@@ -46,7 +46,7 @@ update github repo:
   image: debian:stable-slim
   script:
     - apt update -y && apt install git -y
-    - git remote set-url public-repo https://Captaln:$GITHUB_TOKEN@github.com/Captaln/ts3bot.git
+    - git remote set-url public-repo $GITHUB_URL
     - git push public-repo HEAD:master
   only:
     - master
@@ -58,7 +58,8 @@ push to docker hub:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   script:
     - export VERSION=$(grep -E "version " build.gradle | cut -d "'" -f2)
-    - docker build -t "$CI_REGISTRY_IMAGE:latest" -t "$CI_REGISTRY_IMAGE:$VERSION" .
+    - cp build/libs/ts3bot-$VERSION-all.jar docker/ts3bot.jar
+    - docker build docker -t "$CI_REGISTRY_IMAGE:latest" -t "$CI_REGISTRY_IMAGE:$VERSION"
     - docker push "$CI_REGISTRY_IMAGE"
     - docker image rm "$CI_REGISTRY_IMAGE:latest"
     - docker image rm "$CI_REGISTRY_IMAGE:$VERSION"
