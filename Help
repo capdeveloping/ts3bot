@@ -1,0 +1,89 @@
+#############################################################################################################
+
+						Kann mehrmals verwendet werden 
+
+-------------------------------------------------------------------------------------------------------------
+
+	ClientMove
+
+# Client joint den channel
+FUNKTIONSNAME_client_moved_channel = 
+# Clients dieser Server Groupen sollen angestupst/angeschrieben werden.
+# Eine mit Komma getrennte Liste (ohne Leerzeichen) mit Gruppen IDs.
+FUNKTIONSNAME_client_moved_group_notify = 
+# Gruppen die ignoriert werden oder auf die nur geachtet werden sollen.
+# Eine mit Komma getrennte Liste (ohne Leerzeichen) mit Gruppen IDs.
+FUNKTIONSNAME_client_moved_group_ids = 
+# Gruppen sollen ignoriert oder nur diese sollen gesehen werden. -> ignore/only
+FUNKTIONSNAME_client_moved_group_action = ignore
+
+-------------------------------------------------------------------------------------------------------------
+
+	UpdateGameChannel
+
+# Name des Spiels (csgo)
+FUNKTIONSNAME_game_type =
+FUNKTIONSNAME_game_server_channel_id =
+FUNKTIONSNAME_game_server_channel_name =
+FUNKTIONSNAME_game_server_ip =
+FUNKTIONSNAME_game_server_port =
+FUNKTIONSNAME_game_server_rcon_password =
+
+-------------------------------------------------------------------------------------------------------------
+
+	ClientAFK
+
+# Zeit bis der Client engültig gemoved wird
+# Angaben in Sekunden
+FUNKTIONSNAME_client_afk_time = 
+# Channel wo die AFK Clients hin gemoved werden
+FUNKTIONSNAME_client_afk_channel = 
+# Channel die ignoriert werden sollen vom Bot oder auf denen nur geachtet werden sollen
+# Eine mit Komma getrennte Liste (ohne Leerzeichen) mit Channel IDs.
+FUNKTIONSNAME_client_afk_channel_io = 
+# Channel sollen ignoriert oder nur diese sollen gesehen werden. -> ignore/only
+FUNKTIONSNAME_client_afk_channel_watch = ignore
+# Gruppen die ignoriert werden sollen vom Bot oder auf denen nur geachtet werden sollen
+# Eine mit Komma getrennte Liste (ohne Leerzeichen) mit Gruppen IDs.
+FUNKTIONSNAME_client_afk_group_ids = 
+# Gruppen sollen ignoriert oder nur diese sollen gesehen werden. -> ignore/only
+FUNKTIONSNAME_client_afk_group_watch = ignore
+
+-------------------------------------------------------------------------------------------------------------
+
+#############################################################################################################
+
+						Kann nur einmal verwendet werden 
+
+-------------------------------------------------------------------------------------------------------------
+
+	Ts3Viewer
+
+# Hintergrundfarbe vom Ts3Viewer
+# Entweder die HTML Farbcodes(#3829FF) oder der Farbenname(black) auf Englisch
+FUNKTIONSNAME_ts3_viewer_background_color =
+# Textfarbe von den Channeln sowie deren Clients
+# Entweder die HTML Farbcodes(#3829FF) oder der Farbenname(black) auf Englisch
+FUNKTIONSNAME_ts3_viewer_text_color =
+# Es muss ein Ort festgelegt werden wo die html Datei abgelegt werden soll
+FUNKTIONSNAME_ts3_viewer_file_location = 
+# only important if ts3_server_ip is localhost
+FUNKTIONSNAME_ts3_viewer_server_ip = 
+
+-------------------------------------------------------------------------------------------------------------
+	
+	Broadcast
+
+# Clients die eine Broadcast Nachricht schicken dÃ¼rfen
+# Eine mit Komma getrennte Liste (ohne Leerzeichen) mit der Einzigartigen ID
+# Beispiel +z7a/exrm6PqPWXmh+47eJxaCcA=,hXuT3tgCmIF+oeq3RELL9xZaYK8=
+FUNKTIONSNAME_broadcast_clients = 
+
+-------------------------------------------------------------------------------------------------------------
+
+	Friendlist
+	
+# Join Power die der Channel hÃ¶chstens haben darf um Client zu moven
+FUNKTIONSNAME_move_to_friend_needed_join_power = 
+
+-------------------------------------------------------------------------------------------------------------

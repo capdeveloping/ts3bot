@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="warn">
+    <Properties>
+        <Property name="basePath">data/logs/</Property>
+    </Properties>
+
+    <Appenders>
+        <File name="AppFile" fileName="${basePath}/bot.log">
+            <PatternLayout>
+                <pattern>%d{yyyy-MM-dd HH:mm:ss} [%-5level] [%t] %c{1} - %msg%n</pattern>
+            </PatternLayout>
+        </File>
+    </Appenders>
+    <Loggers>
+        <Logger name="de.ts3bot.app.Application" level="debug" additivity="true">
+            <appender-ref ref="AppFile" level="debug" />
+        </Logger>
+        <Root level="all">
+            <appender-ref ref="AppFile" />
+        </Root>
+    </Loggers>
+</Configuration>

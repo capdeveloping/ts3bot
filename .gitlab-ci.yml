@@ -1,0 +1,85 @@
+image: docker:19.03.1
+
+stages:
+  - cleanup
+  - build
+  - deploy
+  - push-public
+  - update
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - build/
+    - .gradle/
+
+variables:
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+
+before_script:
+  - export GRADLE_USER_HOME=`pwd`/.gradle
+
+cleanup:
+  stage: cleanup
+  script: docker image prune -f
+
+build:
+  stage: build
+  image: gradle:6.0
+  script:
+    - gradle --build-cache buildjar
+  artifacts:
+    paths:
+      - build/libs/
+
+deploy staging:
+  stage: deploy
+  script:
+    - export VERSION=$(grep -E "version " build.gradle | cut -d "'" -f2)
+    - cp build/libs/ts3bot-$VERSION-all.jar docker/ts3bot.jar
+    - docker build docker -t ts3bot:$VERSION-$CI_PIPELINE_ID
+  except:
+    - master
+
+update github repo:
+  stage: push-public
+  image: debian:stable-slim
+  script:
+    - apt update -y && apt install git -y
+    - git remote set-url public-repo https://Captaln:$GITHUB_TOKEN@github.com/Captaln/ts3bot.git
+    - git push public-repo HEAD:master
+  only:
+    - master
+
+push to docker hub:
+  # Official docker image.
+  stage: push-public
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+  script:
+    - export VERSION=$(grep -E "version " build.gradle | cut -d "'" -f2)
+    - docker build -t "$CI_REGISTRY_IMAGE:latest" -t "$CI_REGISTRY_IMAGE:$VERSION" .
+    - docker push "$CI_REGISTRY_IMAGE"
+    - docker image rm "$CI_REGISTRY_IMAGE:latest"
+    - docker image rm "$CI_REGISTRY_IMAGE:$VERSION"
+  only:
+    - master
+
+update:
+  image: tiangolo/docker-with-compose
+  stage: update
+  script:
+    - export VERSION=$(grep -E "version " build.gradle | cut -d "'" -f2)
+    - cd docker && apk add wget
+    - wget -O docker-compose.yml --header "PRIVATE-TOKEN:$GITLAB_API_TOKEN" $DOCKER_COMPOSE_FILE_URL
+    - docker-compose up -d
+
+stop test bot:
+  image: tiangolo/docker-with-compose
+  stage: update
+  script:
+    - export VERSION=$(grep -E "version " build.gradle | cut -d "'" -f2)
+    - cd docker/
+    - docker stop ts3bot-test
+  only:
+    - master
