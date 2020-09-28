@@ -142,7 +142,7 @@ public class AcceptRulesEvent extends TS3EventAdapter {
             }
 
             api.pokeClient( clientID, acceptRules.getPokeMessage());
-            api.sendPrivateMessage( clientID, acceptRules.getPrivateMessageFilePath());
+            api.sendPrivateMessage( clientID, privatMessage);
         }catch (Exception ex){
             log.error("{}: Error in newUserDetected {}", serverConfig.getBotName(), ex.getStackTrace());
         }

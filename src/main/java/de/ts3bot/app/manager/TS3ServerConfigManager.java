@@ -177,7 +177,7 @@ public class TS3ServerConfigManager {
                     message.setDateUntil(configDate);
 
                     Date today = new Date();
-                    if( today.before(configDate) ){
+                    if( today.after(configDate) ){
                         message.setEndDate(true);
                     }
                 }catch (Exception ex) {
