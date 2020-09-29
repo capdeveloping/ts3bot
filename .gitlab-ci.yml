@@ -24,6 +24,10 @@ before_script:
 cleanup:
   stage: cleanup
   script: docker image prune -f
+  rules:
+    - if: '$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ "doku-*"'
+      when: never
+    - if: '$CI_COMMIT_BRANCH == "master"'
 
 build jar file:
   stage: build-jar
@@ -33,6 +37,10 @@ build jar file:
   artifacts:
     paths:
       - build/libs/
+  rules:
+    - if: '$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ "doku-*"'
+      when: never
+    - if: '$CI_COMMIT_BRANCH == "master"'
 
 create staging container:
   stage: build-container
@@ -40,8 +48,10 @@ create staging container:
     - export VERSION=$(grep -E "version " build.gradle | cut -d "'" -f2)
     - cp build/libs/ts3bot-$VERSION-all.jar docker/ts3bot.jar
     - docker build docker -t ts3bot:$VERSION-$CI_PIPELINE_ID
-  except:
-    - master
+  rules:
+    - if: '$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ "doku-*"'
+      when: never
+    - if: '$CI_COMMIT_BRANCH == "master"'
 
 update test bot:
   image: tiangolo/docker-with-compose
@@ -51,15 +61,19 @@ update test bot:
     - cd docker && apk add wget
     - wget -O docker-compose.yml --header "PRIVATE-TOKEN:$GITLAB_API_TOKEN" $DOCKER_COMPOSE_TEST_FILE_URL
     - docker-compose up -d
-  except:
-    - master
+  rules:
+    - if: '$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ "doku-*"'
+      when: never
+    - if: '$CI_COMMIT_BRANCH == "master"'
 
 push to github repo:
   stage: push
   image: debian:stable-slim
   script:
     - apt update -y && apt install git -y
-    - git remote set-url public-repo $GITHUB_URL
+    - export UPDATE_GIT_URL="git remote set-url public-repo $GITHUB_URL"
+    - export ADD_GIT_URL="git remote add public-repo $GITHUB_URL"
+    - if [ `git remote | grep public-repo` == "public-repo" ]; then $UPDATE_GIT_URL; else $ADD_GIT_URL; fi
     - git push public-repo HEAD:master
   only:
     - master
@@ -102,5 +116,7 @@ stop test bot:
     - cd docker && apk add wget
     - wget -O docker-compose.yml --header "PRIVATE-TOKEN:$GITLAB_API_TOKEN" $DOCKER_COMPOSE_TEST_FILE_URL
     - docker stop ts3bot-test
-  only:
-    - master
+  rules:
+    - if: '$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ "doku-*"'
+      when: never
+    - if: '$CI_COMMIT_BRANCH == "master"'
