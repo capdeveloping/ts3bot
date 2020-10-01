@@ -24,10 +24,11 @@ before_script:
 cleanup:
   stage: cleanup
   script: docker image prune -f
-  rules:
-    - if: '$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ "doku-*"'
-      when: never
-    - if: '$CI_COMMIT_BRANCH == "master"'
+  only:
+    - /^update-/
+  except:
+    - /^doku-/
+    - master
 
 build jar file:
   stage: build-jar
@@ -37,10 +38,11 @@ build jar file:
   artifacts:
     paths:
       - build/libs/
-  rules:
-    - if: '$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ "doku-*"'
-      when: never
-    - if: '$CI_COMMIT_BRANCH == "master"'
+  only:
+    - /^update-/
+  except:
+    - /^doku-/
+    - master
 
 create staging container:
   stage: build-container
@@ -48,10 +50,11 @@ create staging container:
     - export VERSION=$(grep -E "version " build.gradle | cut -d "'" -f2)
     - cp build/libs/ts3bot-$VERSION-all.jar docker/ts3bot.jar
     - docker build docker -t ts3bot:$VERSION-$CI_PIPELINE_ID
-  rules:
-    - if: '$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ "doku-*"'
-      when: never
-    - if: '$CI_COMMIT_BRANCH == "master"'
+  only:
+    - /^update-/
+  except:
+    - /^doku-/
+    - master
 
 update test bot:
   image: tiangolo/docker-with-compose
@@ -61,10 +64,11 @@ update test bot:
     - cd docker && apk add wget
     - wget -O docker-compose.yml --header "PRIVATE-TOKEN:$GITLAB_API_TOKEN" $DOCKER_COMPOSE_TEST_FILE_URL
     - docker-compose up -d
-  rules:
-    - if: '$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ "doku-*"'
-      when: never
-    - if: '$CI_COMMIT_BRANCH == "master"'
+  only:
+    - /^update-/
+  except:
+    - /^doku-/
+    - master
 
 push to github repo:
   stage: push
@@ -90,10 +94,8 @@ push to docker hub:
     - docker push "$CI_REGISTRY_IMAGE"
     - docker image rm "$CI_REGISTRY_IMAGE:latest"
     - docker image rm "$CI_REGISTRY_IMAGE:$VERSION"
-  rules:
-    - if: '$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ "doku-*"'
-      when: never
-    - if: '$CI_COMMIT_BRANCH == "master"'
+  only:
+    - master
 
 update prod bot:
   image: tiangolo/docker-with-compose
@@ -103,10 +105,8 @@ update prod bot:
     - cd docker && apk add wget
     - wget -O docker-compose.yml --header "PRIVATE-TOKEN:$GITLAB_API_TOKEN" $DOCKER_COMPOSE_FILE_URL
     - docker-compose up -d
-  rules:
-    - if: '$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ "doku-*"'
-      when: never
-    - if: '$CI_COMMIT_BRANCH == "master"'
+  only:
+    - master
 
 stop test bot:
   image: tiangolo/docker-with-compose
@@ -116,7 +116,5 @@ stop test bot:
     - cd docker && apk add wget
     - wget -O docker-compose.yml --header "PRIVATE-TOKEN:$GITLAB_API_TOKEN" $DOCKER_COMPOSE_TEST_FILE_URL
     - docker stop ts3bot-test
-  rules:
-    - if: '$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME =~ "doku-*"'
-      when: never
-    - if: '$CI_COMMIT_BRANCH == "master"'
+  only:
+    - master
