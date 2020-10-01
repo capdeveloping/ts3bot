@@ -117,6 +117,9 @@ FUNKTIONSNAME_move_to_friend_needed_join_power =
 ```
 # Eine mit Komma getrennte Liste (ohne Leerzeichen) mit Parent Channel IDs.
 FUNKTIONSNAME_channel_check_subchannel =
+
+# Datei mit Einträgen für Channel Passwörter
+FUNKTIONSNAME_channel_check_password_file_path = 
 ```
 
 ### AutoRemove
