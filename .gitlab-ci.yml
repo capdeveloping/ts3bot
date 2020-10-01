@@ -26,9 +26,6 @@ cleanup:
   script: docker image prune -f
   only:
     - /^update-/
-  except:
-    - /^doku-/
-    - master
 
 build jar file:
   stage: build-jar
@@ -38,11 +35,8 @@ build jar file:
   artifacts:
     paths:
       - build/libs/
-  only:
-    - /^update-/
   except:
     - /^doku-/
-    - master
 
 create staging container:
   stage: build-container
@@ -52,9 +46,6 @@ create staging container:
     - docker build docker -t ts3bot:$VERSION-$CI_PIPELINE_ID
   only:
     - /^update-/
-  except:
-    - /^doku-/
-    - master
 
 update test bot:
   image: tiangolo/docker-with-compose
@@ -66,9 +57,6 @@ update test bot:
     - docker-compose up -d
   only:
     - /^update-/
-  except:
-    - /^doku-/
-    - master
 
 push to github repo:
   stage: push
@@ -99,7 +87,7 @@ push to docker hub:
 
 update prod bot:
   image: tiangolo/docker-with-compose
-  stage: deploy
+  stage: update
   script:
     - export VERSION=$(grep -E "version " build.gradle | cut -d "'" -f2)
     - cd docker && apk add wget
