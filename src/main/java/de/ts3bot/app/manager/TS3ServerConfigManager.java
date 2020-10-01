@@ -97,7 +97,7 @@ public class TS3ServerConfigManager {
                     serverConfig.setMoveToFriendNeededJoinPower(Integer.parseInt(prop.getProperty(key + "_move_to_friend_needed_join_power")));
                     break;
                 case "ChannelAutoCreate" :
-                    serverConfig.setChannelidlist(convertStringArrayToIntArray(prop.getProperty(key + "_channel_check_subchannel")));
+                    serverConfig.setFunctionChannelAutoCreate(readFunctionChannelAutoCreate(prop, key));
                     break;
                 case "VersionChecker":
                     serverConfig.setVersionCheckTime(Integer.parseInt(prop.getProperty(key + "_version_check_time")));
@@ -140,6 +140,13 @@ public class TS3ServerConfigManager {
                     LOG.error("Couldn't find the function \"" + funcNames.get(key) + "\"");
             }
         }
+    }
+
+    private static FunctionChannelAutoCreate readFunctionChannelAutoCreate(Properties prop, String key) {
+        FunctionChannelAutoCreate functionChannelAutoCreate = new FunctionChannelAutoCreate();
+        functionChannelAutoCreate.setChannelidlist(convertStringArrayToIntArray(prop.getProperty(key + "_channel_check_subchannel")));
+        functionChannelAutoCreate.setChannelPasswordFilePath(prop.getProperty(key + "_channel_check_password_file_path"));
+        return functionChannelAutoCreate;
     }
 
     private static FunctionModel readFunctionAutoRemove(Properties prop, String key){
@@ -338,8 +345,6 @@ public class TS3ServerConfigManager {
                 return name + " = " + serverConfig.getTs3ViewerBackgroundColor() + "\n";
             case "ts3_viewer_server_ip":
                 return name + " = " + serverConfig.getTs3ViewerServerIp() + "\n";
-            case "channel_check_subchannel":
-                return name + " = " + String.join(",", serverConfig.getChannelidlist() + "\n").replaceAll("[\\[|\\]\\s]","") + "\n";
             case BOT_ADMIN:
                 if (serverConfig.getBotAdmin().isEmpty()){
                     return name + " = \n";
@@ -370,8 +375,7 @@ public class TS3ServerConfigManager {
 
             switch (serverConfig.getFunctionNames().get(key)){
                 case "ChannelAutoCreate":
-                    String listString = serverConfig.getChannelidlist().toString();
-                    return key + "_channel_check_subchannel = " + listString.substring(1, listString.length()-1).replace(" ","") + "\n";
+                    return getChannelAutoCreate(name, key, serverConfig);
                 case "ClientMove":
                     return getClientMoveSetting(name, key, serverConfig);
                 case "ClientAFK":
@@ -385,6 +389,17 @@ public class TS3ServerConfigManager {
                 case "Twitch":
                     return getTwitchSetting(name, key, serverConfig);
             }
+        }
+        return "";
+    }
+
+    private static String getChannelAutoCreate(String name, String key, TS3ServerConfig serverConfig) {
+        switch (name) {
+            case "channel_check_subchannel":
+                String listString = serverConfig.getFunctionChannelAutoCreate().getChannelidlist().toString();
+                return key + "_channel_check_subchannel = " + listString.substring(1, listString.length()-1).replace(" ","") + "\n";
+            case "channel_check_password_file_path":
+                return key + "_channel_check_password_file_path = " + serverConfig.getFunctionChannelAutoCreate().getChannelPasswordFilePath() + "\n";
         }
         return "";
     }

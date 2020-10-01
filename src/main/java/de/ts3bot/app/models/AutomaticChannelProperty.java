@@ -18,6 +18,8 @@ public class AutomaticChannelProperty {
     private List<Permission> channelPermissions;
     private String channelDescription;
     private String maxChannelClients;
+    private String channelPassword;
+    private boolean hasPassword;
     private String hasUnlimitedClients; // boolean with 0 and 1
 
     public AutomaticChannelProperty(String channelName){
@@ -55,6 +57,22 @@ public class AutomaticChannelProperty {
     }
 
 //region getter
+    public boolean hasPassword() {
+        return hasPassword;
+    }
+
+    public int getChannelnumber() {
+        return channelnumber;
+    }
+
+    public String getChannelPassword() {
+        return channelPassword;
+    }
+
+    public String getHasUnlimitedClients() {
+        return hasUnlimitedClients;
+    }
+
     public String hasUnlimitedClients() {
         return hasUnlimitedClients;
     }
@@ -114,5 +132,18 @@ public class AutomaticChannelProperty {
     public void setChannelPermissions(List<Permission> channelPermissions) {
         this.channelPermissions = channelPermissions;
     }
+
+    public void setChannelnumber(int channelnumber) {
+        this.channelnumber = channelnumber;
+    }
+
+    public void setChannelPassword(String channelPassword) {
+        this.channelPassword = channelPassword;
+    }
+
+    public void setHasPassword(boolean hasPassword) {
+        this.hasPassword = hasPassword;
+    }
+
     //endregion
 }

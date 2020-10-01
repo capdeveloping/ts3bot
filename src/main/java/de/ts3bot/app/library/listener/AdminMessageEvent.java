@@ -469,7 +469,6 @@ public class AdminMessageEvent extends TS3EventAdapter {
                     break;
                 case "WelcomeMessage":
                     funcAntwort.append("- ");
-                    funcAntwort.append(key);
                     funcAntwort.append("!welcome (for more help))\n");
                     break;
                 case "ClientMove":

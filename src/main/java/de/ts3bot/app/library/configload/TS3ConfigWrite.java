@@ -112,7 +112,7 @@ public class TS3ConfigWrite {
         String funcKey = key.substring( key.indexOf('_') + 1 );
         switch(serverConfig.getFunctionNames().get(funcId)){
             case "ChannelAutoCreate":
-                serverConfig.getChannelidlist().add(Integer.valueOf(value));
+                serverConfig.getFunctionChannelAutoCreate().getChannelidlist().add(Integer.valueOf(value));
                 configChanged = true;
                 break;
             case "ClientMove":

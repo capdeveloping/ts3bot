@@ -48,9 +48,7 @@ public class TS3ServerConfig {
     private int twitchLiveGruppe;
     //endregion
 
-    //region Automatic Channel Variables
-    private List<Integer> channelidlist;
-    //endregion
+    private FunctionChannelAutoCreate functionChannelAutoCreate;
 
     private FunctionAcceptRules functionAcceptRules;
     private FunctionModel functionAutoRemove;
@@ -92,6 +90,10 @@ public class TS3ServerConfig {
 //endregion
 
 //region getter
+    public FunctionChannelAutoCreate getFunctionChannelAutoCreate() {
+        return functionChannelAutoCreate;
+    }
+
     public FunctionModel getFunctionAutoRemove() {
         return functionAutoRemove;
     }
@@ -146,10 +148,6 @@ public class TS3ServerConfig {
 
     public int getVersionCheckTime() {
         return versionCheckTime;
-    }
-
-    public List<Integer> getChannelidlist() {
-        return channelidlist;
     }
 
     public String getTs3ViewerFileLocation() {
@@ -297,8 +295,8 @@ public class TS3ServerConfig {
         this.versionCheckTime = versionCheckTime;
     }
 
-    public void setChannelidlist(List<Integer> channelidlist) {
-        this.channelidlist = channelidlist;
+    public void setFunctionChannelAutoCreate(FunctionChannelAutoCreate functionChannelAutoCreate) {
+        this.functionChannelAutoCreate = functionChannelAutoCreate;
     }
 
     public void setTs3ViewerServerIp(String ts3ViewerServerIp) {

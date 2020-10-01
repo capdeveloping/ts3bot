@@ -10,7 +10,6 @@ import de.ts3bot.app.manager.FormatManager;
 import de.ts3bot.app.models.AutomaticChannelProperty;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import sun.nio.ch.ChannelInputStream;
 
 import java.util.*;
 
@@ -86,22 +85,7 @@ public class CreateAutomaticChannel extends TS3EventAdapter {
     }
 
     private void createChannel(int parentChannelId){
-        // Let's customize our channel
-        final Map<ChannelProperty, String> properties = new HashMap<>();
-        // Make it a permanent channel
-        properties.put(ChannelProperty.CHANNEL_FLAG_PERMANENT, "1");
-        // Make it a subchannel
-        properties.put(ChannelProperty.CPID, String.valueOf(parentChannelId));
-
-        if(channels.get(parentChannelId).hasUnlimitedClients().equals("0")){
-            properties.put(ChannelProperty.CHANNEL_FLAG_MAXCLIENTS_UNLIMITED, channels.get(parentChannelId).hasUnlimitedClients() );
-
-            properties.put(ChannelProperty.CHANNEL_MAXCLIENTS, channels.get(parentChannelId).getMaxChannelClients() );
-        }
-
-        // Let's also set a channel topic
-        properties.put(ChannelProperty.CHANNEL_DESCRIPTION, channels.get(parentChannelId).getChannelDescription());
-
+        Map<ChannelProperty, String> properties = getChannelPropertyMap(parentChannelId);
         // Done customizing, let's create the channel with our properties
         //
         int empty = 0;
@@ -121,5 +105,26 @@ public class CreateAutomaticChannel extends TS3EventAdapter {
             api.createChannel(channels.get(parentChannelId).getNextChannelName(), properties);
             channels.get(parentChannelId).manageNextChannelName("");
         }
+    }
+
+    private Map<ChannelProperty, String> getChannelPropertyMap(int parentChannelId){
+        final Map<ChannelProperty, String> properties = new HashMap<>();
+        properties.put(ChannelProperty.CHANNEL_FLAG_PERMANENT, "1");
+
+        // Make it a subchannel
+        properties.put(ChannelProperty.CPID, String.valueOf(parentChannelId));
+
+        if(channels.get(parentChannelId).hasPassword()) {
+            properties.put(ChannelProperty.CHANNEL_PASSWORD, channels.get(parentChannelId).getChannelPassword());
+        }
+
+        if(channels.get(parentChannelId).hasUnlimitedClients().equals("0")){
+            properties.put(ChannelProperty.CHANNEL_FLAG_MAXCLIENTS_UNLIMITED, channels.get(parentChannelId).hasUnlimitedClients() );
+            properties.put(ChannelProperty.CHANNEL_MAXCLIENTS, channels.get(parentChannelId).getMaxChannelClients() );
+        }
+
+        properties.put(ChannelProperty.CHANNEL_DESCRIPTION, channels.get(parentChannelId).getChannelDescription());
+
+        return properties;
     }
 }
