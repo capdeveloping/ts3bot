@@ -3,7 +3,7 @@ plugins {
 }
 
 group 'de.capdeveloping'
-version '0.9.28'
+version '0.9.29'
 
 sourceCompatibility = 1.8
 
