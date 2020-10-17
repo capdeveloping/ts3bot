@@ -94,6 +94,8 @@ public class TwitchController extends TS3EventAdapter {
                     .build();
             client.getEventManager().getEventHandler(SimpleEventHandler.class).onEvent(ChannelGoLiveEvent.class, this::channelGoLive);
             client.getEventManager().getEventHandler(SimpleEventHandler.class).onEvent(ChannelGoOfflineEvent.class, this::channelGoOffline);
+
+            log.info( "{}: Hinzufuegen der User aus der Config", serverConfig.getBotName());
             registerChannelEvents();
         }catch(Exception ex){
             log.error( "{}: Fehler beim connecten to twitch: {}", serverConfig.getBotName(), serverConfig.getTwitchConfigName());
@@ -103,12 +105,16 @@ public class TwitchController extends TS3EventAdapter {
 
     private void registerChannelEvents(){
         for(User user : users){
-            client.getClientHelper().enableStreamEventListener(user.getName());
+            try {
+                client.getClientHelper().enableStreamEventListener(user.getName());
+            }catch (Exception ex){
+                log.error( "{}: Fehler beim add StreamEventListener: {}", serverConfig.getBotName(), user.getName());
+                log.error( FormatManager.StackTraceToString(ex) );
+            }
         }
     }
 
     private void channelGoLive(ChannelGoLiveEvent event){
-        log.info( "TWITCH CHANNEL WENT LIVE!" );
         for(User user : users){
             if( user.getName().equals(event.getChannel().getName().toLowerCase()) && ! checkIfUserHasGroup(user.getUid())) {
                 api.addClientToServerGroup(serverConfig.getTwitchLiveGruppe(), api.getDatabaseClientByUId(user.getUid()).getDatabaseId());
@@ -149,6 +155,7 @@ public class TwitchController extends TS3EventAdapter {
     public void setServerConfig(TS3ServerConfig serverConfig) {
         this.serverConfig = serverConfig;
         readConfigFile();
+        registerChannelEvents();
     }
 
     public void setApi(TS3Api api) {

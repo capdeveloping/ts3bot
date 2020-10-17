@@ -89,7 +89,7 @@ public class TaskTimer {
     }
 
     public void checkNewVersion(boolean stopTasks){
-        int delaySeconds = 50;
+        int delaySeconds = 5;
         int periodSeconds = (serverConfig.getVersionCheckTime() * 60 * 60);
         if (timer[1]  == null) timer[1] = new Timer();
         if( ! stopTasks ){

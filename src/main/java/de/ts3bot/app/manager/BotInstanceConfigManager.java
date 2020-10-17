@@ -80,6 +80,9 @@ public class BotInstanceConfigManager {
             bufferedWriter.write("# Setzen der Bot Sprache\n" +
                     "language =\n" +
                     "\n" +
+                    "# TS3 Query Floodrate\n" +
+                    "ts3_server_floodrate =\n" +
+                    "\n" +
                     "# TS3 Server IP\n" +
                     "ts3_server_ip =\n" +
                     "\n" +
@@ -101,7 +104,7 @@ public class BotInstanceConfigManager {
                     "ts3_bot_nickname2 =\n" +
                     "# TS3 Bot Channel in welchem er joint nach dem Connect\n" +
                     "# 0 = Standard Channel\n" +
-                    "ts3_bot_channel_id =\n" +
+                    "ts3_bot_channel_id = 0\n" +
                     "\n" +
                     "#######################################################################################\n" +
                     "# Es werden nur die Functions geladen. Eine Komma getrennte Liste ohne Leerzeichen.\n" +

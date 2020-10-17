@@ -146,8 +146,6 @@ public class BotInstance {
         setBotNickname();
         registerListener();
         startTimer(false);
-        //ClientJoinedMusikChannel test = new ClientJoinedMusikChannel(api, serverConfig);
-        //api.addTS3Listeners(test);
     }
 
     private void setBotNickname(){
@@ -223,6 +221,10 @@ public class BotInstance {
         if(acceptRulesEvent != null) {
             log.info("{}: Starting accept rules listener.", serverConfig.getBotName());
             api.addTS3Listeners(acceptRulesEvent);
+        }
+        if(versionChecker != null) {
+            log.info("{}: Starting version checker listener.", serverConfig.getBotName());
+            api.addTS3Listeners(versionChecker);
         }
         if(clientMoveEvent != null) {
             for(ClientJoinedChannelEvent moveEvent : clientMoveEvent){

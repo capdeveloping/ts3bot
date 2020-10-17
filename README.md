@@ -53,7 +53,7 @@ FUNKTIONSNAME_client_afk_group_watch = ignore
 # Willkommensnachricht die der Client erhalten soll.
 FUNKTIONSNAME_welcome_message =
 
-# Willkommensnachricht die der Client erhalten soll.
+# Poke Willkommensnachricht die der Client erhalten soll.
 # true/false
 FUNKTIONSNAME_welcome_poke_client = false
 
@@ -67,8 +67,8 @@ FUNKTIONSNAME_welcome_poke_message =
 FUNKTIONSNAME_welcome_date = empty
 
 # Wie hoft soll die Nachricht gesendet werden? daily/always
-# Always = Jedes mal wenn der Client auf dem TS joint.
-# Daily = Nur einmal Pro Tag.
+# always = Jedes mal wenn der Client auf dem TS joint.
+# daily = Nur einmal Pro Tag.
 FUNKTIONSNAME_welcome_repeat = always
 
 # Welche Gruppe soll die Nachricht bekommen
@@ -120,6 +120,12 @@ FUNKTIONSNAME_channel_check_subchannel =
 
 # Datei mit Einträgen für Channel Passwörter
 FUNKTIONSNAME_channel_check_password_file_path = 
+```
+
+### VersionChecker
+```
+# Angaben in Stunden
+FUNKTIONSNAME_version_check_time =
 ```
 
 ### AutoRemove
