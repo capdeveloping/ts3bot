@@ -3,7 +3,6 @@ package de.ts3bot.app.features;
 import com.github.philippheuer.credentialmanager.domain.OAuth2Credential;
 import com.github.philippheuer.events4j.simple.SimpleEventHandler;
 import com.github.theholywaffle.teamspeak3.TS3Api;
-import com.github.theholywaffle.teamspeak3.api.event.TS3EventAdapter;
 import com.github.theholywaffle.teamspeak3.api.wrapper.ServerGroup;
 import com.github.twitch4j.TwitchClient;
 import com.github.twitch4j.TwitchClientBuilder;
@@ -22,7 +21,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TwitchController extends TS3EventAdapter {
+public class TwitchController {
     private final Logger log = LogManager.getLogger(TwitchController.class.getName());
     private TwitchClient client;
     private List<User> users;

@@ -118,9 +118,8 @@ public class BotInstanceConfigManager {
                     "# Können nur einmal verwendet werden: \n" +
                     "# Clients koennen friendlists erstellen : Friendlist:[anyname]\n" +
                     "# Bestimmte Clients koennen broadcast Messages schreiben und verschicken : Broadcast:[anyname]\n" +
-                    "# Die ersten drei Plätze als Gruppen im TS anzeigen lassen : TopThree:[anyname]\n" +
                     "# Ts3Viewer mit laufen lassen : Viewer:[anyname]\n" +
-                    "# Automatisches Channel erstellen : ChannelAutoCreate:[anyname]\n" +
+                    "# Automatische Channel erstellen : ChannelAutoCreate:[anyname]\n" +
                     "# Gruppe die automatisch geloescht werden soll : AutoRemove:[anyname]\n" +
                     "# TS3 Regeln die erst akzeptiert werden muessen : AcceptRules:[anyname]\n" +
                     "# User die automatisch die Live Gruppe erhalten sollen : Twitch:[anyname]\n" +
