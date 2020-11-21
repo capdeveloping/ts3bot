@@ -495,6 +495,9 @@ public class TS3ServerConfigManager {
         switch (name) {
             case "welcome_date":
                 Format formatter = new SimpleDateFormat("dd.MM.yy HH:mm");
+                if (serverConfig.getFunctionWelcomeMessageHashMap().get(key).getDateUntil() == null){
+                    return  key + "_welcome_date = empty\n";
+                }
                 Date date = serverConfig.getFunctionWelcomeMessageHashMap().get(key).getDateUntil();
                 return  key + "_welcome_date = " + formatter.format(date) + "\n";
             case "welcome_message":
