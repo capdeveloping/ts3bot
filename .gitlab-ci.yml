@@ -2,6 +2,7 @@ image: docker:19.03.1
 
 stages:
   - cleanup
+  - sonar
   - build-jar
   - build-container
   - deploy
@@ -26,6 +27,11 @@ cleanup:
   script: docker image prune -f
   only:
     - /^update-/
+
+sonar:
+  stage: sonar
+  image: gradle:6.0
+  script: ./gradlew sonarqube
 
 build jar file:
   stage: build-jar
