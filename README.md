@@ -2,12 +2,12 @@
 
 Dieser Bot kann frei verwendet werden. 
 
-# Funktionen
+## Funktionen
 
 Können mehrmals in der Config verwendet werden 
 -------------------------------------------------------------------------------------------------------------
 
-### ClientMove
+#### ClientMove
 ```
 # Client joint den channel
 FUNKTIONSNAME_client_moved_channel =
@@ -24,7 +24,7 @@ FUNKTIONSNAME_client_moved_group_ids =
 FUNKTIONSNAME_client_moved_group_action = ignore
 ```
 
-### ClientAFK
+#### ClientAFK
 ```
 # Zeit bis der Client engültig gemoved wird
 # Angaben in Sekunden
@@ -48,7 +48,7 @@ FUNKTIONSNAME_client_afk_group_ids =
 FUNKTIONSNAME_client_afk_group_watch = ignore
 ```
 
-### WelcomeMessage
+#### WelcomeMessage
 ```
 # Willkommensnachricht die der Client erhalten soll.
 FUNKTIONSNAME_welcome_message =
@@ -81,7 +81,7 @@ FUNKTIONSNAME_welcome_group_ids =
 Kann nur einmal verwendet werden 
 -------------------------------------------------------------------------------------------------------------
 
-### Ts3Viewer
+#### Ts3Viewer
 ```
 # Hintergrundfarbe vom Ts3Viewer
 # Entweder die HTML Farbcodes(#3829FF) oder der Farbenname(black) auf Englisch
@@ -98,7 +98,7 @@ FUNKTIONSNAME_ts3_viewer_file_location =
 FUNKTIONSNAME_ts3_viewer_server_ip = 
 ```
 
-### Broadcast
+#### Broadcast
 ```
 # Clients die eine Broadcast Nachricht schicken dÃ¼rfen
 # Eine mit Komma getrennte Liste (ohne Leerzeichen) mit der Einzigartigen ID
@@ -106,14 +106,14 @@ FUNKTIONSNAME_ts3_viewer_server_ip =
 FUNKTIONSNAME_broadcast_clients = 
 ```
 
-### Friendlist
+#### Friendlist
 ```
 # Join Power die der Channel hÃ¶chstens haben darf um Client zu moven
 FUNKTIONSNAME_move_to_friend_needed_join_power = 
 ```
 
 
-### ChannelAutoCreate
+#### ChannelAutoCreate
 ```
 # Eine mit Komma getrennte Liste (ohne Leerzeichen) mit Parent Channel IDs.
 FUNKTIONSNAME_channel_check_subchannel =
@@ -122,20 +122,20 @@ FUNKTIONSNAME_channel_check_subchannel =
 FUNKTIONSNAME_channel_check_password_file_path = 
 ```
 
-### VersionChecker
+#### VersionChecker
 ```
 # Angaben in Stunden
 FUNKTIONSNAME_version_check_time =
 ```
 
-### AutoRemove
+#### AutoRemove
 ```
 # Welche Gruppe soll die Nachricht bekommen
 # Eine mit Komma getrennte Liste (ohne Leerzeichen) mit Gruppen IDs.
 FUNKTIONSNAME_auto_remove_group_ids =
 ```
 
-### AcceptRules
+#### AcceptRules
 ```
 # Gast Gruppe bei der ersten Verbindung
 FUNKTIONSNAME_accept_rules_first_group =
@@ -158,7 +158,7 @@ FUNKTIONSNAME_accept_rules_message_file_path =
 FUNKTIONSNAME_accept_rules_forbidden_file_path = 
 ```
 
-### Twitch
+#### Twitch
 ```
 # Twitch client id
 FUNKTIONSNAME_twitch_api_client_id =

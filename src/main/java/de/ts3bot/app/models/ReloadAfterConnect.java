@@ -86,7 +86,6 @@ public class ReloadAfterConnect {
 
     void apiUpdated(TS3Api api){
         this.api = api;
-        taskTimer.setApi(api);
         adminMessageEvent.setApi(api);
         userMessageEvent.setApi(api);
         if(versionChecker != null) {

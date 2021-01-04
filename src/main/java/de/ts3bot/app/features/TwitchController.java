@@ -6,8 +6,8 @@ import com.github.theholywaffle.teamspeak3.TS3Api;
 import com.github.theholywaffle.teamspeak3.api.wrapper.ServerGroup;
 import com.github.twitch4j.TwitchClient;
 import com.github.twitch4j.TwitchClientBuilder;
-import com.github.twitch4j.common.events.channel.ChannelGoLiveEvent;
-import com.github.twitch4j.common.events.channel.ChannelGoOfflineEvent;
+import com.github.twitch4j.events.ChannelGoLiveEvent;
+import com.github.twitch4j.events.ChannelGoOfflineEvent;
 import de.ts3bot.app.manager.FormatManager;
 import de.ts3bot.app.manager.ListManager;
 import de.ts3bot.app.models.TS3ServerConfig;
@@ -93,19 +93,19 @@ public class TwitchController {
                     .build();
             client.getEventManager().getEventHandler(SimpleEventHandler.class).onEvent(ChannelGoLiveEvent.class, this::channelGoLive);
             client.getEventManager().getEventHandler(SimpleEventHandler.class).onEvent(ChannelGoOfflineEvent.class, this::channelGoOffline);
-
-            log.info( "{}: Hinzufuegen der User aus der Config", serverConfig.getBotName());
-            registerChannelEvents();
         }catch(Exception ex){
             log.error( "{}: Fehler beim connecten to twitch: {}", serverConfig.getBotName(), serverConfig.getTwitchConfigName());
+            log.error( "{}: Cause: {}", serverConfig.getBotName(), serverConfig.getTwitchConfigName());
             log.error( FormatManager.StackTraceToString(ex) );
         }
     }
 
     private void registerChannelEvents(){
+        log.info( "{}: Hinzufuegen der User aus der Config", serverConfig.getBotName());
         for(User user : users){
             try {
                 client.getClientHelper().enableStreamEventListener(user.getName());
+                log.info( "{}: '{}' wurde zum Listener hinzugefuegt", serverConfig.getBotName(), user.getName());
             }catch (Exception ex){
                 log.error( "{}: Fehler beim add StreamEventListener: {}", serverConfig.getBotName(), user.getName());
                 log.error( FormatManager.StackTraceToString(ex) );
