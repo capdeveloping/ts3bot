@@ -99,14 +99,6 @@ public class WelcomeMessageEvent extends TS3EventAdapter {
         }
     }
 
-    private void sendPokeMessage(ClientJoinEvent e, FunctionWelcomeMessage welcomeObj){
-        if( ! welcomeObj.isPokeClient() && welcomeObj.getPokeMessage().isEmpty() ){
-            return;
-        }
-
-        api.pokeClient(e.getClientId(), welcomeObj.getPokeMessage());
-    }
-
     private void searchAndSendMessage(ClientJoinEvent e, FunctionWelcomeMessage welcomeObj){
         String serverGroups = e.getClientServerGroups();
         for (int group : welcomeObj.getWelcome_group_ids()){
@@ -116,6 +108,14 @@ public class WelcomeMessageEvent extends TS3EventAdapter {
                 break;
             }
         }
+    }
+
+    private void sendPokeMessage(ClientJoinEvent e, FunctionWelcomeMessage welcomeObj){
+        if( ! welcomeObj.isPokeClient() || welcomeObj.getPokeMessage().isEmpty() ){
+            return;
+        }
+
+        api.pokeClient(e.getClientId(), welcomeObj.getPokeMessage());
     }
 
     private void sendMessage(FunctionWelcomeMessage welcomeObj, ClientJoinEvent e){
