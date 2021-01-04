@@ -16,31 +16,24 @@ public class TaskTimer {
     private final Logger LOG = LogManager.getLogger(BotInstance.class);
     private String botname;
     private List<ClientAfkMode> clientAfkMode;
-    private TS3Api api;
     private TS3ServerConfig serverConfig;
     private NewVersionChecker versionChecker;
-    private TS3Viewer ts3Viewer;
     private UpdateGameServerChannel updateGameServerChannel;
 
-    public TaskTimer(List<ClientAfkMode> clientAfkMode, TS3ServerConfig serverConfig, String botname, NewVersionChecker versionChecker, TS3Viewer ts3Viewer, UpdateGameServerChannel updateGameServerChannel) {
+    public TaskTimer(List<ClientAfkMode> clientAfkMode, TS3ServerConfig serverConfig, String botname, NewVersionChecker versionChecker, UpdateGameServerChannel updateGameServerChannel) {
         this.clientAfkMode = clientAfkMode;
         this.serverConfig = serverConfig;
         this.botname = botname;
         this.versionChecker = versionChecker;
-        this.ts3Viewer = ts3Viewer;
         this.updateGameServerChannel = updateGameServerChannel;
-    }
-
-    public void setApi(TS3Api api) {
-        this.api = api;
     }
 
     public void setServerConfig(TS3ServerConfig serverConfig) {
         this.serverConfig = serverConfig;
     }
 
-    private Timer timer[] = new Timer[3];
-    private Timer afkTimer[];
+    private Timer[] timer = new Timer[3];
+    private Timer[] afkTimer;
 
     public void controlClientAfkTimer(boolean stopTask){
         if(afkTimer == null) {afkTimer = new Timer[clientAfkMode.size()];}
