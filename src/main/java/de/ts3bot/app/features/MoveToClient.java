@@ -118,11 +118,7 @@ public class MoveToClient {
                                 }
                             }else{
                                 if (!freunde.contains(friend.getName())) {
-                                    if (serverConfig.getLanguage().equals("german")) {
-                                        freunde = freunde + friendName + " :  [COLOR=red]offline[/COLOR]\n";
-                                    } else {
-                                        freunde = freunde + friendName + " :  [COLOR=red]offline[/COLOR]\n";
-                                    }
+                                    freunde = freunde + friendName + " :  [COLOR=red]offline[/COLOR]\n";
                                 }
                             }
                         }
@@ -274,7 +270,7 @@ public class MoveToClient {
         } else if (message.contains("=")) {
             help = "=";
         }
-        String messageArr[] = message.split(help);
+        String[] messageArr = message.split(help);
         String friendName = messageArr[0];
         for (Client clientTS : api.getClients()) {
             if (clientTS.getNickname().equals(messageArr[1])) {

@@ -15,7 +15,6 @@ import java.util.*;
  * Schaut ob jemand etwas im Server/Channel/Privaten Chat an ihn schriebt und schreibt dementsprechend zur�ck.
  */
 public class UserMessageEvent extends TS3EventAdapter {
-    private int clientBotId;
     private TS3Api api;
     private MoveToClient moveToClient;
     private TS3TextLoad textLoad;
@@ -23,17 +22,10 @@ public class UserMessageEvent extends TS3EventAdapter {
 
     public UserMessageEvent(MoveToClient moveToClient) {
         this.moveToClient = moveToClient;
-        if(this.moveToClient != null)
-            stopMoveFunc = false;
-        else
-            stopMoveFunc = true;
+        stopMoveFunc = this.moveToClient == null;
     }
 
 //region setter
-    public void setClientBotId(int clientBotId) {
-        this.clientBotId = clientBotId;
-    }
-
     public void setApi(TS3Api api) {
         this.api = api;
     }

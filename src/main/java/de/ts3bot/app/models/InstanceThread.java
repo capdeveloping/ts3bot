@@ -3,7 +3,6 @@ package de.ts3bot.app.models;
 import de.ts3bot.app.manager.FormatManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import java.io.StringWriter;
 
 public class InstanceThread extends Thread{
     private final Logger log = LogManager.getLogger(InstanceThread.class.getName());

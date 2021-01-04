@@ -6,7 +6,6 @@ import de.ts3bot.app.manager.FormatManager;
 import de.ts3bot.app.manager.ListManager;
 import de.ts3bot.app.models.TS3ServerConfig;
 import de.ts3bot.app.models.User;
-import de.ts3bot.app.models.data.ServerGroupData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -14,7 +13,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.Collator;
 import java.util.*;
 import java.util.regex.Pattern;
 

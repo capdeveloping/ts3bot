@@ -257,7 +257,7 @@ public class BroadcastMessage extends TS3EventAdapter {
                 if(!userStr.equals("")) {
                     String[] userArr = userStr.split(" #=# ");
                     String[] userBroadcastArr = userArr[1].replace("},{", " # ").replace("{", "").replace("}", "").split(" # ");
-                    clientArr.add(new BroadcastUserData(userArr[0], userBroadcastArr[0], Boolean.valueOf(userBroadcastArr[2]), Boolean.valueOf(userBroadcastArr[1])));
+                    clientArr.add(new BroadcastUserData(userArr[0], userBroadcastArr[0], Boolean.parseBoolean(userBroadcastArr[2]), Boolean.parseBoolean(userBroadcastArr[1])));
                 }
             }
         }

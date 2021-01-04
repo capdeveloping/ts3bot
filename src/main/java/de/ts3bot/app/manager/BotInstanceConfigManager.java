@@ -5,7 +5,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.*;
-import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 
@@ -49,7 +48,7 @@ public class BotInstanceConfigManager {
     private static void createInstanceConfig(String configpath, String instancelocation){
         log.info("create instance config folder + file");
         (new File(configpath)).mkdir();
-        try (FileWriter fileWriter = new FileWriter(instancelocation); BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);) {
+        try (FileWriter fileWriter = new FileWriter(instancelocation); BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)) {
             bufferedWriter.write("# Der Instance Name ist wichtig für den Bot damit man ihn später starten oder stoppen kann\n");
             bufferedWriter.write("# Verwende keine Leerzeichen - nur Zahlen, Minuse oder Unterstriche.\n");
             bufferedWriter.write("1.instance_name = srv1\n");
@@ -72,7 +71,7 @@ public class BotInstanceConfigManager {
         (new File(configpath + "/server1")).mkdir();
         String firstcfg = configpath + "/server1/serverconfig.cfg";
         try (FileWriter fileWriter = new FileWriter(firstcfg);
-            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);)
+            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter))
         {
             final String SPACER = "-------------------------------------------------------------------------------------------------------------\n";
             final String EIDs = "# Eine mit Komma getrennte Liste (ohne Leerzeichen) mit der Einzigartigen ID\n";

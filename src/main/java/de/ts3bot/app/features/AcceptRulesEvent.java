@@ -25,7 +25,7 @@ public class AcceptRulesEvent extends TS3EventAdapter {
     private TS3Api api;
     private boolean stopFunction;
     private FunctionAcceptRules acceptRules;
-    private String privatMessage = "";
+    private String privateMessage = "";
     private List<String> forbiddenNames;
 
     public void setServerConfig(TS3ServerConfig serverConfig) {
@@ -92,7 +92,7 @@ public class AcceptRulesEvent extends TS3EventAdapter {
         } catch (IOException ex) {
             log.error(ex.getStackTrace());
         }
-        privatMessage = builder.toString();
+        privateMessage = builder.toString();
     }
 
     private void createPrivateMessageConfig(){
@@ -112,7 +112,7 @@ public class AcceptRulesEvent extends TS3EventAdapter {
         try (FileWriter writer = new FileWriter(newFile)){
             writer.write("# Information\n");
             writer.write("# Private Nachricht, kann über mehrere Zeilen gehen\n");
-            writer.write(privatMessage);
+            writer.write(privateMessage);
         } catch (IOException ex) {
             log.error(ex.getStackTrace());
         }
@@ -142,7 +142,7 @@ public class AcceptRulesEvent extends TS3EventAdapter {
             }
 
             api.pokeClient( clientID, acceptRules.getPokeMessage());
-            api.sendPrivateMessage( clientID, privatMessage);
+            api.sendPrivateMessage( clientID, privateMessage);
         }catch (Exception ex){
             log.error("{}: Error in newUserDetected {}", serverConfig.getBotName(), ex.getStackTrace());
         }
@@ -224,12 +224,9 @@ public class AcceptRulesEvent extends TS3EventAdapter {
     }
 
     private void checkReadFunctions(TextMessageEvent e, String message){
-        FunctionAcceptRules acceptRules = serverConfig.getFunctionAcceptRules();
-
         if (message.startsWith("readtext")){
-            if( ! privatMessage.isEmpty() ){
-                System.out.println(privatMessage);
-                api.sendPrivateMessage(e.getInvokerId(), privatMessage);
+            if( ! privateMessage.isEmpty() ){
+                api.sendPrivateMessage(e.getInvokerId(), privateMessage);
                 return;
             }
             api.sendPrivateMessage(e.getInvokerId(), "Aktuell ist noch keine Willkommensnachricht definiert. Setze eine mit" +
@@ -272,7 +269,7 @@ public class AcceptRulesEvent extends TS3EventAdapter {
                     "Bsp.: !acceptconfigure settext = Hallo %user%, am %date% findet ein Clan Event statt. Sei bereit.");
             return;
         }
-        privatMessage = input;
+        privateMessage = input;
         api.sendPrivateMessage(clientId, "Wert wurde erfolgreich gesetzt.");
         writePrivateMessage();
     }

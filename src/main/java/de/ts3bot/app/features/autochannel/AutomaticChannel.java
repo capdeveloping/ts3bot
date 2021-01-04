@@ -3,7 +3,6 @@ package de.ts3bot.app.features.autochannel;
 import com.github.theholywaffle.teamspeak3.TS3Api;
 import com.github.theholywaffle.teamspeak3.api.event.*;
 import com.github.theholywaffle.teamspeak3.api.wrapper.Channel;
-import com.github.theholywaffle.teamspeak3.api.wrapper.ChannelInfo;
 import de.ts3bot.app.manager.ListManager;
 import de.ts3bot.app.models.AutomaticChannelProperty;
 import de.ts3bot.app.models.TS3ServerConfig;
