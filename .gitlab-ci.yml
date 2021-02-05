@@ -87,6 +87,7 @@ push to docker hub:
   script:
     - export VERSION=$(grep -E "version " build.gradle | cut -d "'" -f2)
     - cp build/libs/ts3bot-$VERSION-all.jar docker/ts3bot.jar
+    - cp -r webinterface/ docker/html
     - docker build docker -t "$CI_REGISTRY_IMAGE:latest" -t "$CI_REGISTRY_IMAGE:$VERSION"
     - docker push "$CI_REGISTRY_IMAGE"
     - docker image rm "$CI_REGISTRY_IMAGE:latest"
