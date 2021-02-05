@@ -5,7 +5,7 @@
     if (array_key_exists("Twitch", $functions)) {
         $twitchKey = $functions["Twitch"];
 
-        if(filesize($config[$twitchKey . "_channel_check_password_file_path"])) {
+        if(filesize($config[$twitchKey . "_twitch_config_name"])) {
             $twitchUser = fileReadContentWithSeparator($config[$twitchKey . "_twitch_config_name"], " #=# ");
         }else{
             $twitchUser = [];
