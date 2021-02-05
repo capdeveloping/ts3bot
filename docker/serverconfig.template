@@ -1,0 +1,12 @@
+language =
+ts3_server_ip =
+ts3_server_port =
+ts3_server_query_port = 10011
+ts3_server_query_login_name =
+ts3_server_query_login_password =
+ts3_bot_nickname =
+ts3_bot_nickname2 =
+ts3_bot_channel_id = 0
+bot_admin =
+bot_full_admin =
+functions =

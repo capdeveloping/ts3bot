@@ -49,14 +49,8 @@ public class BotInstanceConfigManager {
         log.info("create instance config folder + file");
         (new File(configpath)).mkdir();
         try (FileWriter fileWriter = new FileWriter(instancelocation); BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)) {
-            bufferedWriter.write("# Der Instance Name ist wichtig für den Bot damit man ihn später starten oder stoppen kann\n");
-            bufferedWriter.write("# Verwende keine Leerzeichen - nur Zahlen, Minuse oder Unterstriche.\n");
-            bufferedWriter.write("1.instance_name = srv1\n");
-            bufferedWriter.write("\n");
-            bufferedWriter.write("# Jeder Bot benötigt einen config Pfad damit die Config geladen werden kann.\n");
-            bufferedWriter.write("1.instance_config_pfad = data/configs/server1/serverconfig.cfg\n");
-            bufferedWriter.write("\n");
-            bufferedWriter.write("# Welcher Bot ist aktiv und welcher soll nicht gestartet werden.\n");
+            bufferedWriter.write("1.instance_name = server1\n");
+            bufferedWriter.write("1.instance_config_pfad = " + configpath + "/server1/serverconfig.cfg\n");
             bufferedWriter.write("1.instance_activ = true");
 
             // Always close files.
@@ -73,71 +67,19 @@ public class BotInstanceConfigManager {
         try (FileWriter fileWriter = new FileWriter(firstcfg);
             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter))
         {
-            final String SPACER = "-------------------------------------------------------------------------------------------------------------\n";
-            final String EIDs = "# Eine mit Komma getrennte Liste (ohne Leerzeichen) mit der Einzigartigen ID\n";
-
-            bufferedWriter.write("# Setzen der Bot Sprache\n" +
-                    "language =\n" +
-                    "\n" +
-                    "# TS3 Query Floodrate\n" +
+            bufferedWriter.write("# TS3 Query Floodrate\n" +
                     "ts3_server_floodrate =\n" +
-                    "\n" +
-                    "# TS3 Server IP\n" +
                     "ts3_server_ip =\n" +
-                    "\n" +
-                    "# TS3 Server Port\n" +
                     "ts3_server_port =\n" +
-                    "\n" +
-                    "# TS3 Server Query Port\n" +
                     "ts3_server_query_port = 10011\n" +
-                    "\n" +
-                    "# TS3 Server Query Admin Name\n" +
                     "ts3_server_query_login_name =\n" +
-                    "\n" +
-                    "# TS3 Server Query Admin Passwort\n" +
                     "ts3_server_query_login_password =\n" +
-                    "\n" +
-                    "# TS3 Bot Nickname\n" +
                     "ts3_bot_nickname =\n" +
-                    "# TS3 Bot Nickname2, falls der erste schon verwendet wird\n" +
                     "ts3_bot_nickname2 =\n" +
-                    "# TS3 Bot Channel in welchem er joint nach dem Connect\n" +
-                    "# 0 = Standard Channel\n" +
                     "ts3_bot_channel_id = 0\n" +
-                    "\n" +
-                    "#######################################################################################\n" +
-                    "# Es werden nur die Functions geladen. Eine Komma getrennte Liste ohne Leerzeichen.\n" +
-                    "# Stehen keine Funktionen hinter functions werden sie nicht geladen.\n" +
-                    "#\n" +
-                    "# Können mehrmals verwendet werden:\n" +
-                    "# Client Moved in einem bestimmten Channel : ClientMove:[anyname]\n" +
-                    "# Clients die eine bestimmte Zeit AFK sind : ClientAFK:[anyname]\n" +
-                    "# Clients die eine Willkommensnachricht erhalten sollen : WelcomeMessage:[anyname]\n" +
-                    "#\n" +
-                    "# Können nur einmal verwendet werden: \n" +
-                    "# Clients koennen friendlists erstellen : Friendlist:[anyname]\n" +
-                    "# Bestimmte Clients koennen broadcast Messages schreiben und verschicken : Broadcast:[anyname]\n" +
-                    "# Ts3Viewer mit laufen lassen : Viewer:[anyname]\n" +
-                    "# Automatische Channel erstellen : ChannelAutoCreate:[anyname]\n" +
-                    "# Gruppe die automatisch geloescht werden soll : AutoRemove:[anyname]\n" +
-                    "# TS3 Regeln die erst akzeptiert werden muessen : AcceptRules:[anyname]\n" +
-                    "# User die automatisch die Live Gruppe erhalten sollen : Twitch:[anyname]\n" +
-                    "#\n" +
-                    "functions =\n" +
-                    "\n" +
-                    "########################################################################################\n" +
-                    "\n" +
-                    SPACER +
-                    "\n" +
-                    "# Liste der Clients die Bot Admins sind.\n" +
-                    EIDs +
-                    "# Admins haben automatisch Rechte zu broadcast Nachrichten\n" +
                     "bot_admin = \n" +
-                    "\n" +
-                    "# Liste der Clients die Bot Full Admins sind.\n" +
-                    EIDs +
-                    "# Full Admins haben automatisch Rechte zu broadcast Nachrichten\n" +
-                    "bot_full_admin =\n");
+                    "bot_full_admin =\n" +
+                    "functions =\n");
 
         }
         catch(IOException ex) {

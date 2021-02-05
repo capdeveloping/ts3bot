@@ -3,7 +3,7 @@ plugins {
 }
 
 group 'de.capdeveloping'
-version '0.9.31'
+version '1.0.0'
 
 repositories {
     mavenCentral()

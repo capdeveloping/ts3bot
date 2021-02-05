@@ -51,6 +51,7 @@ create staging container:
   script:
     - export VERSION=$(grep -E "version " build.gradle | cut -d "'" -f2)
     - cp build/libs/ts3bot-$VERSION-all.jar docker/ts3bot.jar
+    - cp -r webinterface/ docker/html
     - docker build docker -t ts3bot:$VERSION-$CI_PIPELINE_ID
   only:
     - /^update-/

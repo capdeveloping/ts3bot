@@ -1,10 +1,7 @@
-#!/usr/bin/env bash
-
-ln -sf /dev/stdout /data/logs/bot.log
+#!/bin/bash
 
 echo "Europe/Berlin" > /etc/timezone
 ln -sf /usr/share/zoneinfo/Europe/Berlin /etc/localtime
+ln -sf /data/ts3_icons/ /
 
-ln -s /data/ts3_icons/ /
-
-java -Duser.timezone=Europe/Berlin -jar ./ts3bot.jar
+/usr/sbin/apache2ctl -D FOREGROUND

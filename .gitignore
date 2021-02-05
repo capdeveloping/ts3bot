@@ -4,7 +4,7 @@
 .idea/workspace.xml
 *.zip
 *.html
-
+webinterface/.current
 
 # Created by https://www.gitignore.io/api/gradle,intellij+all
 # Edit at https://www.gitignore.io/?templates=gradle,intellij+all

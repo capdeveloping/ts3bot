@@ -16,7 +16,7 @@ import java.util.List;
 
 public class Application {
     private static final Logger LOG  = LogManager.getLogger(Application.class);
-    private static String configpath = "data/configs";
+    private static String configpath = "/data/configs";
 
     private static final Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {
         public void uncaughtException(Thread t, Throwable e) {
@@ -31,7 +31,7 @@ public class Application {
 
     public static void main(String[] args) {
         LogInstance.renameLogFile();
-        String instancepath = "data/configs/instancemanager.cfg";
+        String instancepath = "/data/configs/instancemanager.cfg";
         Thread.setDefaultUncaughtExceptionHandler(handler);
         Thread.currentThread().setUncaughtExceptionHandler(handler);
         try {
