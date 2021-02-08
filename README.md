@@ -2,6 +2,9 @@
 
 Dieser Bot kann frei verwendet werden. 
 
+## ACHTUNG!
+Ich empfehle im 1.0.1 Release erstmal mit einem Basic Auth zu arbeiten. Sorry. Weblogin wird nachgezogen.
+
 ## Funktionen
 
 Können mehrmals in der Config verwendet werden 

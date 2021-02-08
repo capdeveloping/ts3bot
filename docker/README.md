@@ -1,5 +1,6 @@
 # docker-compose example
 ## for teamspeak server as container on same host
+## Ich empfehle erstmal mit einem Basic Auth zu arbeiten.
 ```
 version: "2"
 
@@ -8,6 +9,8 @@ ts3bot:
   image: ts3bot:latest
   container_name: ts3bot
   restart: always
+  ports:
+    - 8080:80
   networks:
     front:
       ipv4_address: specific ip for whitelist
@@ -28,6 +31,8 @@ services:
  ts3bot:
    image: ts3bot:latest
    container_name: ts3bot
+   ports:
+     - 8080:80
    restart: always
    volumes:
      - /path/to/folder/ts3bot:/data
