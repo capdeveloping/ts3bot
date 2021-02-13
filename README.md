@@ -65,8 +65,7 @@ ts3bot:
     front:
       ipv4_address: specific ip for whitelist
   volumes:
-     - /path/to/folder/ts3bot/configs:/data/configs
-     - /path/to/folder/ts3bot/db.sqlite3:/data/db.sqlite3
+     - /path/to/folder/ts3bot/:/data/
 
 networks:
  front:
@@ -86,6 +85,5 @@ services:
      - 8080:80
    restart: always
    volumes:
-     - /path/to/folder/ts3bot/configs:/data/configs
-     - /path/to/folder/ts3bot/db.sqlite3:/data/db.sqlite3
+     - /path/to/folder/ts3bot/:/data/
 ```
