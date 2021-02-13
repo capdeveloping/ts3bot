@@ -5,20 +5,19 @@
         $number_lines = $_POST['number'];
     }
     $logoutput = getlog($number_lines);
+    $startlogoutput = getstartlog();
     if (isset($_POST['start'])){
-        startScript("start");
-        $logoutput = getlog($number_lines);
-        header("Refresh:0");
+        $logoutput = startScript("start");
+        header("Refresh:5");
     }
     if (isset($_POST['stop'])){
         startScript("stop");
         $logoutput = getlog($number_lines);
-        header("Refresh:0");
     }
     if (isset($_POST['restart'])){
         startScript("restart");
         $logoutput = getlog($number_lines);
-        header("Refresh:0");
+        header("Refresh:5");
     }
 ?>
 <!DOCTYPE html>
@@ -98,6 +97,7 @@
                                     </div>
                                 </div>
                             </form>
+                            <h4 class="col-sm-2" for="inputInstanceName">Bot log</h4>
                             <div class="card mb-4" style="margin-left: 20px;margin-right: 20px;margin-top: 10px">
                                 <div class="row">
                                     <div class="col-lg-12">
@@ -105,6 +105,19 @@
                                             echo $err_msg;
                                         }else{
                                             foreach ($logoutput as $line) { echo $line; }
+                                        }
+                                        ?>
+                                    </div>
+                                </div>
+                            </div>
+                            <h4 class="col-sm-2" for="inputInstanceName">Start log</h4>
+                            <div class="card mb-4" style="margin-left: 20px;margin-right: 20px;margin-top: 10px">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <pre><?PHP if(isset($err_msg)){
+                                            echo $err_msg;
+                                        }else{
+                                            foreach ($startlogoutput as $line) { echo $line; }
                                         }
                                         ?>
                                     </div>
@@ -125,6 +138,5 @@
         <script src="js/scripts.js"></script>
         <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
         <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
-        <script src="assets/demo/datatables-demo.js"></script>
     </body>
 </html>

@@ -4,21 +4,23 @@
     if (isset($_POST['addNewInstance'])){
         $addNewInstance = TRUE;
     }
-    print_r($_POST);
+
     foreach($_POST as $key => $value){
         if( str_starts_with( $key, "delete-") ){
             $removeKey = str_replace("delete-", "", $key);
-            unset($instances[$removeKey]);
-            saveInstanceConfigFile($instances, $instance_config_path);
+            unset($_SESSION["instances"][$removeKey]);
+            saveInstanceConfigFile($_SESSION["instances"], $_SESSION["instance_config_path"]);
             startScriptWithParams("removeInstance" , $removeKey);
-            if ( empty($instances) ){
+            if ( empty($_SESSION["instances"]) ){
                 removeCurrentInstance();
+                $_SESSION["configFolderPath"] = "";
+                $_SESSION["config"] = "";
             }
-            if($instance_name === $removeKey){
-                $firstKey = array_key_first( $instances );
-                $configPath = $instances[$firstKey]["instance_config_pfad"];
-                $instance_name = $firstKey;
-                saveCurrentInstance(array($instance_name => ""), $instances);
+            if($_SESSION["instance_name"] === $removeKey){
+                $firstKey = array_key_first( $_SESSION["instances"] );
+                $_SESSION["configPath"] = $_SESSION["instances"][$firstKey]["instance_config_pfad"];
+                $_SESSION["instance_name"] = $firstKey;
+                saveCurrentInstance(array($_SESSION["instance_name"] => ""), $_SESSION["instances"]);
             }
             continue;
         }
@@ -32,24 +34,24 @@
             if($newkey === $oldkey){
                 continue;
             }
-            $instances = renameInstance($instances, $newkey, $oldkey);
-            saveInstanceConfigFile($instances, $instance_config_path);
+            $_SESSION["instances"] = renameInstance($_SESSION["instances"], $newkey, $oldkey);
+            saveInstanceConfigFile($_SESSION["instances"], $_SESSION["instance_config_path"]);
             startScriptWithParams("renameInstance" , $oldkey, $newkey);
-            if($instance_name === $oldkey){
-                $configPath = $instances[$newkey]["instance_config_pfad"];
-                $instance_name = $newkey;
-                saveCurrentInstance(array($instance_name => ""), $instances);
+            if($_SESSION["instance_name"] === $oldkey){
+                $_SESSION["configPath"] = $_SESSION["instances"][$newkey]["instance_config_pfad"];
+                $_SESSION["instance_name"] = $newkey;
+                saveCurrentInstance(array($_SESSION["instance_name"] => ""), $_SESSION["instances"]);
             }
             continue;
         }
     }
     if (isset($_POST['update'])){
         $invalidInstance = FALSE;
-        foreach($instances as $key => $value){
+        foreach($_SESSION["instances"] as $key => $value){
             if (isset($_POST['enable-' . $key]) && filter_var($_POST['enable-' . $key], FILTER_VALIDATE_BOOLEAN)){
-                $instances[$key]["instance_activ"] = "true";
+                $_SESSION["instances"][$key]["instance_activ"] = "true";
             }else{
-                $instances[$key]["instance_activ"] = "false";
+                $_SESSION["instances"][$key]["instance_activ"] = "false";
             }
         }
         if(isset($_POST['newinstancename']) && empty($_POST['newinstancename'])){
@@ -58,21 +60,21 @@
         if (isset($_POST['newinstancename']) && ! empty($_POST['newinstancename']) ){
             if( preg_match("/^[0-9a-zA-Z-]*$/", $_POST['newinstancename']) ) {
                 $newinstance = $_POST['newinstancename'];
-                if ( empty($instances)){
+                if ( empty($_SESSION["instances"])){
                     $firstInstance = TRUE;
                 }
-                $instances[$newinstance] = [];
+                $_SESSION["instances"][$newinstance] = [];
                 if (isset($_POST['enableNewInstance'])){
-                    $instances[$newinstance]["instance_activ"] = boolval(filter_var($_POST['enableNewInstance'], FILTER_VALIDATE_BOOLEAN));
+                    $_SESSION["instances"][$newinstance]["instance_activ"] = boolval(filter_var($_POST['enableNewInstance'], FILTER_VALIDATE_BOOLEAN));
                 } else {
-                    $instances[$newinstance]["instance_activ"] = "false";
+                    $_SESSION["instances"][$newinstance]["instance_activ"] = "false";
                 }
-                $instances[$newinstance]["instance_config_pfad"] = "/data/configs/" . $newinstance . "/serverconfig.cfg";
+                $_SESSION["instances"][$newinstance]["instance_config_pfad"] = "/data/configs/" . $newinstance . "/serverconfig.cfg";
                 startScriptWithParams("createInstance" , $newinstance);
                 if($firstInstance){
-                    $instance_name = $newinstance;
-                    saveCurrentInstance(array($instance_name => ""), $instances);
-                    header("refresh:0");
+                    $_SESSION["instance_name"] = $newinstance;
+                    saveCurrentInstance(array($_SESSION["instance_name"] => ""), $_SESSION["instances"]);
+                    header("Refresh:0");
                 }
             }else{
                 $invalidInstance = TRUE;
@@ -80,7 +82,7 @@
         }
         if( ! $invalidInstance ){
             $saved = TRUE;
-            saveInstanceConfigFile($instances, $instance_config_path);
+            saveInstanceConfigFile($_SESSION["instances"], $_SESSION["instance_config_path"]);
         }
     }
 ?>
@@ -120,7 +122,7 @@
                                 <br>
 <?php
 $counter = 1;
-foreach($instances as $key => $value){
+foreach($_SESSION["instances"] as $key => $value){
 ?>
                                 <div class="form-group row">
                                     <div class="col-sm-3"></div>
@@ -136,7 +138,7 @@ foreach($instances as $key => $value){
                                     </div>
                                     <div class="col-sm-1">
                                         <label class="switch">
-                                          <input name=<?php echo '"enable-' . $key . '"';?> id=<?php echo '"switch-' . $key . '"';?> type="checkbox" <?php if( filter_var($instances[$key]["instance_activ"], FILTER_VALIDATE_BOOLEAN)){ echo "checked";} ?> />
+                                          <input name=<?php echo '"enable-' . $key . '"';?> id=<?php echo '"switch-' . $key . '"';?> type="checkbox" <?php if( filter_var($_SESSION["instances"][$key]["instance_activ"], FILTER_VALIDATE_BOOLEAN)){ echo "checked";} ?> />
                                           <span class="slider round"></span>
                                         </label>
                                     </div>

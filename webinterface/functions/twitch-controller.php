@@ -1,45 +1,59 @@
 <?php
-    require_once('_preload.php');
-    $nav_expanded = TRUE;
+    session_start();
+    if( ! isset($_SESSION['userid']) ){
+        $host  = $_SERVER['HTTP_HOST'];
+        $uri   = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
+        $extra = 'login.php';
+        print_r("http://$host$uri/$extra");
+        header("Location:http://$host$uri/$extra");
+        exit();
+    }
+
+    require_once($_SERVER["DOCUMENT_ROOT"] . '/_preload.php');
+    $_SESSION["nav_expanded"] = TRUE;
     $saved = FALSE;
+    if (array_key_exists("Twitch", $_SESSION["functions"])) {
+        $twitchKey = $_SESSION["functions"]["Twitch"];
 
-    if (array_key_exists("ChannelAutoCreate", $functions)) {
-        $cacKey = $functions["ChannelAutoCreate"];
-
-        if(filesize($config[$cacKey . "_channel_check_password_file_path"])) {
-            $channelPasswords = fileReadContentWithSeparator($config[$cacKey . "_channel_check_password_file_path"], " = ");
+        if(filesize($_SESSION["config"][$twitchKey . "_twitch_config_name"])) {
+            $twitchUser = fileReadContentWithSeparator($_SESSION["config"][$twitchKey . "_twitch_config_name"], " #=# ");
         }else{
-            $channelPasswords = [];
+            $twitchUser = [];
         }
 
+    }else{
+        header("Refresh:0; url=/core.php");
+        exit();
     }
 
     foreach($_POST as $key => $value){
         if( str_starts_with($key, "rmItem")){
             $number = str_replace("rmItem", "", $key);
-            unset($channelPasswords[$_POST['itemKey' . $number]]);
-            writeConfigFileWithSeparator($channelPasswords, $config[$cacKey . "_channel_check_password_file_path"], " = ");
+            unset($twitchUser[$_POST['itemKey' . $number]]);
+            writeConfigFileWithSeparator($twitchUser, $_SESSION["config"][$twitchKey . "_twitch_config_name"], " #=# ");
             $saved = TRUE;
         }
     }
 
     if (isset($_POST['save'])){
-        $channelPasswords = [];
+        $twitchUser = [];
         foreach($_POST as $key => $value){
             if( str_starts_with($key, "newItemKey") && ! empty($value) ){
                 $number = str_replace("newItemKey", "", $key);
-                $channelPasswords[$value] = $_POST["newItem" . $number];
+                $twitchUser[$value] = $_POST["newItem" . $number];
             }
             if( str_starts_with($key, "itemKey") && ! empty($value) ){
                 $number = str_replace("itemKey", "", $key);
-                $channelPasswords[$value] = $_POST["item" . $number];
+                $twitchUser[$value] = $_POST["item" . $number];
             }
         }
-        $config[$cacKey . "_channel_check_subchannel"] = $_POST['channel_check_subchannel'];
+        $_SESSION["config"][$twitchKey . "_twitch_api_client_id"] = $_POST['twitch_api_client_id'];
+        $_SESSION["config"][$twitchKey . "_twitch_api_client_oauth_token"] = $_POST['twitch_api_client_oauth_token'];
+        $_SESSION["config"][$twitchKey . "_twitch_server_group"] = $_POST['twitch_server_group'];
 
-        writeConfigFileWithSeparator($channelPasswords, $config[$cacKey . "_channel_check_password_file_path"], " = ");
+        writeConfigFileWithSeparator($twitchUser, $_SESSION["config"][$twitchKey . "_twitch_config_name"], " #=# ");
 
-        saveConfig($config, $configPath);
+        saveConfig($_SESSION["config"], $_SESSION["configPath"]);
         $saved = TRUE;
     }
 ?>
@@ -51,29 +65,29 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <meta name="description" content="" />
         <meta name="author" content="" />
-        <title>Funktion - Automatisches Channel erstellen</title>
-        <link href="css/styles.css" rel="stylesheet" />
+        <title>Funktion - Twitch Verbindung</title>
+        <link href="../css/styles.css" rel="stylesheet" />
         <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" crossorigin="anonymous" />
         <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/js/all.min.js" crossorigin="anonymous"></script>
     </head>
     <body class="sb-nav-fixed">
         <?php
-            require_once('_nav-header.php');
+            require_once($_SERVER["DOCUMENT_ROOT"] . '/_nav-header.php');
         ?>
         <div id="layoutSidenav">
             <div id="layoutSidenav_nav">
                 <?php
-                    require_once('_nav.php');
+                    require_once($_SERVER["DOCUMENT_ROOT"] . '/_nav.php');
                 ?>
             </div>
             <div id="layoutSidenav_content">
                 <main>
                     <div class="container-fluid">
-                        <h1 class="mt-4">Channel auto create</h1>
+                        <h1 class="mt-4">Twitch Controller</h1>
                         <ol class="breadcrumb mb-4">
                             <li class="breadcrumb-item">Settings</a></li>
                             <li class="breadcrumb-item">Funktionen</li>
-                            <li class="breadcrumb-item active">ChannelAutoCreate</li>
+                            <li class="breadcrumb-item active">Twitch Controller</li>
                         </ol>
                         <div class="card mb-4">
                             <div class="card-header">
@@ -88,29 +102,41 @@
                             </div>
                             <br>
                             <?php }?>
+                            <br>
                             <form class="form-horizontal" data-toggle="validator" name="save" method="POST">
                                 <div class="form-group row">
-                                    <label class="col-sm-4 control-label" for="inputParentIDs">Eine mit Komma getrennte Liste (ohne Leerzeichen) mit Parent Channel IDs.</label>
+                                    <label class="col-sm-4 control-label" for="inputTwitchId">Twitch client id</label>
                                     <div class="col-sm-4">
-                                        <input class="form-control" id="inputParentIDs" type="text" name="channel_check_subchannel" placeholder="enter channel ids" value=<?php echo '"' . $config[$cacKey . "_channel_check_subchannel"] . '"' ?> required/>
+                                        <input class="form-control" id="inputTwitchId" type="text" name="twitch_api_client_id" placeholder="twitch client id" value=<?php echo '"' . $_SESSION["config"][$twitchKey . "_twitch_api_client_id"] . '"' ?> required/>
+                                    </div>
+                                </div>
+                                <div class="form-group row" >
+                                    <label class="col-sm-4 control-label" for="inputTwitchOauth">Twitch OAuth Token</label>
+                                    <div class="col-sm-4">
+                                        <input class="form-control" id="inputTwitchOauth" type="password" name="twitch_api_client_oauth_token" placeholder="twitch client oauth token" value=<?php echo '"' . $_SESSION["config"][$twitchKey . "_twitch_api_client_oauth_token"] . '"' ?> required/>
+                                    </div>
+                                </div>
+                                <div class="form-group row" >
+                                    <label class="col-sm-4 control-label" for="inputTwitchGroup">Twitch Servergroup</label>
+                                    <div class="col-sm-4">
+                                        <input class="form-control" id="inputTwitchGroup" type="text" name="twitch_server_group" placeholder="twitch servergroup" value=<?php echo '"' . $_SESSION["config"][$twitchKey . "_twitch_server_group"] . '"' ?> required/>
                                     </div>
                                 </div>
                                 <div class="form-group row">
-                                    <label class="col-sm-4 control-label" for="inputChannelPasswords">Einträge mit Channel Passwörtern</label>
+                                    <label class="col-sm-3 control-label" for="inputTwitchUserFile"></label>
                                     <div class="col-xs-4">
-                                        <label class="col-sm-12 control-label" for="inputChannelPasswords">Hauptchannel ID</label>
+                                        <label class="col-sm-12 control-label" for="inputChannelPasswords">Twitchusername</label>
                                     </div>
                                     <div class="col-xs-4">
-                                        <label class="col-sm-12 control-label" for="inputChannelPasswords">Passwort</label>
+                                        <label class="col-sm-12 control-label" for="inputChannelPasswords">Teamspeak Client UID</label>
                                     </div>
                                 </div>
-
 <?php
 $counter = 1;
-if( ! empty($channelPasswords) ){
-foreach($channelPasswords as $key=>$value){ ?>
+if( ! empty($twitchUser) ){
+foreach($twitchUser as $key=>$value){ ?>
                                     <div class="form-group row">
-                                        <div class="col-sm-4"></div>
+                                        <div class="col-sm-3"></div>
                                         <div class="col-sm-1">
                                             <input class="form-control" id="itemKey<?php echo "$counter";?>" type="text" name="itemKey<?php echo "$counter";?>"  value='<?php echo "$key"; ?>' />
                                         </div>
@@ -127,7 +153,7 @@ foreach($channelPasswords as $key=>$value){ ?>
 for ($x = 1; $x <= 3; $x++) { ?>
 
                                     <div class="form-group row">
-                                        <div class="col-sm-4"></div>
+                                        <div class="col-sm-3"></div>
                                         <div class="col-sm-1">
                                             <input class="form-control" id="newItemKey<?php echo "$x"?>" type="text" name="newItemKey<?php echo "$x";?>"/>
                                         </div>
@@ -137,11 +163,6 @@ for ($x = 1; $x <= 3; $x++) { ?>
                                         </div>
                                     </div>
 <?php } ?>
-
-                                <div class="text-center">
-                                    <button type="submit" class="btn btn-success" name="save"><i class="fas fa-plus"></i></button>
-                                </div>
-                                <br>
                                 <div class="row">&nbsp;</div>
                                 <div class="row" style="display: block;">
                                     <div class="text-center">
@@ -155,16 +176,15 @@ for ($x = 1; $x <= 3; $x++) { ?>
                 </main>
                 <footer class="py-4 bg-light mt-auto">
                     <?php
-                        require_once('_footer.php');
+                        require_once($_SERVER["DOCUMENT_ROOT"] . '/_footer.php');
                     ?>
                 </footer>
             </div>
         </div>
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-        <script src="js/scripts.js"></script>
+        <script src="../js/scripts.js"></script>
         <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
         <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
-        <script src="assets/demo/datatables-demo.js"></script>
     </body>
 </html>

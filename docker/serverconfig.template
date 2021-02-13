@@ -1,4 +1,5 @@
 language =
+ts3_server_floodrate =
 ts3_server_ip =
 ts3_server_port =
 ts3_server_query_port = 10011

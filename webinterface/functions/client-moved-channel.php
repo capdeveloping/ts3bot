@@ -1,18 +1,23 @@
 <?php
-    require_once('_preload.php');
-    $nav_expanded = TRUE;
+    require_once($_SERVER["DOCUMENT_ROOT"] . '/_preload.php');
+    $_SESSION["nav_expanded"] = TRUE;
+
+    if ( ! array_key_exists("ClientMove", $_SESSION["functions"])) {
+        header("Refresh:0; url=/core.php");
+        exit();
+    }
 
     $saved = FALSE;
     if ( isset($_POST['update']) ){
         print_r($_POST);
-        foreach($functions["ClientMove"] as $number => $key) {
-            $config[$key . "_client_moved_channel"] = $_POST['clientJoindChannel-' . $key];
-            $config[$key . "_client_moved_group_notify"] = $_POST['clientPokeClient-' . $key];
-            $config[$key . "_client_moved_group_ids"] = $_POST['groupids-' . $key];
-            $config[$key . "_client_moved_group_action"] = $_POST['action-' . $key];
+        foreach($_SESSION["functions"]["ClientMove"] as $number => $key) {
+            $_SESSION["config"][$key . "_client_moved_channel"] = $_POST['clientJoindChannel-' . $key];
+            $_SESSION["config"][$key . "_client_moved_group_notify"] = $_POST['clientPokeClient-' . $key];
+            $_SESSION["config"][$key . "_client_moved_group_ids"] = $_POST['groupids-' . $key];
+            $_SESSION["config"][$key . "_client_moved_group_action"] = $_POST['action-' . $key];
         }
         $saved = TRUE;
-        saveConfig($config, $configPath);
+        saveConfig($_SESSION["config"], $_SESSION["configPath"]);
     }
 ?>
 <!DOCTYPE html>
@@ -24,18 +29,18 @@
         <meta name="description" content="" />
         <meta name="author" content="Capdeveloping" />
         <title>Funktion - Client joint Channel</title>
-        <link href="css/styles.css" rel="stylesheet" />
+        <link href="../css/styles.css" rel="stylesheet" />
         <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" crossorigin="anonymous" />
         <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/js/all.min.js" crossorigin="anonymous"></script>
     </head>
     <body class="sb-nav-fixed">
         <?php
-            require_once('_nav-header.php');
+            require_once($_SERVER["DOCUMENT_ROOT"] . '/_nav-header.php');
         ?>
         <div id="layoutSidenav">
             <div id="layoutSidenav_nav">
                 <?php
-                    require_once('_nav.php');
+                    require_once($_SERVER["DOCUMENT_ROOT"] . '/_nav.php');
                 ?>
             </div>
             <div id="layoutSidenav_content">
@@ -56,7 +61,7 @@
                         <br>
                         <?php }?>
                         <form class="form-horizontal" data-toggle="validator" name="addFunction" method="POST">
-<?php foreach($functions["ClientMove"] as $number=>$key){ ?>
+<?php foreach($_SESSION["functions"]["ClientMove"] as $number=>$key){ ?>
 <?php if($number % 2 == 0 || $number == 0){ ?>
                             <div class="row">
 <?php }?>
@@ -72,7 +77,7 @@
                                                     <label class="control-label" for=<?php echo '"clientJoindChannel-' . $key . '"'; ?>  >Client joint den channel</label>
                                                 </div>
                                                 <div class="col-sm-4">
-                                                    <input name=<?php echo '"clientJoindChannel-' . $key . '"'; ?> class="form-control" id=<?php echo '"clientJoindChannel-' . $key . '"'; ?> type="text" placeholder=<?php echo "Channel ID eingeben"; ?> value=<?php echo '"' . $config[$key . "_client_moved_channel"] . '"'; ?> />
+                                                    <input name=<?php echo '"clientJoindChannel-' . $key . '"'; ?> class="form-control" id=<?php echo '"clientJoindChannel-' . $key . '"'; ?> type="text" placeholder=<?php echo "Channel ID eingeben"; ?> value=<?php echo '"' . $_SESSION["config"][$key . "_client_moved_channel"] . '"'; ?> />
                                                 </div>
                                             </div>
                                         </div>
@@ -82,7 +87,7 @@
                                                     <label class="control-label" for=<?php echo '"clientPokeClient-' . $key . '"'; ?> >Clients dieser Server Groupen sollen angestupst</label>
                                                 </div>
                                                 <div class="col-sm-4">
-                                                    <input name=<?php echo '"clientPokeClient-' . $key . '"'; ?> class="form-control" id=<?php echo '"clientPokeClient-' . $key . '"'; ?> type="text" placeholder=<?php echo "liste von Gruppen ids"; ?> value=<?php echo '"' . $config[$key . "_client_moved_group_notify"] . '"'; ?> />
+                                                    <input name=<?php echo '"clientPokeClient-' . $key . '"'; ?> class="form-control" id=<?php echo '"clientPokeClient-' . $key . '"'; ?> type="text" placeholder=<?php echo "liste von Gruppen ids"; ?> value=<?php echo '"' . $_SESSION["config"][$key . "_client_moved_group_notify"] . '"'; ?> />
                                                 </div>
                                             </div>
                                         </div>
@@ -92,7 +97,7 @@
                                                     <label class="control-label" for=<?php echo '"groupids-' . $key . '"'; ?> >Gruppen auf die geachtet oder die ignoriert werden sollen</label>
                                                 </div>
                                                 <div class="col-sm-4">
-                                                    <input name=<?php echo '"groupids-' . $key . '"'; ?> class="form-control" id=<?php echo '"groupids-' . $key . '"'; ?> type="text" placeholder=<?php echo "Channel ids eingeben"; ?> value=<?php echo '"' . $config[$key . "_client_moved_group_ids"] . '"'; ?> />
+                                                    <input name=<?php echo '"groupids-' . $key . '"'; ?> class="form-control" id=<?php echo '"groupids-' . $key . '"'; ?> type="text" placeholder=<?php echo "Channel ids eingeben"; ?> value=<?php echo '"' . $_SESSION["config"][$key . "_client_moved_group_ids"] . '"'; ?> />
                                                 </div>
                                             </div>
                                         </div>
@@ -102,16 +107,16 @@
                                                     <label class="control-label" for=<?php echo '"action-' . $key . '"'; ?> >Ignoriere die oberen Gruppen oder überprüfe nur diese</label>
                                                 </div>
                                                 <div class="col-sm-4">
-                                                    <input name=<?php echo '"action-' . $key . '"'; ?> class="form-control" id=<?php echo '"action-' . $key . '"'; ?> type="text" placeholder=<?php echo "ignore/only"; ?> value=<?php echo '"' . $config[$key . "_client_moved_group_action"] . '"'; ?> />
+                                                    <input name=<?php echo '"action-' . $key . '"'; ?> class="form-control" id=<?php echo '"action-' . $key . '"'; ?> type="text" placeholder=<?php echo "ignore/only"; ?> value=<?php echo '"' . $_SESSION["config"][$key . "_client_moved_group_action"] . '"'; ?> />
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-<?php if($number % 2 != 0 || count($functions["ClientMove"]) == 0 ){ ?>
+<?php if($number % 2 != 0 || count($_SESSION["functions"]["ClientMove"]) == 0 ){ ?>
                         </div>
 <?php }
-    if ( count($functions["ClientMove"]) == ($number + 1) && $number % 2 == 0){?>
+    if ( count($_SESSION["functions"]["ClientMove"]) == ($number + 1) && $number % 2 == 0){?>
                             </div>
                             <div class="row">
                                  <div class="col-lg-6">
@@ -130,24 +135,16 @@
                     </div>
                 </main>
                 <footer class="py-4 bg-light mt-auto">
-                    <div class="container-fluid">
-                        <div class="d-flex align-items-center justify-content-between small">
-                            <div class="text-muted">Copyright &copy; Capdeveloping 2021</div>
-                            <div>
-                                <a href="#">Privacy Policy</a>
-                                &middot;
-                                <a href="#">Terms &amp; Conditions</a>
-                            </div>
-                        </div>
-                    </div>
+                    <?php
+                        require_once($_SERVER["DOCUMENT_ROOT"] . '/_footer.php');
+                    ?>
                 </footer>
             </div>
         </div>
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-        <script src="js/scripts.js"></script>
+        <script src="../js/scripts.js"></script>
         <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
         <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
-        <script src="assets/demo/datatables-demo.js"></script>
     </body>
 </html>

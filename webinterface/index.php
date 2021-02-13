@@ -13,7 +13,6 @@
         <link href="css/styles.css" rel="stylesheet" />
         <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" crossorigin="anonymous" />
         <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/js/all.min.js" crossorigin="anonymous"></script>
-        <script src="assets/chart-pie-bots-active.js"></script>
     </head>
     <body class="sb-nav-fixed">
         <?php
@@ -34,7 +33,7 @@
                             <div class="col-xl-3 col-md-6">
                                 <div class="card mb-4">
                                     <div class="card-header">
-                                        <i class="fas fa-chart-pie mr-1"></i><?php if( ! empty($instances) ){ echo "Bots active"; }else{ echo "Keine Instanzen"; }?>
+                                        <i class="fas fa-chart-pie mr-1"></i><?php if( ! empty($_SESSION["instances"]) ){ echo "Bots active"; }else{ echo "Keine Instanzen"; }?>
                                     </div>
                                     <div id="piechart"></div>
                                 </div>
@@ -45,12 +44,12 @@
                         <form class="form-horizontal" data-toggle="validator" name="changeConfig" method="POST">
 <?php
 $counter = 0;
-foreach($instances as $key => $value){
+foreach($_SESSION["instances"] as $key => $value){
  if($counter % 4 == 0 || $counter == 0){ ?>
                             <div class="row">
 <?php }
 $counter++;
-if( filter_var($instances[$key]["instance_activ"], FILTER_VALIDATE_BOOLEAN)){ ?>
+if( filter_var($_SESSION["instances"][$key]["instance_activ"], FILTER_VALIDATE_BOOLEAN)){ ?>
                                 <div class="col-xl-3 col-md-6">
                                     <div class="card bg-success text-white mb-4">
                                         <div class="card-body text-center"><?php echo $key; ?></div>
@@ -71,7 +70,7 @@ if( filter_var($instances[$key]["instance_activ"], FILTER_VALIDATE_BOOLEAN)){ ?>
                                     </div>
                                 </div>
 <?php }
-    if($counter % 4 == 0 || count($instances) == 1 || count($instances) == $counter){ ?>
+    if($counter % 4 == 0 || count($_SESSION["instances"]) == 1 || count($_SESSION["instances"]) == $counter){ ?>
                             </div>
 <?php }
 } ?>
@@ -101,9 +100,9 @@ google.charts.setOnLoadCallback(drawChart);
 function drawChart() {
   var data = google.visualization.arrayToDataTable([
   ['Task', ''],
-  <?php if( ! empty($instances) ){ ?>
-  ['Online', <?php echo intval(countActiveInstances($instances)); ?>],
-  ['Offline', <?php echo intval(count($instances) - countActiveInstances($instances)); ?>],
+  <?php if( ! empty($_SESSION["instances"]) ){ ?>
+  ['Online', <?php echo intval(countActiveInstances($_SESSION["instances"])); ?>],
+  ['Offline', <?php echo intval(count($_SESSION["instances"]) - countActiveInstances($_SESSION["instances"])); ?>],
   <?php }else{ ?>
   ['Keine Instanzen', <?php echo intval("1");?>],
   <?php } ?>

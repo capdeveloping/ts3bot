@@ -7,7 +7,7 @@ RUN apt-get update && apt install wget -y && \
     echo "deb https://packages.sury.org/php/ buster main" > /etc/apt/sources.list.d/php.list && \
     wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg && \
     apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get -y install apache2 php8.0 libapache2-mod-php8.0
+    DEBIAN_FRONTEND=noninteractive apt-get -y install apache2 php8.0 libapache2-mod-php8.0 php8.0-sqlite3 sqlite3
 
 # Enable apache mods.
 RUN a2enmod php8.0
@@ -31,7 +31,7 @@ RUN ln -sf /proc/self/fd/1 $APACHE_LOG_DIR/access.log && \
 
 # By default start up apache in the foreground, override with /bin/bash for interative.
 
-RUN mkdir -p /data/configs && \
+RUN mkdir -p /data/configs /data/logs && \
     chown www-data:www-data /data -R
 
 COPY ts3bot.jar /ts3bot.jar
@@ -41,11 +41,12 @@ COPY html/ /var/www/html/
 COPY serverconfig.template /data/serverconfig.template
 
 RUN chmod gu+x /control-bot.sh && \
-    chown www-data:www-data -R /control-bot.sh /ts3bot.jar /var/www/html
+    chown www-data:www-data -R /control-bot.sh /ts3bot.jar /var/www/html && \
+    usermod --shell /bin/bash www-data
 
 VOLUME /data
 
 # Expose apache.
 EXPOSE 80
 
-ENTRYPOINT ["sh", "/etc/entrypoint.sh"]
+ENTRYPOINT ["/bin/bash", "/etc/entrypoint.sh"]

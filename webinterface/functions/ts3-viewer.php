@@ -1,19 +1,22 @@
 <?php
-    require_once('_preload.php');
-    $nav_expanded = TRUE;
-    if (array_key_exists("Viewer", $functions)) {
-        $viewerKey = $functions["Viewer"];
+    require_once($_SERVER["DOCUMENT_ROOT"] . '/_preload.php');
+    $_SESSION["nav_expanded"] = TRUE;
+    if (array_key_exists("Viewer", $_SESSION["functions"])) {
+        $viewerKey = $_SESSION["functions"]["Viewer"];
+    }else{
+        header("Refresh:0; url=/core.php");
+        exit();
     }
     $saved = FALSE;
     if (isset($_POST['update'])){
 
-        $config[$viewerKey . "_ts3_viewer_update_time"] = $_POST['ts3_viewer_update_time'];
-        $config[$viewerKey . "_ts3_viewer_file_location"] = $_POST['ts3_viewer_file_location'];
-        $config[$viewerKey . "_ts3_viewer_text_color"] = $_POST['ts3_viewer_text_color'];
-        $config[$viewerKey . "_ts3_viewer_background_color"] = $_POST['ts3_viewer_background_color'];
-        $config[$viewerKey . "_ts3_viewer_server_ip"] = $_POST['ts3_viewer_server_ip'];
+        $_SESSION["config"][$viewerKey . "_ts3_viewer_update_time"] = $_POST['ts3_viewer_update_time'];
+        $_SESSION["config"][$viewerKey . "_ts3_viewer_file_location"] = $_POST['ts3_viewer_file_location'];
+        $_SESSION["config"][$viewerKey . "_ts3_viewer_text_color"] = $_POST['ts3_viewer_text_color'];
+        $_SESSION["config"][$viewerKey . "_ts3_viewer_background_color"] = $_POST['ts3_viewer_background_color'];
+        $_SESSION["config"][$viewerKey . "_ts3_viewer_server_ip"] = $_POST['ts3_viewer_server_ip'];
 
-        saveConfig($config, $configPath);
+        saveConfig($_SESSION["config"], $_SESSION["configPath"]);
         $saved = TRUE;
     }
 ?>
@@ -26,18 +29,18 @@
         <meta name="description" content="" />
         <meta name="author" content="" />
         <title>Funktion - TS3 Viewer</title>
-        <link href="css/styles.css" rel="stylesheet" />
+        <link href="../css/styles.css" rel="stylesheet" />
         <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" crossorigin="anonymous" />
         <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/js/all.min.js" crossorigin="anonymous"></script>
     </head>
     <body class="sb-nav-fixed">
         <?php
-            require_once('_nav-header.php');
+            require_once($_SERVER["DOCUMENT_ROOT"] . '/_nav-header.php');
         ?>
         <div id="layoutSidenav">
             <div id="layoutSidenav_nav">
                 <?php
-                    require_once('_nav.php');
+                    require_once($_SERVER["DOCUMENT_ROOT"] . '/_nav.php');
                 ?>
             </div>
             <div id="layoutSidenav_content">
@@ -62,31 +65,31 @@
                                         <div class="input-group-prepend">
                                             <span class="input-group-text">in Minuten</span>
                                         </div>
-                                        <input class="form-control" id="inputUpdateTime" type="text" name="ts3_viewer_update_time" placeholder="1" value=<?php echo '"' . $config[$viewerKey . "_ts3_viewer_update_time"] . '"' ?> required/>
+                                        <input class="form-control" id="inputUpdateTime" type="text" name="ts3_viewer_update_time" placeholder="1" value=<?php echo '"' . $_SESSION["config"][$viewerKey . "_ts3_viewer_update_time"] . '"' ?> required/>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="col-sm-4 control-label" for="inputFileLocation">HTML File output location</label>
                                     <div class="col-sm-4">
-                                        <input class="form-control" id="inputFileLocation" type="text" name="ts3_viewer_file_location" placeholder="enter output location" value=<?php if ( ! empty($config[$viewerKey . "_ts3_viewer_file_location"])){ echo '"' . $config[$viewerKey . "_ts3_viewer_file_location"] . '"'; } else { echo '"' . $configFolderPath . 'ts3viewer.html"';} ?> required/>
+                                        <input class="form-control" id="inputFileLocation" type="text" name="ts3_viewer_file_location" placeholder="enter output location" value=<?php if ( ! empty($_SESSION["config"][$viewerKey . "_ts3_viewer_file_location"])){ echo '"' . $_SESSION["config"][$viewerKey . "_ts3_viewer_file_location"] . '"'; } else { echo '"' . $_SESSION["configFolderPath"] . 'ts3viewer.html"';} ?> required/>
                                     </div>
                                 </div>
                                 <div class="form-group row" >
                                     <label class="col-sm-4 control-label" for="inputTextColor">Text Color</label>
                                     <div class="col-sm-4">
-                                        <input class="form-control" id="inputTextColor" type="text" name="ts3_viewer_text_color" placeholder="enter viewer text color" value=<?php echo '"' . $config[$viewerKey . "_ts3_viewer_text_color"] . '"' ?> required/>
+                                        <input class="form-control" id="inputTextColor" type="text" name="ts3_viewer_text_color" placeholder="enter viewer text color" value=<?php echo '"' . $_SESSION["config"][$viewerKey . "_ts3_viewer_text_color"] . '"' ?> required/>
                                     </div>
                                 </div>
                                 <div class="form-group row" >
                                     <label class="col-sm-4 control-label" for="inputBackgroundColor">Viewer Background Color</label>
                                     <div class="col-sm-4">
-                                        <input class="form-control" id="inputBackgroundColor" type="text" name="ts3_viewer_background_color" placeholder="enter viewer background color" value=<?php echo '"' . $config[$viewerKey . "_ts3_viewer_background_color"] . '"' ?> required/>
+                                        <input class="form-control" id="inputBackgroundColor" type="text" name="ts3_viewer_background_color" placeholder="enter viewer background color" value=<?php echo '"' . $_SESSION["config"][$viewerKey . "_ts3_viewer_background_color"] . '"' ?> required/>
                                     </div>
                                 </div>
                                 <div class="form-group row" >
                                     <label class="col-sm-4 control-label" for="inputServerIp">Viewer Server IP</label>
                                     <div class="col-sm-4">
-                                        <input class="form-control" id="inputServerIp" type="text" name="ts3_viewer_server_ip" placeholder="enter viewer server ip" value=<?php echo '"' . $config[$viewerKey . "_ts3_viewer_server_ip"] . '"' ?> required/>
+                                        <input class="form-control" id="inputServerIp" type="text" name="ts3_viewer_server_ip" placeholder="enter viewer server ip" value=<?php echo '"' . $_SESSION["config"][$viewerKey . "_ts3_viewer_server_ip"] . '"' ?> required/>
                                     </div>
                                 </div>
                                 <div class="col-md-3"></div>
@@ -108,16 +111,15 @@
                 </main>
                 <footer class="py-4 bg-light mt-auto">
                     <?php
-                        require_once('_footer.php');
+                        require_once($_SERVER["DOCUMENT_ROOT"] . '/_footer.php');
                     ?>
                 </footer>
             </div>
         </div>
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-        <script src="js/scripts.js"></script>
+        <script src="../js/scripts.js"></script>
         <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
         <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
-        <script src="assets/demo/datatables-demo.js"></script>
     </body>
 </html>

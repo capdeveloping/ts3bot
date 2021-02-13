@@ -110,7 +110,7 @@ stop test bot:
   image: tiangolo/docker-with-compose
   stage: remove
   script:
-    - export VERSION=$(grep -E "version " build.gradle | cut -d "'" -f2))
+    - export VERSION=$(grep -E "version " build.gradle | cut -d "'" -f2)
     - cd docker && apk add wget
     - wget -O docker-compose.yml --header "PRIVATE-TOKEN:$GITLAB_API_TOKEN" $DOCKER_COMPOSE_TEST_FILE_URL
     - docker stop ts3bot-test

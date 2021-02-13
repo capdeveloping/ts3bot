@@ -1,11 +1,5 @@
 <?php
-    if( isset($_GET['id']) ){
-        $currentFile = fopen(".current", "w+") or die("Unable to open file!");
-        fwrite($currentFile, $_GET['id']);
-        fclose($currentFile);
-    }
     require_once('_preload.php');
-
 
     $saved = FALSE;
     if (isset($_POST['addClientAfk'])){
@@ -19,113 +13,114 @@
     }
 
     if (isset($_POST['update'])){
-        $config["language"] = $_POST['language'];
-        $config["ts3_server_floodrate"] = $_POST['ts3_server_floodrate'];
-        $config["ts3_server_ip"] = $_POST['ts3_server_ip'];
-        $config["ts3_server_port"] = $_POST['ts3_server_port'];
-        $config["ts3_server_query_port"] = $_POST['ts3_server_query_port'];
-        $config["ts3_server_query_login_name"] = $_POST['ts3_server_query_login_name'];
-        $config["ts3_server_query_login_password"] = $_POST['ts3_server_query_login_password'];
-        $config["ts3_bot_nickname"] = $_POST['ts3_bot_nickname'];
-        $config["ts3_bot_nickname2"] = $_POST['ts3_bot_nickname2'];
-        $config["ts3_bot_channel_id"] = $_POST['ts3_bot_channel_id'];
-        $config["bot_admin"] = $_POST['bot_admin'];
-        $config["bot_full_admin"] = $_POST['bot_full_admin'];
+        $_SESSION['config']["language"] = $_POST['language'];
+        $_SESSION['config']["ts3_server_floodrate"] = $_POST['ts3_server_floodrate'];
+        $_SESSION['config']["ts3_server_ip"] = $_POST['ts3_server_ip'];
+        $_SESSION['config']["ts3_server_port"] = $_POST['ts3_server_port'];
+        $_SESSION['config']["ts3_server_query_port"] = $_POST['ts3_server_query_port'];
+        $_SESSION['config']["ts3_server_query_login_name"] = $_POST['ts3_server_query_login_name'];
+        $_SESSION['config']["ts3_server_query_login_password"] = $_POST['ts3_server_query_login_password'];
+        $_SESSION['config']["ts3_bot_nickname"] = $_POST['ts3_bot_nickname'];
+        $_SESSION['config']["ts3_bot_nickname2"] = $_POST['ts3_bot_nickname2'];
+        $_SESSION['config']["ts3_bot_channel_id"] = $_POST['ts3_bot_channel_id'];
+        $_SESSION['config']["bot_admin"] = $_POST['bot_admin'];
+        $_SESSION['config']["bot_full_admin"] = $_POST['bot_full_admin'];
 
-        if( empty($_POST["enableTwitch"]) && array_key_exists("Twitch", $functions)) {
-            $retValue = removeFunction($config, $functions, "Twitch");
-            $config = $retValue[0];
-            $functions = $retValue[1];
-        } else if( ! array_key_exists("Twitch", $functions) && $_POST["enableTwitch"]) {
-            $retValue = addTwitch($config, $functions, $_POST["twitch_key"], $configFolderPath);
-            $config = $retValue[0];
-            $functions = $retValue[1];
+        if( empty($_POST["enableTwitch"]) && array_key_exists("Twitch", $_SESSION['functions'])) {
+            $retValue = removeFunction($_SESSION['config'], $_SESSION['functions'], "Twitch");
+            $_SESSION['config'] = $retValue[0];
+            $_SESSION['functions'] = $retValue[1];
+        } else if( ! array_key_exists("Twitch", $_SESSION['functions']) && $_POST["enableTwitch"]) {
+            $retValue = addTwitch($_SESSION['config'], $_SESSION['functions'], $_POST["twitch_key"], $_SESSION['configFolderPath']);
+            $_SESSION['config'] = $retValue[0];
+            $_SESSION['functions'] = $retValue[1];
         }
-        if( empty($_POST["enableViewer"]) && array_key_exists("Viewer", $functions)) {
-            $retValue = removeCustomFunction($config, $functions, "Viewer", "ts3_viewer");
-            $config = $retValue[0];
-            $functions = $retValue[1];
-        } else if( ! array_key_exists("Viewer", $functions) && $_POST["enableViewer"]) {
-            $retValue = addTs3Viewer($config, $functions, $_POST["viewer_key"], $configFolderPath);
-            $config = $retValue[0];
-            $functions = $retValue[1];
+        if( empty($_POST["enableViewer"]) && array_key_exists("Viewer", $_SESSION['functions'])) {
+            $retValue = removeCustomFunction($_SESSION['config'], $_SESSION['functions'], "Viewer", "ts3_viewer");
+            $_SESSION['config'] = $retValue[0];
+            $_SESSION['functions'] = $retValue[1];
+        } else if( ! array_key_exists("Viewer", $_SESSION['functions']) && $_POST["enableViewer"]) {
+            $retValue = addTs3Viewer($_SESSION['config'], $_SESSION['functions'], $_POST["viewer_key"], $_SESSION['configFolderPath']);
+            $_SESSION['config'] = $retValue[0];
+            $_SESSION['functions'] = $retValue[1];
         }
-        if( empty($_POST["enableChannelAutoCreate"]) && array_key_exists("ChannelAutoCreate", $functions)) {
-            $retValue = removeCustomFunction($config, $functions, "ChannelAutoCreate", "channel_check");
-            $config = $retValue[0];
-            $functions = $retValue[1];
-        } else if( ! array_key_exists("ChannelAutoCreate", $functions) && $_POST["enableChannelAutoCreate"]) {
-            $retValue = addChannelAutoCreate($config, $functions, $_POST["channelautocreate_key"], $configFolderPath);
-            $config = $retValue[0];
-            $functions = $retValue[1];
+        if( empty($_POST["enableChannelAutoCreate"]) && array_key_exists("ChannelAutoCreate", $_SESSION['functions'])) {
+            $retValue = removeCustomFunction($_SESSION['config'], $_SESSION['functions'], "ChannelAutoCreate", "channel_check");
+            $_SESSION['config'] = $retValue[0];
+            $_SESSION['functions'] = $retValue[1];
+        } else if( ! array_key_exists("ChannelAutoCreate", $_SESSION['functions']) && $_POST["enableChannelAutoCreate"]) {
+            $retValue = addChannelAutoCreate($_SESSION['config'], $_SESSION['functions'], $_POST["channelautocreate_key"], $_SESSION['configFolderPath']);
+            $_SESSION['config'] = $retValue[0];
+            $_SESSION['functions'] = $retValue[1];
         }
-        if( empty($_POST["enableVersionChecker"]) && array_key_exists("VersionChecker", $functions)) {
-            $retValue = removeCustomFunction($config, $functions, "VersionChecker", "version");
-            $config = $retValue[0];
-            $functions = $retValue[1];
-        } else if( ! array_key_exists("VersionChecker", $functions) && $_POST["enableVersionChecker"]) {
-            $retValue = addVersionChecker($config, $functions, $_POST["versionchecker_key"]);
-            $config = $retValue[0];
-            $functions = $retValue[1];
+        if( empty($_POST["enableVersionChecker"]) && array_key_exists("VersionChecker", $_SESSION['functions'])) {
+            $retValue = removeCustomFunction($_SESSION['config'], $_SESSION['functions'], "VersionChecker", "version");
+            $_SESSION['config'] = $retValue[0];
+            $_SESSION['functions'] = $retValue[1];
+        } else if( ! array_key_exists("VersionChecker", $_SESSION['functions']) && $_POST["enableVersionChecker"]) {
+            $retValue = addVersionChecker($_SESSION['config'], $_SESSION['functions'], $_POST["versionchecker_key"]);
+            $_SESSION['config'] = $retValue[0];
+            $_SESSION['functions'] = $retValue[1];
         }
-        if( empty($_POST["enableAutoRemove"]) && array_key_exists("AutoRemove", $functions)) {
-            $retValue = removeCustomFunction($config, $functions, "AutoRemove", "auto_remove");
-            $config = $retValue[0];
-            $functions = $retValue[1];
-        } else if( ! array_key_exists("AutoRemove", $functions) && $_POST["enableAutoRemove"]) {
-            $retValue = addAutoRemove($config, $functions, $_POST["autoremove_key"]);
-            $config = $retValue[0];
-            $functions = $retValue[1];
+        if( empty($_POST["enableAutoRemove"]) && array_key_exists("AutoRemove", $_SESSION['functions'])) {
+            $retValue = removeCustomFunction($_SESSION['config'], $_SESSION['functions'], "AutoRemove", "auto_remove");
+            $_SESSION['config'] = $retValue[0];
+            $_SESSION['functions'] = $retValue[1];
+        } else if( ! array_key_exists("AutoRemove", $_SESSION['functions']) && $_POST["enableAutoRemove"]) {
+            $retValue = addAutoRemove($_SESSION['config'], $_SESSION['functions'], $_POST["autoremove_key"]);
+            $_SESSION['config'] = $retValue[0];
+            $_SESSION['functions'] = $retValue[1];
         }
-        if( empty($_POST["enableAcceptRules"]) && array_key_exists("AcceptRules", $functions)) {
-            $retValue = removeCustomFunction($config, $functions, "AcceptRules", "accept_rules");
-            $config = $retValue[0];
-            $functions = $retValue[1];
-        } else if( ! array_key_exists("AcceptRules", $functions) && $_POST["enableAcceptRules"]) {
-            $retValue = addAcceptRules($config, $functions, $_POST["acceptrules_key"], $configFolderPath);
-            $config = $retValue[0];
-            $functions = $retValue[1];
+        if( empty($_POST["enableAcceptRules"]) && array_key_exists("AcceptRules", $_SESSION['functions'])) {
+            $retValue = removeCustomFunction($_SESSION['config'], $_SESSION['functions'], "AcceptRules", "accept_rules");
+            $_SESSION['config'] = $retValue[0];
+            $_SESSION['functions'] = $retValue[1];
+        } else if( ! array_key_exists("AcceptRules", $_SESSION['functions']) && $_POST["enableAcceptRules"]) {
+            $retValue = addAcceptRules($_SESSION['config'], $_SESSION['functions'], $_POST["acceptrules_key"], $_SESSION['configFolderPath']);
+            $_SESSION['config'] = $retValue[0];
+            $_SESSION['functions'] = $retValue[1];
         }
         if( $_POST["enableClientAfk"] ) {
-            $retValue = addClientAfk($config, $functions, $_POST["clientafk_key"]);
-            $config = $retValue[0];
-            $functions = $retValue[1];
+            $retValue = addClientAfk($_SESSION['config'], $_SESSION['functions'], $_POST["clientafk_key"]);
+            $_SESSION['config'] = $retValue[0];
+            $_SESSION['functions'] = $retValue[1];
         }
         if( $_POST["enableClientMove"] ) {
-            $retValue = addClientMove($config, $functions, $_POST["clientmove_key"]);
-            $config = $retValue[0];
-            $functions = $retValue[1];
+            $retValue = addClientMove($_SESSION['config'], $_SESSION['functions'], $_POST["clientmove_key"]);
+            $_SESSION['config'] = $retValue[0];
+            $_SESSION['functions'] = $retValue[1];
         }
 
         if( $_POST["enableWelcomeMessage"] ) {
-            $retValue = addWelcomeMessage($config, $functions, $_POST["welcomemessage_key"], $configFolderPath);
-            $config = $retValue[0];
-            $functions = $retValue[1];
+            $retValue = addWelcomeMessage($_SESSION['config'], $_SESSION['functions'], $_POST["welcomemessage_key"], $_SESSION['configFolderPath']);
+            $_SESSION['config'] = $retValue[0];
+            $_SESSION['functions'] = $retValue[1];
         }
 
         foreach($_POST as $key => $value) {
             $tmpkey = str_replace("clientafk_key-", "", $key);
             if(str_starts_with($key, "clientafk_key-") && ! isset( $_POST["enableClientAfk-" . $tmpkey] )){
-                $retValue = removeSpecialFunction($config, $functions, "ClientAFK", "client_afk", $tmpkey);
-                $config = $retValue[0];
-                $functions = $retValue[1];
+                $retValue = removeSpecialFunction($_SESSION['config'], $_SESSION['functions'], "ClientAFK", "client_afk", $tmpkey);
+                $_SESSION['config'] = $retValue[0];
+                $_SESSION['functions'] = $retValue[1];
             }
             $tmpkey = str_replace("clientmove_key-", "", $key);
             if(str_starts_with($key, "clientmove_key-") && ! isset( $_POST["enableClientMove-" . $tmpkey] )){
-                $retValue = removeSpecialFunction($config, $functions, "ClientMove", "client_moved", $tmpkey);
-                $config = $retValue[0];
-                $functions = $retValue[1];
+                $retValue = removeSpecialFunction($_SESSION['config'], $_SESSION['functions'], "ClientMove", "client_moved", $tmpkey);
+                $_SESSION['config'] = $retValue[0];
+                $_SESSION['functions'] = $retValue[1];
             }
             $tmpkey = str_replace("welcomemessage_key-", "", $key);
             if(str_starts_with($key, "welcomemessage_key-") && ! isset( $_POST["enableWelcomeMessage-" . $tmpkey] )){
-                $retValue = removeSpecialFunction($config, $functions, "WelcomeMessage", "welcome", $tmpkey);
-                $config = $retValue[0];
-                $functions = $retValue[1];
+                $retValue = removeSpecialFunction($_SESSION['config'], $_SESSION['functions'], "WelcomeMessage", "welcome", $tmpkey);
+                $_SESSION['config'] = $retValue[0];
+                $_SESSION['functions'] = $retValue[1];
             }
         }
 
-        $config["functions"] = updateFunctionString($functions);
-        saveConfig($config, $configPath);
+        $_SESSION['config']["functions"] = updateFunctionString($_SESSION['functions']);
+        saveConfig($_SESSION['config'], $_SESSION['configPath']);
+        $saved = TRUE;
     }
 ?>
 <!DOCTYPE html>
@@ -171,73 +166,73 @@
                                         <div class="form-group row">
                                             <label class="col-sm-5 control-label" for="language">Sprache</label>
                                             <div class="col-sm-4">
-                                                <input class="form-control" id="language" type="text" name="language" placeholder="Enter new language" value=<?php if(array_key_exists("language", $config)){ echo '"' . $config["language"] . '"' . '"';}else{ echo '""';} ?> required/>
+                                                <input class="form-control" id="language" type="text" name="language" placeholder="Enter new language" value=<?php if(array_key_exists("language", $_SESSION['config'])){ echo '"' . $_SESSION['config']["language"] . '"' . '"';}else{ echo '""';} ?> required/>
                                             </div>
                                         </div>
                                         <div class="form-group row">
                                             <label class="col-sm-5 control-label" for="ts3_server_floodrate">Floodrate</label>
                                             <div class="col-sm-4">
-                                                <input class="form-control" id="ts3_server_floodrate" type="text" name="ts3_server_floodrate" placeholder="Enter new ts3_server_floodrate" value=<?php if(array_key_exists("ts3_server_floodrate", $config)){ echo '"' . $config["ts3_server_floodrate"] . '"' . '"';}else{ echo '""';} ?> required/>
+                                                <input class="form-control" id="ts3_server_floodrate" type="text" name="ts3_server_floodrate" placeholder="Enter new ts3_server_floodrate" value=<?php if(array_key_exists("ts3_server_floodrate", $_SESSION['config'])){ echo '"' . $_SESSION['config']["ts3_server_floodrate"] . '"' . '"';}else{ echo '""';} ?> required/>
                                             </div>
                                         </div>
                                         <div class="form-group row">
                                             <label class="col-sm-5 control-label" for="ts3_server_ip">Server IP</label>
                                             <div class="col-sm-4">
-                                                <input class="form-control" id="ts3_server_ip" type="text" name="ts3_server_ip" placeholder="Enter new ts3_server_ip" value=<?php if(array_key_exists("ts3_server_ip", $config)){ echo '"' . $config["ts3_server_ip"] . '"' . '"';}else{ echo '""';} ?> required/>
+                                                <input class="form-control" id="ts3_server_ip" type="text" name="ts3_server_ip" placeholder="Enter new ts3_server_ip" value=<?php if(array_key_exists("ts3_server_ip", $_SESSION['config'])){ echo '"' . $_SESSION['config']["ts3_server_ip"] . '"' . '"';}else{ echo '""';} ?> required/>
                                             </div>
                                         </div>
                                         <div class="form-group row">
                                             <label class="col-sm-5 control-label" for="ts3_server_port">Server Port</label>
                                             <div class="col-sm-4">
-                                                <input class="form-control" id="ts3_server_port" type="text" name="ts3_server_port" placeholder="Enter new ts3_server_port" value=<?php if(array_key_exists("ts3_server_port", $config)){ echo '"' . $config["ts3_server_port"] . '"' . '"';}else{ echo '""';} ?> required/>
+                                                <input class="form-control" id="ts3_server_port" type="text" name="ts3_server_port" placeholder="Enter new ts3_server_port" value=<?php if(array_key_exists("ts3_server_port", $_SESSION['config'])){ echo '"' . $_SESSION['config']["ts3_server_port"] . '"' . '"';}else{ echo '""';} ?> required/>
                                             </div>
                                         </div>
                                         <div class="form-group row">
                                             <label class="col-sm-5 control-label" for="ts3_server_query_port">Query Port</label>
                                             <div class="col-sm-4">
-                                                <input class="form-control" id="ts3_server_query_port" type="text" name="ts3_server_query_port" placeholder="Enter new ts3_server_query_port" value=<?php if(array_key_exists("ts3_server_query_port", $config)){ echo '"' . $config["ts3_server_query_port"] . '"';}else{ echo '""';} ?> required/>
+                                                <input class="form-control" id="ts3_server_query_port" type="text" name="ts3_server_query_port" placeholder="Enter new ts3_server_query_port" value=<?php if(array_key_exists("ts3_server_query_port", $_SESSION['config'])){ echo '"' . $_SESSION['config']["ts3_server_query_port"] . '"';}else{ echo '""';} ?> required/>
                                             </div>
                                         </div>
                                         <div class="form-group row">
                                             <label class="col-sm-5 control-label" for="ts3_server_query_login_name">Query Login Name</label>
                                             <div class="col-sm-4">
-                                                <input class="form-control" id="ts3_server_query_login_name" type="text" name="ts3_server_query_login_name" placeholder="Enter new ts3_server_query_login_name" value=<?php if(array_key_exists("ts3_server_query_login_name", $config)){ echo '"' . $config["ts3_server_query_login_name"] . '"';}else{ echo '""';} ?> required/>
+                                                <input class="form-control" id="ts3_server_query_login_name" type="text" name="ts3_server_query_login_name" placeholder="Enter new ts3_server_query_login_name" value=<?php if(array_key_exists("ts3_server_query_login_name", $_SESSION['config'])){ echo '"' . $_SESSION['config']["ts3_server_query_login_name"] . '"';}else{ echo '""';} ?> required/>
                                             </div>
                                         </div>
                                         <div class="form-group row">
                                             <label class="col-sm-5 control-label" for="ts3_server_query_login_password">Query Login Password</label>
                                             <div class="col-sm-4">
-                                                <input class="form-control" id="ts3_server_query_login_password" type="text" name="ts3_server_query_login_password" placeholder="Enter new ts3_server_query_login_password" value=<?php if(array_key_exists("ts3_server_query_login_password", $config)){ echo '"' . $config["ts3_server_query_login_password"] . '"';}else{ echo '""';} ?> required/>
+                                                <input class="form-control" id="ts3_server_query_login_password" type="text" name="ts3_server_query_login_password" placeholder="Enter new ts3_server_query_login_password" value=<?php if(array_key_exists("ts3_server_query_login_password", $_SESSION['config'])){ echo '"' . $_SESSION['config']["ts3_server_query_login_password"] . '"';}else{ echo '""';} ?> required/>
                                             </div>
                                         </div>
                                         <div class="form-group row">
                                             <label class="col-sm-5 control-label" for="ts3_bot_nickname">Bot Nickname</label>
                                             <div class="col-sm-4">
-                                                <input class="form-control" id="ts3_bot_nickname" type="text" name="ts3_bot_nickname" placeholder="Enter new ts3_bot_nickname" value=<?php if(array_key_exists("ts3_bot_nickname", $config)){ echo '"' . $config["ts3_bot_nickname"] . '"';}else{ echo '""';} ?> required/>
+                                                <input class="form-control" id="ts3_bot_nickname" type="text" name="ts3_bot_nickname" placeholder="Enter new ts3_bot_nickname" value=<?php if(array_key_exists("ts3_bot_nickname", $_SESSION['config'])){ echo '"' . $_SESSION['config']["ts3_bot_nickname"] . '"';}else{ echo '""';} ?> required/>
                                             </div>
                                         </div>
                                         <div class="form-group row">
                                             <label class="col-sm-5 control-label" for="ts3_bot_nickname2">Bot Nickname 2</label>
                                             <div class="col-sm-4">
-                                                <input class="form-control" id="ts3_bot_nickname2" type="text" name="ts3_bot_nickname2" placeholder="Enter new ts3_bot_nickname2" value=<?php if(array_key_exists("ts3_bot_nickname2", $config)){ echo '"' . $config["ts3_bot_nickname2"] . '"' . '"';}else{ echo '""';} ?> required/>
+                                                <input class="form-control" id="ts3_bot_nickname2" type="text" name="ts3_bot_nickname2" placeholder="Enter new ts3_bot_nickname2" value=<?php if(array_key_exists("ts3_bot_nickname2", $_SESSION['config'])){ echo '"' . $_SESSION['config']["ts3_bot_nickname2"] . '"' . '"';}else{ echo '""';} ?> required/>
                                             </div>
                                         </div>
                                         <div class="form-group row">
                                             <label class="col-sm-5 control-label" for="ts3_bot_channel_id">Default Channel ID</label>
                                             <div class="col-sm-4">
-                                                <input class="form-control" id="ts3_bot_channel_id" type="text" name="ts3_bot_channel_id" placeholder="Enter new ts3_bot_channel_id" value=<?php if(array_key_exists("ts3_bot_channel_id", $config)){ echo '"' . $config["ts3_bot_channel_id"] . '"';}else{ echo '""';} ?> required/>
+                                                <input class="form-control" id="ts3_bot_channel_id" type="text" name="ts3_bot_channel_id" placeholder="Enter new ts3_bot_channel_id" value=<?php if(array_key_exists("ts3_bot_channel_id", $_SESSION['config'])){ echo '"' . $_SESSION['config']["ts3_bot_channel_id"] . '"';}else{ echo '""';} ?> required/>
                                             </div>
                                         </div>
                                         <div class="form-group row">
                                             <label class="col-sm-5 control-label" for="bot_admin">Bot Admins (als Komma Liste)</label>
                                             <div class="col-sm-4">
-                                                <input class="form-control" id="bot_admin" type="text" name="bot_admin" placeholder="Enter new bot_admin" value=<?php if(array_key_exists("bot_admin", $config)){ echo '"' . $config["bot_admin"] . '"';}else{ echo '""';} ?> />
+                                                <input class="form-control" id="bot_admin" type="text" name="bot_admin" placeholder="Enter new bot_admin" value=<?php if(array_key_exists("bot_admin", $_SESSION['config'])){ echo '"' . $_SESSION['config']["bot_admin"] . '"';}else{ echo '""';} ?> />
                                             </div>
                                         </div>
                                         <div class="form-group row">
                                             <label class="col-sm-5 control-label" for="bot_full_admin">Bot Full Admins (als Komma Liste)</label>
                                             <div class="col-sm-4">
-                                                <input class="form-control" id="bot_full_admin" type="text" name="bot_full_admin" placeholder="Enter new bot_full_admin" value=<?php if(array_key_exists("bot_full_admin", $config)){ echo '"' . $config["bot_full_admin"] . '"';}else{ echo '""';} ?> required/>
+                                                <input class="form-control" id="bot_full_admin" type="text" name="bot_full_admin" placeholder="Enter new bot_full_admin" value=<?php if(array_key_exists("bot_full_admin", $_SESSION['config'])){ echo '"' . $_SESSION['config']["bot_full_admin"] . '"';}else{ echo '""';} ?> required/>
                                             </div>
                                         </div>
                                     </div>
@@ -254,81 +249,81 @@
                                         <div class="form-group row">
                                             <div class="col-sm-1">
                                                 <label class="switch">
-                                                  <input name="enableTwitch" id="switchTwitch" type="checkbox" <?php if(array_key_exists("Twitch", $functions)){ echo "checked";} ?> >
+                                                  <input name="enableTwitch" id="switchTwitch" type="checkbox" <?php if(array_key_exists("Twitch", $_SESSION['functions'])){ echo "checked";} ?> >
                                                   <span class="slider round"></span>
                                                 </label>
                                             </div>
                                             <label class="col-sm-5 control-label" for="switchTwitch">Twitch</label>
                                             <div class="col-sm-4">
-                                                <input <?php if(array_key_exists("Twitch", $functions)){ echo 'readonly';} ?> class="form-control" id="inputTwitchKey" type="text" name="twitch_key" value=<?php if(array_key_exists("Twitch", $functions)){ echo '"' . $functions["Twitch"] . '"';}else{ echo '"' . generateRandomString(7) . '"';} ?>/>
+                                                <input <?php if(array_key_exists("Twitch", $_SESSION['functions'])){ echo 'readonly';} ?> class="form-control" id="inputTwitchKey" type="text" name="twitch_key" value=<?php if(array_key_exists("Twitch", $_SESSION['functions'])){ echo '"' . $_SESSION['functions']["Twitch"] . '"';}else{ echo '"' . generateRandomString(7) . '"';} ?>/>
                                             </div>
                                         </div>
                                         <div class="form-group row">
                                             <div class="col-sm-1">
                                                 <label class="switch">
-                                                  <input name="enableViewer" id="switchViewer" type="checkbox" <?php if(array_key_exists("Viewer", $functions)){ echo "checked";} ?> >
+                                                  <input name="enableViewer" id="switchViewer" type="checkbox" <?php if(array_key_exists("Viewer", $_SESSION['functions'])){ echo "checked";} ?> >
                                                   <span class="slider round"></span>
                                                 </label>
                                             </div>
                                             <label class="col-sm-5 control-label" for="switchViewer">Ts3 Viewer</label>
                                             <div class="col-sm-4">
-                                                <input <?php if(array_key_exists("Viewer", $functions)){ echo 'readonly';} ?> class="form-control" id="inputViewerKey" type="text" name="viewer_key" value=<?php if(array_key_exists("Viewer", $functions)){ echo '"' . $functions["Viewer"] . '"';}else{ echo '"' . generateRandomString(7) . '"';} ?>/>
+                                                <input <?php if(array_key_exists("Viewer", $_SESSION['functions'])){ echo 'readonly';} ?> class="form-control" id="inputViewerKey" type="text" name="viewer_key" value=<?php if(array_key_exists("Viewer", $_SESSION['functions'])){ echo '"' . $_SESSION['functions']["Viewer"] . '"';}else{ echo '"' . generateRandomString(7) . '"';} ?>/>
                                             </div>
                                         </div>
                                         <div class="form-group row">
                                             <div class="col-sm-1">
                                                 <label class="switch">
-                                                  <input name="enableChannelAutoCreate" id="switchChannelAutoCreate" type="checkbox" <?php if(array_key_exists("ChannelAutoCreate", $functions)){ echo "checked";} ?> >
+                                                  <input name="enableChannelAutoCreate" id="switchChannelAutoCreate" type="checkbox" <?php if(array_key_exists("ChannelAutoCreate", $_SESSION['functions'])){ echo "checked";} ?> >
                                                   <span class="slider round"></span>
                                                 </label>
                                             </div>
                                             <label class="col-sm-5 control-label" for="switchChannelAutoCreate">ChannelAutoCreate</label>
                                             <div class="col-sm-4">
-                                                <input <?php if(array_key_exists("ChannelAutoCreate", $functions)){ echo 'readonly';} ?> class="form-control" id="inputChannelAutoCreateKey" type="text" name="channelautocreate_key" value=<?php if(array_key_exists("ChannelAutoCreate", $functions)){ echo '"' . $functions["ChannelAutoCreate"] . '"';}else{ echo '"' . generateRandomString(7) . '"';} ?>/>
+                                                <input <?php if(array_key_exists("ChannelAutoCreate", $_SESSION['functions'])){ echo 'readonly';} ?> class="form-control" id="inputChannelAutoCreateKey" type="text" name="channelautocreate_key" value=<?php if(array_key_exists("ChannelAutoCreate", $_SESSION['functions'])){ echo '"' . $_SESSION['functions']["ChannelAutoCreate"] . '"';}else{ echo '"' . generateRandomString(7) . '"';} ?>/>
                                             </div>
                                         </div>
                                         <div class="form-group row">
                                             <div class="col-sm-1">
                                                 <label class="switch">
-                                                  <input name="enableVersionChecker" id="switchVersionChecker" type="checkbox" <?php if(array_key_exists("VersionChecker", $functions)){ echo "checked";} ?> >
+                                                  <input name="enableVersionChecker" id="switchVersionChecker" type="checkbox" <?php if(array_key_exists("VersionChecker", $_SESSION['functions'])){ echo "checked";} ?> >
                                                   <span class="slider round"></span>
                                                 </label>
                                             </div>
                                             <label class="col-sm-5 control-label" for="switchVersionChecker">VersionChecker</label>
                                             <div class="col-sm-4">
-                                                <input <?php if(array_key_exists("VersionChecker", $functions)){ echo 'readonly';} ?> class="form-control" id="inputVersionCheckerKey" type="text" name="versionchecker_key" value=<?php if(array_key_exists("VersionChecker", $functions)){ echo '"' . $functions["VersionChecker"] . '"';}else{ echo '"' . generateRandomString(7) . '"';} ?>/>
+                                                <input <?php if(array_key_exists("VersionChecker", $_SESSION['functions'])){ echo 'readonly';} ?> class="form-control" id="inputVersionCheckerKey" type="text" name="versionchecker_key" value=<?php if(array_key_exists("VersionChecker", $_SESSION['functions'])){ echo '"' . $_SESSION['functions']["VersionChecker"] . '"';}else{ echo '"' . generateRandomString(7) . '"';} ?>/>
                                             </div>
                                         </div>
                                         <div class="form-group row">
                                             <div class="col-sm-1">
                                                 <label class="switch">
-                                                  <input name="enableAutoRemove" id="switchAutoRemove" type="checkbox" <?php if(array_key_exists("AutoRemove", $functions)){ echo "checked";} ?> >
+                                                  <input name="enableAutoRemove" id="switchAutoRemove" type="checkbox" <?php if(array_key_exists("AutoRemove", $_SESSION['functions'])){ echo "checked";} ?> >
                                                   <span class="slider round"></span>
                                                 </label>
                                             </div>
                                             <label class="col-sm-5 control-label" for="switchAutoRemove">AutoRemove</label>
                                             <div class="col-sm-4">
-                                                <input <?php if(array_key_exists("AutoRemove", $functions)){ echo 'readonly';} ?> class="form-control" id="inputAutoRemoveKey" type="text" name="autoremove_key" value=<?php if(array_key_exists("AutoRemove", $functions)){ echo '"' . $functions["AutoRemove"] . '"';}else{ echo '"' . generateRandomString(7) . '"';} ?>/>
+                                                <input <?php if(array_key_exists("AutoRemove", $_SESSION['functions'])){ echo 'readonly';} ?> class="form-control" id="inputAutoRemoveKey" type="text" name="autoremove_key" value=<?php if( array_key_exists("AutoRemove", $_SESSION['functions']) ){ echo '"' . $_SESSION['functions']["AutoRemove"] . '"';}else{ echo '"' . generateRandomString(7) . '"';} ?>/>
                                             </div>
                                         </div>
                                         <div class="form-group row">
                                             <div class="col-sm-1">
                                                 <label class="switch">
-                                                  <input name="enableAcceptRules" id="switchAcceptRules" type="checkbox" <?php if(array_key_exists("AcceptRules", $functions)){ echo "checked";} ?> >
+                                                  <input name="enableAcceptRules" id="switchAcceptRules" type="checkbox" <?php if(array_key_exists("AcceptRules", $_SESSION['functions'])){ echo "checked";} ?> >
                                                   <span class="slider round"></span>
                                                 </label>
                                             </div>
                                             <label class="col-sm-5 control-label" for="switchAcceptRules">AcceptRules</label>
                                             <div class="col-sm-4">
-                                                <input <?php if(array_key_exists("AcceptRules", $functions)){ echo 'readonly';} ?> class="form-control" id="inputAcceptRulesKey" type="text" name="acceptrules_key" value=<?php if(array_key_exists("AcceptRules", $functions)){ echo '"' . $functions["AcceptRules"] . '"';}else{ echo '"' . generateRandomString(7) . '"';} ?>/>
+                                                <input <?php if(array_key_exists("AcceptRules", $_SESSION['functions'])){ echo 'readonly';} ?> class="form-control" id="inputAcceptRulesKey" type="text" name="acceptrules_key" value=<?php if(array_key_exists("AcceptRules", $_SESSION['functions'])){ echo '"' . $_SESSION['functions']["AcceptRules"] . '"';}else{ echo '"' . generateRandomString(7) . '"';} ?>/>
                                             </div>
                                         </div>
                                         <br>
                                         <label class="col-sm-5 control-label">Können mehrmals vewendet werden</label>
                                         <br>
 <?php
-if( isset($functions["ClientAFK"])){
-    foreach($functions["ClientAFK"] as $number=>$key){ ?>
+if( isset($_SESSION['functions']["ClientAFK"])){
+    foreach($_SESSION['functions']["ClientAFK"] as $number=>$key){ ?>
                                         <div class="form-group row">
                                             <div class="col-sm-1">
                                                 <label class="switch">
@@ -340,13 +335,13 @@ if( isset($functions["ClientAFK"])){
                                             <div class="col-sm-4">
                                                 <input readonly class="form-control" id=<?php echo '"inputClientAfk-' . $key . '"'; ?> type="text" name=<?php echo '"clientafk_key-' . $key . '"' ?>  value=<?php echo '"' . $key . '"'; ?> />
                                             </div>
-<?php if( count($functions["ClientAFK"]) != $number + 1 ){ ?>
+<?php if( count($_SESSION['functions']["ClientAFK"]) != $number + 1 ){ ?>
                                         </div>
 <?php   }
     }
 }
-if ( ( isset($addClientAfk) && $addClientAfk ) || ( isset($invalidClientAfk) && $invalidClientAfk ) || ! isset($functions["ClientAFK"]) || (isset($functions["ClientAFK"]) && count($functions["ClientAFK"]) == 0) ) {
-    if(isset($functions["ClientAFK"]) && count($functions["ClientAFK"]) != 0){?>
+if ( ( isset($addClientAfk) && $addClientAfk ) || ( isset($invalidClientAfk) && $invalidClientAfk ) || ! isset($_SESSION['functions']["ClientAFK"]) || (isset($_SESSION['functions']["ClientAFK"]) && count($_SESSION['functions']["ClientAFK"]) == 0) ) {
+    if(isset($_SESSION['functions']["ClientAFK"]) && count($_SESSION['functions']["ClientAFK"]) != 0){?>
                                         </div>
 <?php } ?>
                                         <div class="form-group row">
@@ -372,8 +367,8 @@ if ( ( isset($addClientAfk) && $addClientAfk ) || ( isset($invalidClientAfk) && 
 <?php } ?>
 
 <?php
-if( isset($functions["ClientMove"])){
-    foreach($functions["ClientMove"] as $number=>$key){ ?>
+if( isset($_SESSION['functions']["ClientMove"])){
+    foreach($_SESSION['functions']["ClientMove"] as $number=>$key){ ?>
                                         <div class="form-group row">
                                             <div class="col-sm-1">
                                                 <label class="switch">
@@ -385,13 +380,13 @@ if( isset($functions["ClientMove"])){
                                             <div class="col-sm-4">
                                                 <input readonly class="form-control" id=<?php echo '"inputClientMove-' . $key . '"'; ?> type="text" name=<?php echo '"clientmove_key-' . $key . '"' ?>  value=<?php echo '"' . $key . '"'; ?> />
                                             </div>
-<?php if( count($functions["ClientMove"]) != $number + 1 ){ ?>
+<?php if( count($_SESSION['functions']["ClientMove"]) != $number + 1 ){ ?>
                                         </div>
 <?php   }
     }
 }
-if ( ( isset($addClientMove) && $addClientMove ) || ( isset($invalidClientMove) && $invalidClientMove ) || ! isset($functions["ClientMove"]) || (isset($functions["ClientMove"]) && count($functions["ClientMove"]) == 0) ) {
-    if(isset($functions["ClientMove"]) && count($functions["ClientMove"]) != 0){?>
+if ( ( isset($addClientMove) && $addClientMove ) || ( isset($invalidClientMove) && $invalidClientMove ) || ! isset($_SESSION['functions']["ClientMove"]) || (isset($_SESSION['functions']["ClientMove"]) && count($_SESSION['functions']["ClientMove"]) == 0) ) {
+    if(isset($_SESSION['functions']["ClientMove"]) && count($_SESSION['functions']["ClientMove"]) != 0){?>
                                         </div>
 <?php } ?>
                                         <div class="form-group row">
@@ -418,8 +413,8 @@ if ( ( isset($addClientMove) && $addClientMove ) || ( isset($invalidClientMove) 
 
 
 <?php
-if( isset($functions["WelcomeMessage"])){
-    foreach($functions["WelcomeMessage"] as $number=>$key){ ?>
+if( isset($_SESSION['functions']["WelcomeMessage"])){
+    foreach($_SESSION['functions']["WelcomeMessage"] as $number=>$key){ ?>
                                         <div class="form-group row">
                                             <div class="col-sm-1">
                                                 <label class="switch">
@@ -431,13 +426,13 @@ if( isset($functions["WelcomeMessage"])){
                                             <div class="col-sm-4">
                                                 <input readonly class="form-control" id=<?php echo '"inputWelcomeMessage-' . $key . '"'; ?> type="text" name=<?php echo '"welcomemessage_key-' . $key . '"' ?>  value=<?php echo '"' . $key . '"'; ?> />
                                             </div>
-<?php if( count($functions["WelcomeMessage"]) != $number + 1 ){ ?>
+<?php if( count($_SESSION['functions']["WelcomeMessage"]) != $number + 1 ){ ?>
                                         </div>
 <?php   }
     }
 }
-if ( ( isset($addWelcomeMessage) && $addWelcomeMessage ) || ( isset($invalidWelcomeMessage) && $invalidWelcomeMessage ) || ! isset($functions["WelcomeMessage"]) || (isset($functions["WelcomeMessage"]) && count($functions["WelcomeMessage"]) == 0) ) {
-    if(isset($functions["WelcomeMessage"]) && count($functions["WelcomeMessage"]) != 0){?>
+if ( ( isset($addWelcomeMessage) && $addWelcomeMessage ) || ( isset($invalidWelcomeMessage) && $invalidWelcomeMessage ) || ! isset($_SESSION['functions']["WelcomeMessage"]) || (isset($_SESSION['functions']["WelcomeMessage"]) && count($_SESSION['functions']["WelcomeMessage"]) == 0) ) {
+    if(isset($_SESSION['functions']["WelcomeMessage"]) && count($_SESSION['functions']["WelcomeMessage"]) != 0){?>
                                         </div>
 <?php } ?>
                                         <div class="form-group row">

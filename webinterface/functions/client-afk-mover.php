@@ -1,28 +1,33 @@
 <?php
-    require_once('_preload.php');
-    $nav_expanded = TRUE;
+    require_once($_SERVER["DOCUMENT_ROOT"] . '/_preload.php');
+    $_SESSION["nav_expanded"] = TRUE;
+
+    if ( ! array_key_exists("ClientAFK", $_SESSION["functions"])) {
+        header("Refresh:0; url=/core.php");
+        exit();
+    }
 
     $saved = FALSE;
     if ( isset($_POST['update']) ){
         print_r($_POST);
-        foreach($functions["ClientAFK"] as $number => $key) {
-            $config[$key . "_client_afk_time"] = $_POST['afkTime-' . $key];
-            $config[$key . "_client_afk_channel"] = $_POST['afkChannel-' . $key];
+        foreach($_SESSION["functions"]["ClientAFK"] as $number => $key) {
+            $_SESSION["config"][$key . "_client_afk_time"] = $_POST['afkTime-' . $key];
+            $_SESSION["config"][$key . "_client_afk_channel"] = $_POST['afkChannel-' . $key];
             if( ! empty($_POST['afkChannelIo-' . $key]) ){
-                $config[$key . "_client_afk_channel_io"] = $_POST['afkChannelIo-' . $key];
+                $_SESSION["config"][$key . "_client_afk_channel_io"] = $_POST['afkChannelIo-' . $key];
             }else{
-                $config[$key . "_client_afk_channel_io"] = "";
+                $_SESSION["config"][$key . "_client_afk_channel_io"] = "";
             }
             if( ! empty($_POST['afkGroupIds-' . $key]) ){
-                $config[$key . "_client_afk_group_ids"] = $_POST['afkGroupIds-' . $key];
+                $_SESSION["config"][$key . "_client_afk_group_ids"] = $_POST['afkGroupIds-' . $key];
             }else{
-                $config[$key . "_client_afk_group_ids"] = "";
+                $_SESSION["config"][$key . "_client_afk_group_ids"] = "";
             }
-            $config[$key . "_client_afk_channel_watch"] = $_POST['afkChannelWatch-' . $key];
-            $config[$key . "_client_afk_group_watch"] = $_POST['afkGroupWatch-' . $key];
+            $_SESSION["config"][$key . "_client_afk_channel_watch"] = $_POST['afkChannelWatch-' . $key];
+            $_SESSION["config"][$key . "_client_afk_group_watch"] = $_POST['afkGroupWatch-' . $key];
         }
         $saved = TRUE;
-        saveConfig($config, $configPath);
+        saveConfig($_SESSION["config"], $_SESSION["configPath"]);
     }
 ?>
 <!DOCTYPE html>
@@ -34,18 +39,18 @@
         <meta name="description" content="" />
         <meta name="author" content="Capdeveloping" />
         <title>Funktion - Client Mute Mover</title>
-        <link href="css/styles.css" rel="stylesheet" />
+        <link href="../css/styles.css" rel="stylesheet" />
         <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" crossorigin="anonymous" />
         <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/js/all.min.js" crossorigin="anonymous"></script>
     </head>
     <body class="sb-nav-fixed">
         <?php
-            require_once('_nav-header.php');
+            require_once($_SERVER["DOCUMENT_ROOT"] . '/_nav-header.php');
         ?>
         <div id="layoutSidenav">
             <div id="layoutSidenav_nav">
                 <?php
-                    require_once('_nav.php');
+                    require_once($_SERVER["DOCUMENT_ROOT"] . '/_nav.php');
                 ?>
             </div>
             <div id="layoutSidenav_content">
@@ -59,7 +64,7 @@
                         </ol>
 
                         <form class="form-horizontal" data-toggle="validator" name="addFunction" method="POST">
-<?php foreach($functions["ClientAFK"] as $number=>$key){ ?>
+<?php foreach($_SESSION["functions"]["ClientAFK"] as $number=>$key){ ?>
 <?php if($number % 2 == 0 || $number == 0){ ?>
                             <div class="row">
 <?php }?>
@@ -78,7 +83,7 @@
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text">in Sekunden</span>
                                                     </div>
-                                                    <input name=<?php echo '"afkTime-' . $key . '"'; ?> class="form-control" id=<?php echo '"afkTime-' . $key . '"'; ?> type="text" placeholder=<?php echo "Zeit eingeben in Sekunden"; ?> value=<?php echo '"' . $config[$key . "_client_afk_time"] . '"'; ?> />
+                                                    <input name=<?php echo '"afkTime-' . $key . '"'; ?> class="form-control" id=<?php echo '"afkTime-' . $key . '"'; ?> type="text" placeholder=<?php echo "Zeit eingeben in Sekunden"; ?> value=<?php echo '"' . $_SESSION["config"][$key . "_client_afk_time"] . '"'; ?> />
                                                 </div>
                                             </div>
                                         </div>
@@ -88,7 +93,7 @@
                                                     <label class="control-label" for=<?php echo '"afkChannel-' . $key . '"'; ?> >AFK Channel ID</label>
                                                 </div>
                                                 <div class="col-sm-4">
-                                                    <input name=<?php echo '"afkChannel-' . $key . '"'; ?> class="form-control" id=<?php echo '"afkChannel-' . $key . '"'; ?> type="text" placeholder=<?php echo "Channel ID"; ?> value=<?php echo '"' . $config[$key . "_client_afk_channel"] . '"'; ?> />
+                                                    <input name=<?php echo '"afkChannel-' . $key . '"'; ?> class="form-control" id=<?php echo '"afkChannel-' . $key . '"'; ?> type="text" placeholder=<?php echo "Channel ID"; ?> value=<?php echo '"' . $_SESSION["config"][$key . "_client_afk_channel"] . '"'; ?> />
                                                 </div>
                                             </div>
                                         </div>
@@ -98,7 +103,7 @@
                                                     <label class="control-label" for=<?php echo '"afkChannelIo-' . $key . '"'; ?> >Channels auf die geachtet oder die ignoriert werden sollen</label>
                                                 </div>
                                                 <div class="col-sm-4">
-                                                    <input name=<?php echo '"afkChannelIo-' . $key . '"'; ?> class="form-control" id=<?php echo '"afkChannelIo-' . $key . '"'; ?> type="text" placeholder=<?php echo "Channel ids eingeben"; ?> value=<?php echo '"' . $config[$key . "_client_afk_channel_io"] . '"'; ?> />
+                                                    <input name=<?php echo '"afkChannelIo-' . $key . '"'; ?> class="form-control" id=<?php echo '"afkChannelIo-' . $key . '"'; ?> type="text" placeholder=<?php echo "Channel ids eingeben"; ?> value=<?php echo '"' . $_SESSION["config"][$key . "_client_afk_channel_io"] . '"'; ?> />
                                                 </div>
                                             </div>
                                         </div>
@@ -108,7 +113,7 @@
                                                     <label class="control-label" for=<?php echo '"afkChannelWatch-' . $key . '"'; ?> >Ignoriere die oberen Channel oder überprüfe nur diese</label>
                                                 </div>
                                                 <div class="col-sm-4">
-                                                    <input name=<?php echo '"afkChannelWatch-' . $key . '"'; ?> class="form-control" id=<?php echo '"afkChannelWatch-' . $key . '"'; ?> type="text" placeholder=<?php echo "ignore/only"; ?> value=<?php echo '"' . $config[$key . "_client_afk_channel_watch"] . '"'; ?> />
+                                                    <input name=<?php echo '"afkChannelWatch-' . $key . '"'; ?> class="form-control" id=<?php echo '"afkChannelWatch-' . $key . '"'; ?> type="text" placeholder=<?php echo "ignore/only"; ?> value=<?php echo '"' . $_SESSION["config"][$key . "_client_afk_channel_watch"] . '"'; ?> />
                                                 </div>
                                             </div>
                                         </div>
@@ -118,7 +123,7 @@
                                                     <label class="control-label" for=<?php echo '"afkGroupIds-' . $key . '"'; ?> >Gruppen auf die geachtet oder die ignoriert werden sollen</label>
                                                 </div>
                                                 <div class="col-sm-4">
-                                                    <input name=<?php echo '"afkGroupIds-' . $key . '"'; ?> class="form-control" id=<?php echo '"afkGroupIds-' . $key . '"'; ?> type="text" placeholder=<?php echo "gruppen ids" ?> value=<?php echo '"' . $config[$key . "_client_afk_group_ids"] . '"'; ?> />
+                                                    <input name=<?php echo '"afkGroupIds-' . $key . '"'; ?> class="form-control" id=<?php echo '"afkGroupIds-' . $key . '"'; ?> type="text" placeholder=<?php echo "gruppen ids" ?> value=<?php echo '"' . $_SESSION["config"][$key . "_client_afk_group_ids"] . '"'; ?> />
                                                 </div>
                                             </div>
                                         </div>
@@ -128,16 +133,16 @@
                                                     <label class="control-label" for=<?php echo '"afkGroupWatch-' . $key . '"'; ?> >Ignoriere die oberen Gruppen oder überprüfe nur diese</label>
                                                 </div>
                                                 <div class="col-sm-4">
-                                                    <input name=<?php echo '"afkGroupWatch-' . $key . '"'; ?> class="form-control" id=<?php echo '"afkGroupWatch-' . $key . '"'; ?> type="text" placeholder=<?php echo "ignore/only" ?> value=<?php echo '"' . $config[$key . "_client_afk_group_watch"] . '"'; ?> />
+                                                    <input name=<?php echo '"afkGroupWatch-' . $key . '"'; ?> class="form-control" id=<?php echo '"afkGroupWatch-' . $key . '"'; ?> type="text" placeholder=<?php echo "ignore/only" ?> value=<?php echo '"' . $_SESSION["config"][$key . "_client_afk_group_watch"] . '"'; ?> />
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-<?php if($number % 2 != 0 || count($functions["ClientAFK"]) == 0 ){ ?>
+<?php if($number % 2 != 0 || count($_SESSION["functions"]["ClientAFK"]) == 0 ){ ?>
                             </div>
 <?php }
-    if ( count($functions["ClientAFK"]) == ($number + 1) && $number % 2 == 0){?>
+    if ( count($_SESSION["functions"]["ClientAFK"]) == ($number + 1) && $number % 2 == 0){?>
                             </div>
                             <div class="row">
                                  <div class="col-lg-6">
@@ -162,16 +167,9 @@
                     </div>
                 </main>
                 <footer class="py-4 bg-light mt-auto">
-                    <div class="container-fluid">
-                        <div class="d-flex align-items-center justify-content-between small">
-                            <div class="text-muted">Copyright &copy; Capdeveloping 2021</div>
-                            <div>
-                                <a href="#">Privacy Policy</a>
-                                &middot;
-                                <a href="#">Terms &amp; Conditions</a>
-                            </div>
-                        </div>
-                    </div>
+                    <?php
+                        require_once($_SERVER["DOCUMENT_ROOT"] . '/_footer.php');
+                    ?>
                 </footer>
             </div>
         </div>

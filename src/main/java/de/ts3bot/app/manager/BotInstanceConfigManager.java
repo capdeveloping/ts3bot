@@ -42,6 +42,11 @@ public class BotInstanceConfigManager {
             createFirstServerConfig(configpath);
             return false;
         }
+        if ( Paths.get(configpath).toFile().isDirectory() && ! new File(instancepath).isFile()){
+            createInstanceConfig(configpath, instancepath);
+            createFirstServerConfig(configpath);
+            return false;
+        }
         return true;
     }
 
@@ -67,7 +72,7 @@ public class BotInstanceConfigManager {
         try (FileWriter fileWriter = new FileWriter(firstcfg);
             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter))
         {
-            bufferedWriter.write("# TS3 Query Floodrate\n" +
+            bufferedWriter.write("language = \n" +
                     "ts3_server_floodrate =\n" +
                     "ts3_server_ip =\n" +
                     "ts3_server_port =\n" +

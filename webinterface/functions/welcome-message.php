@@ -1,19 +1,24 @@
 <?php
-    require_once('_preload.php');
-    $nav_expanded = TRUE;
+    require_once($_SERVER["DOCUMENT_ROOT"] . '/_preload.php');
+    $_SESSION["nav_expanded"] = TRUE;
+
+    if ( ! array_key_exists("ClientAFK", $_SESSION["functions"])) {
+        header("Refresh:0; url=/core.php");
+        exit();
+    }
 
     $saved = FALSE;
     if ( isset($_POST['update']) ){
-        foreach($functions["WelcomeMessage"] as $number => $key) {
-            $config[$key . "_welcome_message"] = $_POST['welcomeMessage-' . $key];
-            $config[$key . "_welcome_poke_client"] = $_POST['enablePoke-' . $key];
-            $config[$key . "_welcome_poke_message"] = $_POST['pokeMessage-' . $key];
-            $config[$key . "_welcome_date"] = $_POST['date-' . $key];
-            $config[$key . "_welcome_repeat"] = $_POST['repeat-' . $key];
-            $config[$key . "_welcome_group_ids"] = $_POST['groupids-' . $key];
+        foreach($_SESSION["functions"]["WelcomeMessage"] as $number => $key) {
+            $_SESSION["config"][$key . "_welcome_message"] = $_POST['welcomeMessage-' . $key];
+            $_SESSION["config"][$key . "_welcome_poke_client"] = $_POST['enablePoke-' . $key];
+            $_SESSION["config"][$key . "_welcome_poke_message"] = $_POST['pokeMessage-' . $key];
+            $_SESSION["config"][$key . "_welcome_date"] = $_POST['date-' . $key];
+            $_SESSION["config"][$key . "_welcome_repeat"] = $_POST['repeat-' . $key];
+            $_SESSION["config"][$key . "_welcome_group_ids"] = $_POST['groupids-' . $key];
         }
         $saved = TRUE;
-        saveConfig($config, $configPath);
+        saveConfig($_SESSION["config"], $_SESSION["configPath"]);
     }
 ?>
 <!DOCTYPE html>
@@ -25,18 +30,18 @@
         <meta name="description" content="" />
         <meta name="author" content="Capdeveloping" />
         <title>Funktion - Client Willkommensnachricht</title>
-        <link href="css/styles.css" rel="stylesheet" />
+        <link href="../css/styles.css" rel="stylesheet" />
         <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" crossorigin="anonymous" />
         <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/js/all.min.js" crossorigin="anonymous"></script>
     </head>
     <body class="sb-nav-fixed">
 <?php
-    require_once('_nav-header.php');
+    require_once($_SERVER["DOCUMENT_ROOT"] . '/_nav-header.php');
 ?>
         <div id="layoutSidenav">
             <div id="layoutSidenav_nav">
 <?php
-    require_once('_nav.php');
+    require_once($_SERVER["DOCUMENT_ROOT"] . '/_nav.php');
 ?>
             </div>
             <div id="layoutSidenav_content">
@@ -57,7 +62,7 @@
                         <br>
                         <?php }?>
                         <form class="form-horizontal" data-toggle="validator" name="addFunction" method="POST">
-<?php foreach($functions["WelcomeMessage"] as $number=>$key){ ?>
+<?php foreach($_SESSION["functions"]["WelcomeMessage"] as $number=>$key){ ?>
 <?php if($number % 2 == 0 || $number == 0){ ?>
                             <div class="row">
 <?php }?>
@@ -73,7 +78,7 @@
                                                 </div>
                                             </div>
                                             <div class="col-sm-12">
-                                                <textarea name="welcomeMessage-<?php echo $key; ?>" class="form-control" id="inputWelcomeMessage-<?php echo $key; ?>" placeholder="Text eingeben die der Client erhalten soll" rows="3"><?php echo $config[$key . "_welcome_message"]; ?></textarea>
+                                                <textarea name="welcomeMessage-<?php echo $key; ?>" class="form-control" id="inputWelcomeMessage-<?php echo $key; ?>" placeholder="Text eingeben die der Client erhalten soll" rows="3"><?php echo $_SESSION["config"][$key . "_welcome_message"]; ?></textarea>
                                             </div>
                                         </div>
                                         <div class="form-group">
@@ -99,7 +104,7 @@
                                                 <div class="input-group-prepend">
                                                     <span id="charNum-<?php echo $key; ?>" class="input-group-text"></span>
                                                 </div>
-                                                <textarea name="pokeMessage-<?php echo $key; ?>" class="form-control" onkeyup="countChar(this, '<?php echo $key; ?>')" id="inputWelcomePokeMessage-<?php echo $key; ?>" placeholder="Text eingeben die der Client als Poke Nachricht erhalten soll" rows="1"><?php echo $config[$key . "_welcome_poke_message"]; ?></textarea>
+                                                <textarea name="pokeMessage-<?php echo $key; ?>" class="form-control" onkeyup="countChar(this, '<?php echo $key; ?>')" id="inputWelcomePokeMessage-<?php echo $key; ?>" placeholder="Text eingeben die der Client als Poke Nachricht erhalten soll" rows="1"><?php echo $_SESSION["config"][$key . "_welcome_poke_message"]; ?></textarea>
                                             </div>
                                         </div>
                                         <div class="form-group">
@@ -111,7 +116,7 @@
                                                     <div class="input-group-prepend">
                                                         <span class="input-group-text"><i class="fa fa-calendar"></i></span>
                                                     </div>
-                                                    <input class="form-control" name="date-<?php echo $key; ?>" onkeyup="checkDate(this, '<?php echo $key; ?>')" id="inputWelcomeEndDate-<?php echo $key; ?>" type="text" placeholder="dd.MM.yy HH:mm" value=<?php echo '"' . $config[$key . "_welcome_date"] . '"'; ?> />
+                                                    <input class="form-control" name="date-<?php echo $key; ?>" onkeyup="checkDate(this, '<?php echo $key; ?>')" id="inputWelcomeEndDate-<?php echo $key; ?>" type="text" placeholder="dd.MM.yy HH:mm" value=<?php echo '"' . $_SESSION["config"][$key . "_welcome_date"] . '"'; ?> />
                                                 </div>
                                             </div>
                                         </div>
@@ -121,7 +126,7 @@
                                                     <label class="control-label" for="inputWelcomeRepeat-<?php echo $key; ?>" >Wie hoft soll die Nachricht gesendet werden? daily/always</label>
                                                 </div>
                                                 <div class="col-sm-4">
-                                                    <input name="repeat-<?php echo $key; ?>" class="form-control" id="inputWelcomeRepeat-<?php echo $key; ?>" type="text" placeholder=<?php echo "daily/always" ?> value=<?php echo '"' . $config[$key . "_welcome_repeat"] . '"'; ?> />
+                                                    <input name="repeat-<?php echo $key; ?>" class="form-control" id="inputWelcomeRepeat-<?php echo $key; ?>" type="text" placeholder=<?php echo "daily/always" ?> value=<?php echo '"' . $_SESSION["config"][$key . "_welcome_repeat"] . '"'; ?> />
                                                 </div>
                                             </div>
                                         </div>
@@ -131,16 +136,16 @@
                                                     <label class="control-label" for="inputWelcomeGroupIds-<?php echo $key; ?>" >Welche Gruppe soll die Nachricht bekommen</label>
                                                 </div>
                                                 <div class="col-sm-4">
-                                                    <input name="groupids-<?php echo $key; ?>" class="form-control" id="inputWelcomeGroupIds-<?php echo $key; ?>" type="text" placeholder=<?php echo "gruppen ids" ?> value=<?php echo '"' . $config[$key . "_welcome_group_ids"] . '"'; ?> />
+                                                    <input name="groupids-<?php echo $key; ?>" class="form-control" id="inputWelcomeGroupIds-<?php echo $key; ?>" type="text" placeholder=<?php echo "gruppen ids" ?> value=<?php echo '"' . $_SESSION["config"][$key . "_welcome_group_ids"] . '"'; ?> />
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-<?php if($number % 2 != 0 || count($functions["WelcomeMessage"]) == 0 ){ ?>
+<?php if($number % 2 != 0 || count($_SESSION["functions"]["WelcomeMessage"]) == 0 ){ ?>
                             </div>
 <?php }
-    if ( count($functions["WelcomeMessage"]) == ($number + 1) && $number % 2 == 0){?>
+    if ( count($_SESSION["functions"]["WelcomeMessage"]) == ($number + 1) && $number % 2 == 0){?>
                             </div>
                             <div class="row">
                                  <div class="col-lg-6">
@@ -159,21 +164,14 @@
                     </div>
                 </main>
                 <footer class="py-4 bg-light mt-auto">
-                    <div class="container-fluid">
-                        <div class="d-flex align-items-center justify-content-between small">
-                            <div class="text-muted">Copyright &copy; Capdeveloping 2021</div>
-                            <div>
-                                <a href="#">Privacy Policy</a>
-                                &middot;
-                                <a href="#">Terms &amp; Conditions</a>
-                            </div>
-                        </div>
-                    </div>
+                    <?php
+                        require_once($_SERVER["DOCUMENT_ROOT"] . '/_footer.php');
+                    ?>
                 </footer>
             </div>
         </div>
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" crossorigin="anonymous"></script>
-        <script src="js/scripts.js"></script>
+        <script src="../js/scripts.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.js" crossorigin="anonymous"></script>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
         <script>

@@ -1,24 +1,26 @@
 <?php
-    require_once('_preload.php');
-    $nav_expanded = TRUE;
+    require_once($_SERVER["DOCUMENT_ROOT"] . '/_preload.php');
+    $_SESSION["nav_expanded"] = TRUE;
     $saved = FALSE;
-    if (array_key_exists("AcceptRules", $functions)) {
-        $acprKey = $functions["AcceptRules"];
-        if(filesize($config[$acprKey . "_accept_rules_message_file_path"])) {
-            $messageContent = file_get_contents($config[$acprKey . "_accept_rules_message_file_path"], "r") or die("Unable to open(read) '" . $config[$acprKey . "_accept_rules_message_file_path"] . "' file!");
+    if (array_key_exists("AcceptRules", $_SESSION["functions"])) {
+        $acprKey = $_SESSION["functions"]["AcceptRules"];
+        if(filesize($_SESSION["config"][$acprKey . "_accept_rules_message_file_path"])) {
+            $messageContent = file_get_contents($_SESSION["config"][$acprKey . "_accept_rules_message_file_path"], "r") or die("Unable to open(read) '" . $_SESSION["config"][$acprKey . "_accept_rules_message_file_path"] . "' file!");
         }else{
             $messageContent = "";
         }
-        if(filesize($config[$acprKey . "_accept_rules_forbidden_file_path"])) {
-            $forbiddenNames = fileReadContentWithoutSeparator($config[$acprKey . "_accept_rules_forbidden_file_path"]);
+        if(filesize($_SESSION["config"][$acprKey . "_accept_rules_forbidden_file_path"])) {
+            $forbiddenNames = fileReadContentWithoutSeparator($_SESSION["config"][$acprKey . "_accept_rules_forbidden_file_path"]);
         }
+    }else{
+        header("Refresh:0; url=/core.php");
+        exit();
     }
-
     foreach($_POST as $key => $value){
         if( str_starts_with($key, "rmItem")){
             $number = str_replace("rmItem", "", $key);
             unset($forbiddenNames[$_POST['item' . $number]]);
-            write_config_file($forbiddenNames, $config[$acprKey . "_accept_rules_forbidden_file_path"]);
+            write_config_file($forbiddenNames, $_SESSION["config"][$acprKey . "_accept_rules_forbidden_file_path"]);
             $saved = TRUE;
         }
     }
@@ -30,14 +32,14 @@
                 $forbiddenNames[$value] = "";
             }
         }
-        $config[$acprKey . "_accept_rules_first_group"] = $_POST['accept_rules_first_group'];
-        $config[$acprKey . "_accept_rules_accepted_group"] = $_POST['accept_rules_accepted_group'];
-        $config[$acprKey . "_accept_rules_poke_message"] = $_POST['accept_rules_poke_message'];
-        $config[$acprKey . "_accept_rules_name_seperators"] = $_POST['accept_rules_name_seperators'];
+        $_SESSION["config"][$acprKey . "_accept_rules_first_group"] = $_POST['accept_rules_first_group'];
+        $_SESSION["config"][$acprKey . "_accept_rules_accepted_group"] = $_POST['accept_rules_accepted_group'];
+        $_SESSION["config"][$acprKey . "_accept_rules_poke_message"] = $_POST['accept_rules_poke_message'];
+        $_SESSION["config"][$acprKey . "_accept_rules_name_seperators"] = $_POST['accept_rules_name_seperators'];
         $messageContent = $_POST['privateMessage'];
-        write_content_block($messageContent, $config[$acprKey . "_accept_rules_message_file_path"] );
-        write_config_file($forbiddenNames, $config[$acprKey . "_accept_rules_forbidden_file_path"]);
-        saveConfig($config, $configPath);
+        write_content_block($messageContent, $_SESSION["config"][$acprKey . "_accept_rules_message_file_path"] );
+        write_config_file($forbiddenNames, $_SESSION["config"][$acprKey . "_accept_rules_forbidden_file_path"]);
+        saveConfig($_SESSION["config"], $_SESSION["configPath"]);
         $saved = TRUE;
     }
 ?>
@@ -50,18 +52,18 @@
         <meta name="description" content="" />
         <meta name="author" content="" />
         <title>Funktion - Accept Rules</title>
-        <link href="css/styles.css" rel="stylesheet" />
+        <link href="../css/styles.css" rel="stylesheet" />
         <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" crossorigin="anonymous" />
         <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/js/all.min.js" crossorigin="anonymous"></script>
     </head>
     <body class="sb-nav-fixed">
         <?php
-            require_once('_nav-header.php');
+            require_once($_SERVER["DOCUMENT_ROOT"] . '/_nav-header.php');
         ?>
         <div id="layoutSidenav">
             <div id="layoutSidenav_nav">
                 <?php
-                    require_once('_nav.php');
+                    require_once($_SERVER["DOCUMENT_ROOT"] . '/_nav.php');
                 ?>
             </div>
             <div id="layoutSidenav_content">
@@ -90,23 +92,23 @@
                                 <div class="form-group row">
                                     <label class="col-sm-4 control-label" for="inputServergroup">Gast Gruppe bei der ersten Verbindung</label>
                                     <div class="col-sm-4">
-                                        <input class="form-control" id="inputServergroup" type="text" name="accept_rules_first_group" placeholder="enter first servergroup" value=<?php echo '"' . $config[$acprKey . "_accept_rules_first_group"] . '"' ?> required/>
+                                        <input class="form-control" id="inputServergroup" type="text" name="accept_rules_first_group" placeholder="enter first servergroup" value=<?php echo '"' . $_SESSION["config"][$acprKey . "_accept_rules_first_group"] . '"' ?> required/>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="col-sm-4 control-label" for="inputServergroup2">Gast Gruppe die nach dem Akzeptieren vergeben werden soll</label>
                                     <div class="col-sm-4">
-                                        <input class="form-control" id="inputServergroup2" type="text" name="accept_rules_accepted_group" placeholder="enter second servergroup" value=<?php echo '"' . $config[$acprKey . "_accept_rules_accepted_group"] . '"' ?> required/>
+                                        <input class="form-control" id="inputServergroup2" type="text" name="accept_rules_accepted_group" placeholder="enter second servergroup" value=<?php echo '"' . $_SESSION["config"][$acprKey . "_accept_rules_accepted_group"] . '"' ?> required/>
                                     </div>
                                 </div>
                                 <div class="form-group row" >
                                     <div class="col-sm-12 input-group">
                                         <label class="col-sm-4 control-label" for="inputPokeText">Nachricht die der Client als Poke Nachricht erhalten soll.</label>
                                         <div class="input-group-prepend">
-                                            <span id="charNum" class="input-group-text"><?php echo "verbleibend: " . 100 - strlen($config[$acprKey . "_accept_rules_poke_message"]); ?></span>
+                                            <span id="charNum" class="input-group-text"><?php echo "verbleibend: " . 100 - strlen($_SESSION["config"][$acprKey . "_accept_rules_poke_message"]); ?></span>
                                         </div>
                                         <div class="col-sm-4">
-                                            <textarea name="accept_rules_poke_message" class="form-control" onkeyup="countChar(this)" id="inputPokeText" placeholder="Text eingeben die der Client als Poke Nachricht erhalten soll" rows="1"><?php echo $config[$acprKey . "_accept_rules_poke_message"]; ?></textarea>
+                                            <textarea name="accept_rules_poke_message" class="form-control" onkeyup="countChar(this)" id="inputPokeText" placeholder="Text eingeben die der Client als Poke Nachricht erhalten soll" rows="1"><?php echo $_SESSION["config"][$acprKey . "_accept_rules_poke_message"]; ?></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -119,7 +121,7 @@
                                 <div class="form-group row" >
                                     <label class="col-sm-4 control-label" for="inputTrenner">TeamSpeak Namen Trenner</label>
                                     <div class="col-sm-4">
-                                        <input class="form-control" id="inputTrenner" type="text" name="accept_rules_name_seperators" placeholder="-,/,|" value=<?php echo '"' . $config[$acprKey . "_accept_rules_name_seperators"] . '"' ?> required/>
+                                        <input class="form-control" id="inputTrenner" type="text" name="accept_rules_name_seperators" placeholder="-,/,|" value=<?php echo '"' . $_SESSION["config"][$acprKey . "_accept_rules_name_seperators"] . '"' ?> required/>
                                     </div>
                                 </div>
                                 <div class="form-group row" >
@@ -166,17 +168,16 @@ for ($x = 1; $x <= 3; $x++) { ?>
                 </main>
                 <footer class="py-4 bg-light mt-auto">
                     <?php
-                        require_once('_footer.php');
+                        require_once($_SERVER["DOCUMENT_ROOT"] . '/_footer.php');
                     ?>
                 </footer>
             </div>
         </div>
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-        <script src="js/scripts.js"></script>
+        <script src="../js/scripts.js"></script>
         <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
         <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
-        <script src="assets/demo/datatables-demo.js"></script>
         <script>
             function countChar(val) {
                 var len = val.value.length;

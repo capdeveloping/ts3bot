@@ -1,8 +1,8 @@
 <?php
 #region Instance
 function loadCurrentInstance(){
-    if(file_exists(".current")) {
-        $instance_name = file_get_contents(".current", "r") or die("Unable to open(read) '.current' file!");
+    if(file_exists( $_SERVER["DOCUMENT_ROOT"] . "/.current")) {
+        $instance_name = file_get_contents( $_SERVER["DOCUMENT_ROOT"] . "/.current", "r") or die("Unable to open(read) '.current' file!");
         return $instance_name;
     }
     return NULL;
@@ -51,13 +51,13 @@ function countActiveInstances($instances){
 }
 
 function removeCurrentInstance(){
-    exec("rm .current", $resultexec);
+    exec("rm " . $_SERVER["DOCUMENT_ROOT"] . "/.current", $resultexec);
 }
 
 function saveCurrentInstance($POST, $instances){
     foreach($instances as $key => $value){
         if (isset($POST[$key])){
-            $currentFile = fopen(".current", "w+") or die("Unable to open file!");
+            $currentFile = fopen( $_SERVER["DOCUMENT_ROOT"] . "/.current", "w+") or die("Unable to open file!");
             fwrite($currentFile, array_key_first ( $POST ));
             fclose($currentFile);
             return TRUE;
@@ -446,28 +446,43 @@ function generateRandomString($length = 10) {
 
 function startScript($action){
     $output = "";
-    exec("/control-bot.sh " . escapeshellarg($action) . " 2>&1", $resultexec);
+    exec("/bin/bash /control-bot.sh " . escapeshellarg($action) . " 2>&1", $resultexec);
     foreach($resultexec as $line) {
         $output .= $line.'<br>';
     }
     $err_msg = '<br><br>Result of ts3bot.jar:<br><pre>'.$output.'</pre>';
     $err_lvl = 1;
     usleep(80000);
-    $logoutput = getlog($number_lines);
 }
 
 function startScriptWithParams($action, $param1, $param2 = NULL){
     $output = "";
     if($param2 === NULL){
-        exec("/control-bot.sh " . escapeshellarg($action) . " " . escapeshellarg($param1) . " 2>&1", $resultexec);
+        exec("/bin/bash /control-bot.sh " . escapeshellarg($action) . " " . escapeshellarg($param1) . " 2>&1", $resultexec);
     }else{
-        exec("/control-bot.sh " . escapeshellarg($action) . " " . escapeshellarg($param1) . " " . escapeshellarg($param2) . " 2>&1", $resultexec);
+        exec("/bin/bash /control-bot.sh " . escapeshellarg($action) . " " . escapeshellarg($param1) . " " . escapeshellarg($param2) . " 2>&1", $resultexec);
     }
     foreach($resultexec as $line) {
         $output .= $line.'<br>';
     }
+    print_r($output);
 }
 
+function getstartlog() {
+	$lines=array();
+	if( file_exists("/data/logs/start.log") ) {
+		$fp = fopen("/data/logs/start.log", "r");
+		$buffer=array();
+		while($line = fgets($fp, 4096)) {
+			array_push($buffer, $line);
+		}
+		fclose($fp);
+		foreach($buffer as $line) {
+            array_push($lines, $line);
+		}
+	}
+	return $lines;
+}
 
 function getlog($number_lines) {
 	$lines=array();
@@ -486,6 +501,7 @@ function getlog($number_lines) {
             }
             continue;
 		}
+		$lines = array_reverse($lines);
 	} else {
 		$lines[] = "No log entry found...\n";
 		$lines[] = "The logfile will be created with next startup.\n";
