@@ -31,14 +31,11 @@ RUN ln -sf /proc/self/fd/1 $APACHE_LOG_DIR/access.log && \
 
 # By default start up apache in the foreground, override with /bin/bash for interative.
 
-RUN mkdir -p /data/configs /data/logs && \
-    chown www-data:www-data /data -R
-
 COPY ts3bot.jar /ts3bot.jar
 COPY control-bot.sh /control-bot.sh
 COPY entrypoint.sh /etc/entrypoint.sh
 COPY html/ /var/www/html/
-COPY serverconfig.template /data/serverconfig.template
+COPY serverconfig.template /serverconfig.template
 
 RUN chmod gu+x /control-bot.sh && \
     chown www-data:www-data -R /control-bot.sh /ts3bot.jar /var/www/html && \

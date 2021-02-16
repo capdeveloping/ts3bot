@@ -3,7 +3,13 @@
 echo "Europe/Berlin" > /etc/timezone
 ln -sf /usr/share/zoneinfo/Europe/Berlin /etc/localtime
 ln -sf /data/ts3_icons/ /
+mkdir -p /data/configs /data/logs
 chown www-data:www-data -R /data/
+
+if [ ! -e "/data/serverconfig.template" ]; then
+  cp /serverconfig.template /data/serverconfig.template
+  chown www-data:www-data /data/serverconfig.template
+fi
 
 if [ ! -e "/data/db.sqlite3" ]; then
   echo "CREATE TABLE users(username text,password text);" > /data/db.schema
