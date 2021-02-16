@@ -103,6 +103,20 @@
                             <br>
                             <?php }?>
                             <br>
+                            <div style="align-self: center;">
+                                <div class="col-sm-4"></div>
+                                <div class="row" >
+                                    <h4>Wie erstelle ich einen token und woher bekomme ich eine client id?</h4>
+                                </div>
+                                <div >
+                                    <p>1. Gehe auf die Seite <a href="https://twitchtokengenerator.com/">https://twitchtokengenerator.com/</a> (dieser Dienst wird nicht von capdeveloping betrieben!!! Nutzen auf eigene Gefahr!)</p>
+                                    <p>2. Wähle Custom Scope aus. Da der Bot nur die Channel Abfragt, ob sie online sind, wird kein Scope der dort gelistet ist bentötigt.</p>
+                                    <p>3. Scrolle nach unten und klicke auf token generieren. Nun fragt Twitch, ob du dich von dort aus anmelden und die Funktionen erlauben möchtest.</p>
+                                    <p>   Der Twitch Account muss die Channel nicht abonniert haben. Es kann auch dafür ein neuer Account erstellt werden.</p>
+                                    <p>4. Nun kann die CLIENT ID und der ACCESS TOKEN von dort kopiert werden.</p>
+                                </div>
+                            </div>
+                            <br>
                             <form class="form-horizontal" data-toggle="validator" name="save" method="POST">
                                 <div class="form-group row">
                                     <label class="col-sm-4 control-label" for="inputTwitchId">Twitch client id</label>
