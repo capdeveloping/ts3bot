@@ -121,7 +121,9 @@ public class FormatManager {
 
     public static String fillStringToSpecifiLength(String message, int length){
         StringBuilder messageBuilder = new StringBuilder(message);
-        messageBuilder.append(" ".repeat(Math.max(0, length - messageBuilder.length() + 1)));
+        for(int x = message.length(); x <= length; x++){
+            messageBuilder.append(" ");
+        }
         message = messageBuilder.toString();
         return message;
     }
