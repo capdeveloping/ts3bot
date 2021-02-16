@@ -4,10 +4,7 @@ import com.github.theholywaffle.teamspeak3.TS3Api;
 import com.github.theholywaffle.teamspeak3.api.TextMessageTargetMode;
 import com.github.theholywaffle.teamspeak3.api.event.TS3EventAdapter;
 import com.github.theholywaffle.teamspeak3.api.event.TextMessageEvent;
-import com.github.theholywaffle.teamspeak3.api.wrapper.Channel;
-import com.github.theholywaffle.teamspeak3.api.wrapper.Client;
-import com.github.theholywaffle.teamspeak3.api.wrapper.DatabaseClient;
-import com.github.theholywaffle.teamspeak3.api.wrapper.ServerGroup;
+import com.github.theholywaffle.teamspeak3.api.wrapper.*;
 import de.ts3bot.app.TaskTimer;
 import de.ts3bot.app.features.TwitchController;
 import de.ts3bot.app.library.configload.TS3ConfigWrite;
@@ -44,7 +41,6 @@ public class AdminMessageEvent extends TS3EventAdapter {
     private BotInstanceManager botInstanceManager;
     private TwitchController twitchController;
     private static final String GERMAN = "german";
-    private static final String START_BOTINSTANCE = "!botinstance";
 
     public AdminMessageEvent(TS3ServerConfig serverConfig, TS3TextLoad textLoad, TS3ConfigWrite configWrite, BotInstanceManager botInstanceManager, TwitchController twitchController) {
         this.serverConfig = serverConfig;
@@ -95,6 +91,7 @@ public class AdminMessageEvent extends TS3EventAdapter {
                 || e.getMessage().startsWith("!bot")
                 || e.getMessage().startsWith("!csgo")
                 || e.getMessage().startsWith("!getusers")
+                || e.getMessage().startsWith("!rmuser")
                 || e.getMessage().startsWith("!twitchadduser")
                 || e.getMessage().equals("!quit"))) {
             String message;
@@ -155,6 +152,10 @@ public class AdminMessageEvent extends TS3EventAdapter {
             getUsersConnectionTime(e, message);
         }
 
+        if (message.startsWith("!rmuser")) {
+            removeUserFromAllGroups(e, message);
+        }
+
         if (message.startsWith("!twitchadduser")) {
             twitchAddUser(e, message);
         }
@@ -182,7 +183,59 @@ public class AdminMessageEvent extends TS3EventAdapter {
         }
     }
 
+    private void removeUserFromAllGroups(TextMessageEvent e, String message) {
+        String[] userArr = message.replace("!rmuser", "").trim().split(" ");
+        if(message.equals("!rmuser") || userArr[0].isEmpty()){
+            api.sendPrivateMessage(e.getInvokerId(), "!rmuser <uid>.\n" +
+                    "Bsp 1: !rmuser lCAe2kp38Js5cKqtWlMRQDMux4U=\n" +
+                    "Bsp 2(mehrere gleichzeitig): !rmuser lCAe2kp38Js5cKqtWlMRQDMux4U= lCAe2kp38Js5cKqtWlMRQDMux4U= lCAe2kp38Js5cKqtWlMRQDMux4U=\n" +
+                    "Loescht den User mit der UID aus allen Servergruppen.");
+            return;
+        }
+
+        api.sendPrivateMessage(e.getInvokerId(), "Lass mich den User kurz bereinigen.");
+
+        StringBuffer stringBuffer = new StringBuffer();
+        for(String uid : userArr){
+            if(uid.isEmpty()){
+                continue;
+            }
+            int cldbId;
+            DatabaseClientInfo dbclient;
+            try {
+                dbclient = api.getDatabaseClientByUId(uid);
+                cldbId = dbclient.getDatabaseId();
+            }catch(Exception ex){
+                stringBuffer.append("User mit der UID '").append(uid).append("' ")
+                        .append(" konnte nicht gefunden werden!\n\n");
+                continue;
+            }
+
+            stringBuffer.append("Aus folgenden Gruppe wurde der User( '")
+                    .append(dbclient.getNickname())
+                    .append("' mit der UID: '").append(uid).append("' ")
+                    .append(" ) entfernt: \n\n");
+            for (ServerGroup serverGroup : api.getServerGroupsByClientId(cldbId)){
+                if(serverGroup.getId() == api.getServerInfo().getDefaultServerGroup()){
+                    continue;
+                }
+                stringBuffer.append("Gruppenid: ").append(serverGroup.getId());
+                stringBuffer.append(" | Gruppenname: ").append(serverGroup.getName()).append("\n");
+                api.removeClientFromServerGroup(serverGroup.getId(), dbclient.getDatabaseId());
+            }
+            stringBuffer.append("------------------------------\n");
+        }
+        api.sendPrivateMessage(e.getInvokerId(), stringBuffer.toString());
+    }
+
     private void getUsersConnectionTime(TextMessageEvent e, String message) {
+        if(message.equals("!getusers")){
+            api.sendPrivateMessage(e.getInvokerId(), "!getusers <gruppenid> <1w|2w|3w|4w|1m|2m|3m|4m|5m>.\n" +
+                    "Bsp: !getusers 3 1w\n" +
+                    "Gibt alle User der Gruppe aus mit der Gruppenid 3 die länger als 1 Woche nicht mehr auf dem TS waren.");
+            return;
+        }
+
         api.sendPrivateMessage(e.getInvokerId(), "Lass mich das kurz nachschauen.");
 
         String[] groupIdStr = message.replace("!getusers", "").trim().split(" ");
@@ -204,7 +257,8 @@ public class AdminMessageEvent extends TS3EventAdapter {
             Date lastConnectedDate = dbclient.getLastConnectedDate();
             Date oldate = getDate(timeDistance);
             if(lastConnectedDate.before(oldate)){
-                stringBuffer.append("Nickname: ").append(dbclient.getNickname());
+                stringBuffer.append("Nickname: ").append(FormatManager.fillStringToSpecifiLength(dbclient.getNickname(), 25));
+                stringBuffer.append(" | UID: ").append(dbclient.getUniqueIdentifier());
                 stringBuffer.append(" | Letzte Verbindung: ").append(lastConnectedDate).append("\n");
             }
         }
@@ -340,51 +394,6 @@ public class AdminMessageEvent extends TS3EventAdapter {
         }
         if (message.startsWith("!botnickname set")) {
             botNickname(message);
-        }
-        if (message.startsWith(START_BOTINSTANCE)) {
-            manageBotInstance(e,message);
-        }
-    }
-
-    private void manageBotInstance(TextMessageEvent e, String message){
-        if (message.equals(START_BOTINSTANCE)) {
-            StringBuilder builder = new StringBuilder("\nVerfügbare Botinstancen:\n");
-            for (String botinstance : botInstanceManager.getInstanceList().keySet()) {
-                builder.append("\t");
-                builder.append(botinstance);
-                builder.append(" : ");
-                builder.append(botInstanceManager.getInstanceList().get(botinstance).getOnline());
-                builder.append("\n");
-            }
-            api.sendPrivateMessage(e.getInvokerId(), builder.toString());
-        }
-
-        if(message.startsWith(START_BOTINSTANCE + " ") && message.contains("stop")){
-            stopBotinstance(e, message);
-        }
-
-        if(message.startsWith(START_BOTINSTANCE + " ") && message.contains("start")){
-            startBotinstance(e, message);
-        }
-    }
-
-    private void startBotinstance(TextMessageEvent e, String message) {
-        message = message.replace(START_BOTINSTANCE + " ","").replace("start ","");
-        for (String botinstance : botInstanceManager.getInstanceList().keySet()) {
-            if (botinstance.equals(message)) {
-                botInstanceManager.startThread(botinstance);
-                api.sendPrivateMessage(e.getInvokerId(), "Starting Botinstance: " + message);
-            }
-        }
-    }
-
-    private void stopBotinstance(TextMessageEvent e, String message) {
-        message = message.replace(START_BOTINSTANCE + " ","").replace("stop ","");
-        for (String botinstance : botInstanceManager.getInstanceList().keySet()) {
-            if (botinstance.equals(message)) {
-                botInstanceManager.stopThread(botinstance);
-                api.sendPrivateMessage(e.getInvokerId(), "Stopping Botinstance: " + message);
-            }
         }
     }
 

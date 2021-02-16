@@ -118,4 +118,11 @@ public class FormatManager {
         }
         return help;
     }
+
+    public static String fillStringToSpecifiLength(String message, int length){
+        StringBuilder messageBuilder = new StringBuilder(message);
+        messageBuilder.append(" ".repeat(Math.max(0, length - messageBuilder.length() + 1)));
+        message = messageBuilder.toString();
+        return message;
+    }
 }
