@@ -2,7 +2,7 @@
     require_once($_SERVER["DOCUMENT_ROOT"] . '/_preload.php');
     $_SESSION["nav_expanded"] = TRUE;
 
-    if ( ! array_key_exists("ClientAFK", $_SESSION["functions"])) {
+    if ( ! array_key_exists("WelcomeMessage", $_SESSION["functions"])) {
         header("Refresh:0; url=/core.php");
         exit();
     }
@@ -11,9 +11,17 @@
     if ( isset($_POST['update']) ){
         foreach($_SESSION["functions"]["WelcomeMessage"] as $number => $key) {
             $_SESSION["config"][$key . "_welcome_message"] = $_POST['welcomeMessage-' . $key];
-            $_SESSION["config"][$key . "_welcome_poke_client"] = $_POST['enablePoke-' . $key];
+            if (filter_var($_POST['enablePoke-' . $key], FILTER_VALIDATE_BOOLEAN)){
+                $_SESSION["config"][$key . "_welcome_poke_client"] = "true";
+            }else{
+                $_SESSION["config"][$key . "_welcome_poke_client"] = "false";
+            }
             $_SESSION["config"][$key . "_welcome_poke_message"] = $_POST['pokeMessage-' . $key];
-            $_SESSION["config"][$key . "_welcome_date"] = $_POST['date-' . $key];
+            if(empty($_POST['date-' . $key])){
+                $_SESSION["config"][$key . "_welcome_date"] = "empty";
+            }else{
+                $_SESSION["config"][$key . "_welcome_date"] = $_POST['date-' . $key];
+            }
             $_SESSION["config"][$key . "_welcome_repeat"] = $_POST['repeat-' . $key];
             $_SESSION["config"][$key . "_welcome_group_ids"] = $_POST['groupids-' . $key];
         }
@@ -74,7 +82,7 @@
                                         <div class="form-group">
                                             <div class="row">
                                                 <div class="col-sm-7">
-                                                    <label class="control-label" for="welcomeMessage-<?php echo $key; ?>"  >Willkommensnachricht die der Client erhalten soll.</label>
+                                                    <label class="control-label" for="welcomeMessage-<?php echo $key; ?>" >Willkommensnachricht die der Client erhalten soll.</label>
                                                 </div>
                                             </div>
                                             <div class="col-sm-12">
@@ -88,7 +96,7 @@
                                                 </div>
                                                 <div class="col-sm-1">
                                                     <label class="switch">
-                                                      <input name="enablePoke-<?php echo $key; ?>" id="inputWelcomePokeClient-<?php echo $key; ?>" type="checkbox" checked >
+                                                      <input name="enablePoke-<?php echo $key; ?>" id="inputWelcomePokeClient-<?php echo $key; ?>" type="checkbox" <?php if( filter_var($_SESSION["config"][$key . "_welcome_poke_client"], FILTER_VALIDATE_BOOLEAN)){ echo "checked";} ?> >
                                                       <span class="slider round"></span>
                                                     </label>
                                                 </div>
@@ -102,15 +110,15 @@
                                             </div>
                                             <div class="col-sm-12 input-group">
                                                 <div class="input-group-prepend">
-                                                    <span id="charNum-<?php echo $key; ?>" class="input-group-text"></span>
+                                                    <span id="charNum-<?php echo $key; ?>" class="input-group-text"><?php echo "verbleibend: " . 100 - strlen($_SESSION["config"][$key . "_welcome_poke_message"]); ?></span>
                                                 </div>
                                                 <textarea name="pokeMessage-<?php echo $key; ?>" class="form-control" onkeyup="countChar(this, '<?php echo $key; ?>')" id="inputWelcomePokeMessage-<?php echo $key; ?>" placeholder="Text eingeben die der Client als Poke Nachricht erhalten soll" rows="1"><?php echo $_SESSION["config"][$key . "_welcome_poke_message"]; ?></textarea>
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <div class="row">
-                                                <div class="col-sm-7">
-                                                    <label class="control-label" for="inputWelcomeEndDate-<?php echo $key; ?>" >Wann ist das Enddatum?</label>
+                                                <div class="col-sm-8">
+                                                    <label class="control-label" for="inputWelcomeEndDate-<?php echo $key; ?>" >Wann ist das Enddatum? (leer lassen, falls es niemals ablaufen soll)</label>
                                                 </div>
                                                 <div class="col-sm-4 input-group">
                                                     <div class="input-group-prepend">
@@ -122,8 +130,8 @@
                                         </div>
                                         <div class="form-group">
                                             <div class="row">
-                                                <div class="col-sm-7">
-                                                    <label class="control-label" for="inputWelcomeRepeat-<?php echo $key; ?>" >Wie hoft soll die Nachricht gesendet werden? daily/always</label>
+                                                <div class="col-sm-8">
+                                                    <label class="control-label" for="inputWelcomeRepeat-<?php echo $key; ?>" >Wie hoft soll die Nachricht gesendet werden? (daily/always)</label>
                                                 </div>
                                                 <div class="col-sm-4">
                                                     <input name="repeat-<?php echo $key; ?>" class="form-control" id="inputWelcomeRepeat-<?php echo $key; ?>" type="text" placeholder=<?php echo "daily/always" ?> value=<?php echo '"' . $_SESSION["config"][$key . "_welcome_repeat"] . '"'; ?> />
@@ -132,8 +140,8 @@
                                         </div>
                                         <div class="form-group">
                                             <div class="row">
-                                                <div class="col-sm-7">
-                                                    <label class="control-label" for="inputWelcomeGroupIds-<?php echo $key; ?>" >Welche Gruppe soll die Nachricht bekommen</label>
+                                                <div class="col-sm-8">
+                                                    <label class="control-label" for="inputWelcomeGroupIds-<?php echo $key; ?>" >Welche Gruppe(id) soll die Nachricht bekommen?</label>
                                                 </div>
                                                 <div class="col-sm-4">
                                                     <input name="groupids-<?php echo $key; ?>" class="form-control" id="inputWelcomeGroupIds-<?php echo $key; ?>" type="text" placeholder=<?php echo "gruppen ids" ?> value=<?php echo '"' . $_SESSION["config"][$key . "_welcome_group_ids"] . '"'; ?> />

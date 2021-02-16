@@ -202,7 +202,9 @@ $counter++;
                     </div>
                 </main>
                 <footer class="py-4 bg-light mt-auto">
-<?php require_once('_footer.php'); ?>
+                    <?php
+                        require_once($_SERVER["DOCUMENT_ROOT"] . '/_footer.php');
+                    ?>
                 </footer>
             </div>
         </div>

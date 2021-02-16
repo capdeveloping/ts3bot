@@ -67,7 +67,10 @@ if (array_key_exists("ChannelAutoCreate", $_SESSION["functions"])) { ?>
                                 <div class="sb-nav-link-icon"><i class="fas fa-server"></i></div>
                                 Instanzen
                             </a>
-
+                            <a class="nav-link" href="/info.php">
+                                <div class="sb-nav-link-icon"><i class="fas fa-info-circle"></i></div>
+                                Bot Informationen
+                            </a>
                         </div>
                     </div>
                 </nav>
