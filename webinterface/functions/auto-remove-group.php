@@ -8,7 +8,7 @@
         exit();
     }
     $saved = FALSE;
-    if (isset($_POST['save'])){
+    if (isset($_POST['update'])){
 
         $_SESSION["config"][$autormKey . "_auto_remove_group_ids"] = $_POST['auto_remove_group_ids'];
 
@@ -58,7 +58,16 @@
                                 <div class="form-group row">
                                     <label class="col-sm-4 control-label" for="inputServergroup">AutoRemove Servergroup</label>
                                     <div class="col-sm-4">
-                                        <input class="form-control" id="inputServergroup" type="text" name="auto_remove_group_ids" placeholder="enter servergoup" value=<?php echo '"' . $_SESSION["config"][$autormKey . "_auto_remove_group_ids"] . '"' ?> required/>
+                                        <select name="auto_remove_group_ids" class="form-select" aria-label="select">
+                                            <option value="">-- Servergruppe auswählen --</option>
+<?php foreach ($_SESSION['db_groups'] as $id=>$name){
+        if ( strval($id) === $_SESSION["config"][$autormKey . "_auto_remove_group_ids"]) { ?>
+                                            <option selected value="<?php echo $id?>"><?php print_r("(" . $id . ") " . $name)?></option>
+<?php   } else {?>
+                                            <option value="<?php echo $id?>"><?php print_r("(" . $id . ") " . $name)?></option>
+<?php   }
+}?>
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="col-md-3"></div>

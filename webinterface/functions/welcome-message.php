@@ -41,6 +41,8 @@
         <link href="../css/styles.css" rel="stylesheet" />
         <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" crossorigin="anonymous" />
         <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/js/all.min.js" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="../js/virtual-select.min.css" />
+        <script src="../js/virtual-select.min.js"></script>
     </head>
     <body class="sb-nav-fixed">
 <?php
@@ -91,14 +93,22 @@
                                         </div>
                                         <div class="form-group">
                                             <div class="row">
-                                                <div class="col-sm-7">
+                                                <div class="col-sm-8">
                                                     <label class="control-label" for="inputWelcomePokeClient-<?php echo $key; ?>" >Soll der Client angestupst werden?</label>
                                                 </div>
-                                                <div class="col-sm-1">
-                                                    <label class="switch">
-                                                      <input name="enablePoke-<?php echo $key; ?>" id="inputWelcomePokeClient-<?php echo $key; ?>" type="checkbox" <?php if( filter_var($_SESSION["config"][$key . "_welcome_poke_client"], FILTER_VALIDATE_BOOLEAN)){ echo "checked";} ?> >
-                                                      <span class="slider round"></span>
-                                                    </label>
+                                                <div class="col-sm-4">
+                                                    <select name=<?php echo '"enablePoke-' . $key . '"'; ?> class="form-select" aria-label="select">
+<?php if ($_SESSION["config"][$key . "_welcome_poke_client"] === "true"){?>
+                                                        <option selected value="true">anstupsen</option>
+                                                        <option value="false">nicht anstupsen</option>
+<?php } else if ( $_SESSION["config"][$key . "_welcome_poke_client"] === "false"){?>
+                                                        <option value="true">anstupsen</option>
+                                                        <option selected value="false">nicht anstupsen</option>
+<?php } else { ?>
+                                                        <option value="true">anstupsen</option>
+                                                        <option value="false">nicht anstupsen</option>
+<?php } ?>
+                                                    </select>
                                                 </div>
                                             </div>
                                         </div>
@@ -131,10 +141,21 @@
                                         <div class="form-group">
                                             <div class="row">
                                                 <div class="col-sm-8">
-                                                    <label class="control-label" for="inputWelcomeRepeat-<?php echo $key; ?>" >Wie hoft soll die Nachricht gesendet werden? (daily/always)</label>
+                                                    <label class="control-label" for="inputWelcomeRepeat-<?php echo $key; ?>" >Wie hoft soll die Nachricht gesendet werden?</label>
                                                 </div>
                                                 <div class="col-sm-4">
-                                                    <input name="repeat-<?php echo $key; ?>" class="form-control" id="inputWelcomeRepeat-<?php echo $key; ?>" type="text" placeholder=<?php echo "daily/always" ?> value=<?php echo '"' . $_SESSION["config"][$key . "_welcome_repeat"] . '"'; ?> />
+                                                    <select name=<?php echo '"repeat-' . $key . '"'; ?> class="form-select" aria-label="select">
+<?php if ($_SESSION["config"][$key . "_welcome_repeat"] === "daily"){?>
+                                                        <option selected value="daily">täglich</option>
+                                                        <option value="always">jedesmal</option>
+<?php } else if ( $_SESSION["config"][$key . "_welcome_repeat"] === "always"){?>
+                                                        <option value="daily">täglich</option>
+                                                        <option selected value="always">jedesmal</option>
+<?php } else { ?>
+                                                        <option value="daily">täglich</option>
+                                                        <option value="always">jedesmal</option>
+<?php } ?>
+                                                    </select>
                                                 </div>
                                             </div>
                                         </div>
@@ -144,7 +165,7 @@
                                                     <label class="control-label" for="inputWelcomeGroupIds-<?php echo $key; ?>" >Welche Gruppe(id) soll die Nachricht bekommen?</label>
                                                 </div>
                                                 <div class="col-sm-4">
-                                                    <input name="groupids-<?php echo $key; ?>" class="form-control" id="inputWelcomeGroupIds-<?php echo $key; ?>" type="text" placeholder=<?php echo "gruppen ids" ?> value=<?php echo '"' . $_SESSION["config"][$key . "_welcome_group_ids"] . '"'; ?> />
+                                                    <div name=<?php echo '"groupids-' . $key . '"'; ?> id="multiple-select-<?php echo $key?>"></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -200,6 +221,38 @@
                     document.getElementById("inputWelcomeEndDate-" + key).style.color = "green";
                 }
             };
+
+          function getGroups() {
+              var optionsData = [];
+
+<?php foreach ($_SESSION['db_groups'] as $id=>$name){?>
+              optionsData.push({ value: "<?php echo $id?>", label: "<?php print_r("(" . $id . ") " . $name)?>"});
+<?php }?>
+              return optionsData;
+          }
+
+          function getSelected(key) {
+              var optionsData = [];
+              switch(key) {
+<?php foreach($_SESSION["functions"]["WelcomeMessage"] as $number=>$key){?>
+                case "groups-<?php echo $key?>":
+                    optionsData = [<?php echo getJSSelectOption($_SESSION['db_groups'], $_SESSION["config"][$key . "_welcome_group_ids"]);?>];
+                    break;
+<?php }?>
+              }
+              return optionsData;
+         }
+
+<?php foreach($_SESSION["functions"]["WelcomeMessage"] as $number=>$key){?>
+
+         VirtualSelect.init({
+            ele: '#multiple-select-<?php echo $key?>',
+            options: getGroups(),
+            multiple: true,
+            selectedValue: getSelected("groups-<?php echo $key?>"),
+            placeholder: 'Servergruppen auswählen',
+          });
+<?php }?>
         </script>
     </body>
 </html>

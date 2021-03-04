@@ -36,13 +36,14 @@ public class ReloadAfterConnect {
     private TwitchController twitchController;
     private AcceptRulesEvent acceptRulesEvent;
     private AutoRemove autoRemove;
+    private CollectData collectData;
 
     ReloadAfterConnect(TS3ServerConfig serverConfig, TS3TextLoad ts3TextLoad, TS3ConfigWrite configWrite, MoveToClient moveToClient,
                        List<ClientAfkMode> clientAfkMode, TaskTimer taskTimer, BroadcastMessage broadcastMessage, UserMessageEvent userMessageEvent,
                        AdminMessageEvent adminMessageEvent, NewVersionChecker versionChecker, TS3Viewer ts3Viewer, AutomaticChannel automaticChannel,
                        UpdateGameServerChannel updateGameServerChannel, List<ClientJoinedChannelEvent> clientMovedEvent,
                        WelcomeMessageEvent welcomeMessageEvent, TwitchController twitchController, AcceptRulesEvent acceptRulesEvent,
-                       AutoRemove autoRemove) {
+                       AutoRemove autoRemove, CollectData collectData) {
         this.serverConfig = serverConfig;
         this.ts3TextLoad = ts3TextLoad;
         this.configWrite = configWrite;
@@ -62,6 +63,7 @@ public class ReloadAfterConnect {
         this.twitchController = twitchController;
         this.acceptRulesEvent = acceptRulesEvent;
         this.autoRemove = autoRemove;
+        this.collectData = collectData;
     }
 
     void updateAll(){
@@ -88,6 +90,7 @@ public class ReloadAfterConnect {
         this.api = api;
         adminMessageEvent.setApi(api);
         userMessageEvent.setApi(api);
+        collectData.setApi(api);
         if(versionChecker != null) {
             versionChecker.setApi(api);
         }
@@ -135,6 +138,7 @@ public class ReloadAfterConnect {
         adminMessageEvent.setServerConfig(serverConfig);
         ts3TextLoad.setTs3ServerConfig(serverConfig);
         configWrite.setServerConfig(serverConfig);
+        collectData.setServerConfig(serverConfig);
         if(automaticChannel != null) {
             automaticChannel.setServerConfig(serverConfig);
         }

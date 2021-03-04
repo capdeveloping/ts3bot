@@ -8,7 +8,7 @@ if( ! isset($_SESSION['userid']) ){
 
 include $_SERVER["DOCUMENT_ROOT"] . "/functions.php";
 
-saveCurrentInstance($_POST, $_SESSION["instances"]);
+saveCurrentInstance($_POST, $_SESSION["instances"], $_SERVER["DOCUMENT_ROOT"]);
 
 if( ! isset($_SESSION["config"])){
     $_SESSION["config"] = [];
@@ -26,7 +26,7 @@ if( ! isset($_SESSION["instances"])){
     $_SESSION["instances"] = [];
 }
 
-$_SESSION["instance_name"] = loadCurrentInstance();
+$_SESSION["instance_name"] = loadCurrentInstance($_SERVER["DOCUMENT_ROOT"]);
 $_SESSION["nav_expanded"] = FALSE;
 $_SESSION["instance_config_path"] = "/data/configs/instancemanager.cfg";
 
@@ -43,4 +43,6 @@ if( ! empty($_SESSION["configPath"])){
     $_SESSION["config"] = $retValue[0];
     $_SESSION["functions"] = $retValue[1];
 }
+
+include $_SERVER["DOCUMENT_ROOT"] . "/_db.php";
 ?>

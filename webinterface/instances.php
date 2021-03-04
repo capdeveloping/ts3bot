@@ -1,6 +1,9 @@
 <?php
     require_once('_preload.php');
     $saved = FALSE;
+    $oldkey = "";
+    $addNewInstance = "";
+    $invalidInstance = "";
     if (isset($_POST['addNewInstance'])){
         $addNewInstance = TRUE;
     }
@@ -20,8 +23,10 @@
                 $firstKey = array_key_first( $_SESSION["instances"] );
                 $_SESSION["configPath"] = $_SESSION["instances"][$firstKey]["instance_config_pfad"];
                 $_SESSION["instance_name"] = $firstKey;
-                saveCurrentInstance(array($_SESSION["instance_name"] => ""), $_SESSION["instances"]);
+                saveCurrentInstance(array($_SESSION["instance_name"] => ""), $_SESSION["instances"], $_SERVER["DOCUMENT_ROOT"]);
             }
+
+            startScript("restart");
             continue;
         }
         if ( str_starts_with( $key, "rename-") ){
@@ -40,8 +45,10 @@
             if($_SESSION["instance_name"] === $oldkey){
                 $_SESSION["configPath"] = $_SESSION["instances"][$newkey]["instance_config_pfad"];
                 $_SESSION["instance_name"] = $newkey;
-                saveCurrentInstance(array($_SESSION["instance_name"] => ""), $_SESSION["instances"]);
+                saveCurrentInstance(array($_SESSION["instance_name"] => ""), $_SESSION["instances"], $_SERVER["DOCUMENT_ROOT"]);
             }
+
+            startScript("restart");
             continue;
         }
     }

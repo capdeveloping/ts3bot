@@ -1,15 +1,8 @@
 <?php
     session_start();
-    if( ! isset($_SESSION['userid']) ){
-        $host  = $_SERVER['HTTP_HOST'];
-        $uri   = rtrim(dirname($_SERVER['PHP_SELF']), '/\\');
-        $extra = 'login.php';
-        print_r("http://$host$uri/$extra");
-        header("Location:http://$host$uri/$extra");
-        exit();
-    }
 
     require_once($_SERVER["DOCUMENT_ROOT"] . '/_preload.php');
+
     $_SESSION["nav_expanded"] = TRUE;
     $saved = FALSE;
     if (array_key_exists("Twitch", $_SESSION["functions"])) {
@@ -56,6 +49,7 @@
         saveConfig($_SESSION["config"], $_SESSION["configPath"]);
         $saved = TRUE;
     }
+    print_r($_POST);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -133,30 +127,50 @@
                                 <div class="form-group row" >
                                     <label class="col-sm-4 control-label" for="inputTwitchGroup">Twitch Servergroup</label>
                                     <div class="col-sm-4">
-                                        <input class="form-control" id="inputTwitchGroup" type="text" name="twitch_server_group" placeholder="twitch servergroup" value=<?php echo '"' . $_SESSION["config"][$twitchKey . "_twitch_server_group"] . '"' ?> required/>
+                                        <select name="twitch_server_group" class="form-select" aria-label="select">
+<?php foreach ($_SESSION['db_groups'] as $id=>$name){
+    if ( strval($id) === $_SESSION["config"][$twitchKey . "_twitch_server_group"]) {
+?>
+                                            <option selected value="<?php echo $id?>"><?php print_r("(" . $id . ") " . $name)?></option>
+<?php } else {?>
+                                            <option value="<?php echo $id?>"><?php print_r("(" . $id . ") " . $name)?></option>
+<?php }
+}?>
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="col-sm-3 control-label" for="inputTwitchUserFile"></label>
-                                    <div class="col-xs-4">
-                                        <label class="col-sm-12 control-label" for="inputChannelPasswords">Twitchusername</label>
+                                    <div class="col-xs-5">
+                                        <label class="col-sm-12 control-label" for="inputChannelPasswords">Twitchusername (kleingeschrieben)</label>
                                     </div>
                                     <div class="col-xs-4">
-                                        <label class="col-sm-12 control-label" for="inputChannelPasswords">Teamspeak Client UID</label>
+                                        <label class="col-sm-12 control-label" for="inputChannelPasswords">Teamspeak User</label>
                                     </div>
                                 </div>
+
 <?php
 $counter = 1;
 if( ! empty($twitchUser) ){
 foreach($twitchUser as $key=>$value){ ?>
                                     <div class="form-group row">
                                         <div class="col-sm-3"></div>
-                                        <div class="col-sm-1">
+                                        <div class="col-sm-2">
                                             <input class="form-control" id="itemKey<?php echo "$counter";?>" type="text" name="itemKey<?php echo "$counter";?>"  value='<?php echo "$key"; ?>' />
                                         </div>
                                         =
                                         <div class="col-sm-3">
-                                            <input class="form-control" id="item<?php echo "$counter";?>" type="text" name="item<?php echo "$counter";?>"  value='<?php echo "$value"; ?>' />
+                                            <select name="item<?php echo "$counter";?>" class="form-select" aria-label="select">
+                                                <option value="" >-- User auswählen --</option>
+<?php foreach ($_SESSION['db_users'] as $uid=>$name){
+    if ( strval($uid) === $value) {
+?>
+                                                <option selected value="<?php echo $uid?>"><?php print_r($name)?></option>
+<?php } else {?>
+                                                <option value="<?php echo $uid?>"><?php print_r($name)?></option>
+<?php }
+}?>
+                                            </select>
                                         </div>
                                         <div class="text-center">
                                             <button name="rmItem<?php echo "$counter";?>" type="submit" class="btn btn-danger" ><i class="fas fa-trash-alt"></i></button>
@@ -168,12 +182,22 @@ for ($x = 1; $x <= 3; $x++) { ?>
 
                                     <div class="form-group row">
                                         <div class="col-sm-3"></div>
-                                        <div class="col-sm-1">
+                                        <div class="col-sm-2">
                                             <input class="form-control" id="newItemKey<?php echo "$x"?>" type="text" name="newItemKey<?php echo "$x";?>"/>
                                         </div>
                                         =
                                         <div class="col-sm-3">
-                                            <input class="form-control" id="newItem<?php echo "$x"?>" type="text" name="newItem<?php echo "$x";?>"/>
+                                            <select name="newItem<?php echo "$x"?>" class="form-select" aria-label="select">
+                                                <option value="" >-- User auswählen --</option>
+<?php foreach ($_SESSION['db_users'] as $uid=>$name){
+    if ( strval($uid) === "ServerQuery") {
+        continue;
+    ?>
+<?php } else {?>
+                                                <option value="<?php echo $uid?>"><?php print_r($name)?></option>
+<?php }
+}?>
+                                            </select>
                                         </div>
                                     </div>
 <?php } ?>

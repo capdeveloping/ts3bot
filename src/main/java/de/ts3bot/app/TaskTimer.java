@@ -1,11 +1,10 @@
 package de.ts3bot.app;
 
-import com.github.theholywaffle.teamspeak3.TS3Api;
-import de.ts3bot.app.features.TS3Viewer;
 import de.ts3bot.app.features.ClientAfkMode;
 import de.ts3bot.app.features.NewVersionChecker;
 import de.ts3bot.app.features.UpdateGameServerChannel;
 import de.ts3bot.app.models.BotInstance;
+import de.ts3bot.app.models.CollectData;
 import de.ts3bot.app.models.TS3ServerConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,13 +18,17 @@ public class TaskTimer {
     private TS3ServerConfig serverConfig;
     private NewVersionChecker versionChecker;
     private UpdateGameServerChannel updateGameServerChannel;
+    private CollectData collectData;
 
-    public TaskTimer(List<ClientAfkMode> clientAfkMode, TS3ServerConfig serverConfig, String botname, NewVersionChecker versionChecker, UpdateGameServerChannel updateGameServerChannel) {
+    public TaskTimer(List<ClientAfkMode> clientAfkMode, TS3ServerConfig serverConfig,
+                     String botname, NewVersionChecker versionChecker,
+                     UpdateGameServerChannel updateGameServerChannel, CollectData collectData) {
         this.clientAfkMode = clientAfkMode;
         this.serverConfig = serverConfig;
         this.botname = botname;
         this.versionChecker = versionChecker;
         this.updateGameServerChannel = updateGameServerChannel;
+        this.collectData = collectData;
     }
 
     public void setServerConfig(TS3ServerConfig serverConfig) {
@@ -96,6 +99,23 @@ public class TaskTimer {
             timer[1].cancel();
             timer[1].purge();
             timer[1] = new Timer();
+        }
+    }
+
+    public void collectingData(boolean stopTasks){
+        int delaySeconds = 5;
+        int periodSeconds = 60;
+        if (timer[0]  == null) timer[0] = new Timer();
+        if( ! stopTasks ){
+            timer[0].schedule(new TimerTask() {
+                public void run() {
+                    collectData.startCollectingData();
+                }
+            }, delaySeconds * 1000, periodSeconds * 1000);
+        } else{
+            timer[0].cancel();
+            timer[0].purge();
+            timer[0] = new Timer();
         }
     }
 }

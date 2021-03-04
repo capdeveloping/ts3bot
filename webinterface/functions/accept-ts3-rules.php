@@ -92,13 +92,31 @@
                                 <div class="form-group row">
                                     <label class="col-sm-4 control-label" for="inputServergroup">Gast Gruppe bei der ersten Verbindung</label>
                                     <div class="col-sm-4">
-                                        <input class="form-control" id="inputServergroup" type="text" name="accept_rules_first_group" placeholder="enter first servergroup" value=<?php echo '"' . $_SESSION["config"][$acprKey . "_accept_rules_first_group"] . '"' ?> required/>
+                                        <select name="accept_rules_first_group" class="form-select" aria-label="select">
+                                            <option value="">-- Servergruppe auswählen --</option>
+<?php foreach ($_SESSION['db_groups'] as $id=>$name){
+        if ( strval($id) === $_SESSION["config"][$acprKey . "_accept_rules_first_group"]) { ?>
+                                            <option selected value="<?php echo $id?>"><?php print_r("(" . $id . ") " . $name)?></option>
+<?php   } else {?>
+                                            <option value="<?php echo $id?>"><?php print_r("(" . $id . ") " . $name)?></option>
+<?php   }
+}?>
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="col-sm-4 control-label" for="inputServergroup2">Gast Gruppe die nach dem Akzeptieren vergeben werden soll</label>
                                     <div class="col-sm-4">
-                                        <input class="form-control" id="inputServergroup2" type="text" name="accept_rules_accepted_group" placeholder="enter second servergroup" value=<?php echo '"' . $_SESSION["config"][$acprKey . "_accept_rules_accepted_group"] . '"' ?> required/>
+                                        <select name="accept_rules_accepted_group" class="form-select" aria-label="select">
+                                            <option value="">-- Servergruppe auswählen --</option>
+<?php foreach ($_SESSION['db_groups'] as $id=>$name){
+        if ( strval($id) === $_SESSION["config"][$acprKey . "_accept_rules_accepted_group"]) { ?>
+                                            <option selected value="<?php echo $id?>"><?php print_r("(" . $id . ") " . $name)?></option>
+<?php   } else {?>
+                                            <option value="<?php echo $id?>"><?php print_r("(" . $id . ") " . $name)?></option>
+<?php   }
+}?>
+                                        </select>
                                     </div>
                                 </div>
                                 <div class="form-group row" >

@@ -15,6 +15,7 @@
             $_SESSION["config"][$key . "_client_moved_group_notify"] = $_POST['clientPokeClient-' . $key];
             $_SESSION["config"][$key . "_client_moved_group_ids"] = $_POST['groupids-' . $key];
             $_SESSION["config"][$key . "_client_moved_group_action"] = $_POST['action-' . $key];
+            getJSGroups($_SESSION['db_groups'], $_SESSION["config"][$key . "_client_moved_group_notify"]);
         }
         $saved = TRUE;
         saveConfig($_SESSION["config"], $_SESSION["configPath"]);
@@ -30,8 +31,9 @@
         <meta name="author" content="Capdeveloping" />
         <title>Funktion - Client joint Channel</title>
         <link href="../css/styles.css" rel="stylesheet" />
-        <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" crossorigin="anonymous" />
         <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/js/all.min.js" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="../js/virtual-select.min.css" />
+        <script src="../js/virtual-select.min.js"></script>
     </head>
     <body class="sb-nav-fixed">
         <?php
@@ -62,9 +64,9 @@
                         <?php }?>
                         <form class="form-horizontal" data-toggle="validator" name="addFunction" method="POST">
 <?php foreach($_SESSION["functions"]["ClientMove"] as $number=>$key){ ?>
-<?php if($number % 2 == 0 || $number == 0){ ?>
+<?php   if($number % 2 == 0 || $number == 0){ ?>
                             <div class="row">
-<?php }?>
+<?php   }?>
                                 <div class="col-lg-6">
                                     <div class="card mb-4">
                                         <div class="card-header">
@@ -77,7 +79,16 @@
                                                     <label class="control-label" for=<?php echo '"clientJoindChannel-' . $key . '"'; ?>  >Client joint den channel</label>
                                                 </div>
                                                 <div class="col-sm-4">
-                                                    <input name=<?php echo '"clientJoindChannel-' . $key . '"'; ?> class="form-control" id=<?php echo '"clientJoindChannel-' . $key . '"'; ?> type="text" placeholder=<?php echo "Channel ID eingeben"; ?> value=<?php echo '"' . $_SESSION["config"][$key . "_client_moved_channel"] . '"'; ?> />
+                                                    <select name=<?php echo '"clientJoindChannel-' . $key . '"'; ?> class="form-select" aria-label="select" placeholder=" -- Channel auswählen -- ">
+<?php   foreach ($_SESSION['db_channels'] as $id=>$name){
+            if ( strval($id) === $_SESSION["config"][$key . "_client_moved_channel"]) {
+?>
+                                                        <option selected value="<?php echo $id?>"><?php print_r("(" . $id . ") " . $name)?></option>
+<?php       } else {?>
+                                                        <option value="<?php echo $id?>"><?php print_r("(" . $id . ") " . $name)?></option>
+<?php       }
+        }?>
+                                                    </select>
                                                 </div>
                                             </div>
                                         </div>
@@ -87,7 +98,7 @@
                                                     <label class="control-label" for=<?php echo '"clientPokeClient-' . $key . '"'; ?> >Clients dieser Server Groupen sollen angestupst</label>
                                                 </div>
                                                 <div class="col-sm-4">
-                                                    <input name=<?php echo '"clientPokeClient-' . $key . '"'; ?> class="form-control" id=<?php echo '"clientPokeClient-' . $key . '"'; ?> type="text" placeholder=<?php echo "liste von Gruppen ids"; ?> value=<?php echo '"' . $_SESSION["config"][$key . "_client_moved_group_notify"] . '"'; ?> />
+                                                    <div name=<?php echo '"clientPokeClient-' . $key . '"'; ?> id="multiple-select-<?php echo $key?>"></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -97,7 +108,7 @@
                                                     <label class="control-label" for=<?php echo '"groupids-' . $key . '"'; ?> >Gruppen auf die geachtet oder die ignoriert werden sollen</label>
                                                 </div>
                                                 <div class="col-sm-4">
-                                                    <input name=<?php echo '"groupids-' . $key . '"'; ?> class="form-control" id=<?php echo '"groupids-' . $key . '"'; ?> type="text" placeholder=<?php echo "Channel ids eingeben"; ?> value=<?php echo '"' . $_SESSION["config"][$key . "_client_moved_group_ids"] . '"'; ?> />
+                                                    <div name=<?php echo '"groupids-' . $key . '"'; ?> id="multiple-select-groupids-<?php echo $key?>"></div>
                                                 </div>
                                             </div>
                                         </div>
@@ -107,7 +118,18 @@
                                                     <label class="control-label" for=<?php echo '"action-' . $key . '"'; ?> >Ignoriere die oberen Gruppen oder überprüfe nur diese</label>
                                                 </div>
                                                 <div class="col-sm-4">
-                                                    <input name=<?php echo '"action-' . $key . '"'; ?> class="form-control" id=<?php echo '"action-' . $key . '"'; ?> type="text" placeholder=<?php echo "ignore/only"; ?> value=<?php echo '"' . $_SESSION["config"][$key . "_client_moved_group_action"] . '"'; ?> />
+                                                    <select name=<?php echo '"action-' . $key . '"'; ?> class="form-select" id="basic">
+<?php if ($_SESSION["config"][$key . "_client_moved_group_action"] === "ignore"){?>
+                                                        <option selected value="ignore">ignore</option>
+                                                        <option value="only">only</option>
+<?php } else if ($_SESSION["config"][$key . "_client_moved_group_action"] === "only"){?>
+                                                        <option value="ignore">ignore</option>
+                                                        <option selected value="only">only</option>
+<?php } else { ?>
+                                                        <option value="ignore">ignore</option>
+                                                        <option value="only">only</option>
+<?php } ?>
+                                                    </select>
                                                 </div>
                                             </div>
                                         </div>
@@ -144,7 +166,48 @@
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
         <script src="../js/scripts.js"></script>
-        <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
-        <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
+        <script>
+          function getOptions() {
+              var optionsData = [];
+
+<?php foreach ($_SESSION['db_groups'] as $id=>$name){?>
+              optionsData.push({ value: "<?php echo $id?>", label: "<?php print_r("(" . $id . ") " . $name)?>"});
+<?php }?>
+              return optionsData;
+         }
+
+          function getSelected(key) {
+              var optionsData = [];
+              switch(key) {
+<?php foreach($_SESSION["functions"]["ClientMove"] as $number=>$key){?>
+                case "poke-<?php echo $key?>":
+                    optionsData = [<?php echo getJSSelectOption($_SESSION['db_groups'], $_SESSION["config"][$key . "_client_moved_group_notify"]);?>];
+                    break;
+                case "groupids-<?php echo $key?>":
+                    optionsData = [<?php echo getJSSelectOption($_SESSION['db_groups'], $_SESSION["config"][$key . "_client_moved_group_ids"]);?>];
+                    break;
+<?php }?>
+              }
+              return optionsData;
+         }
+
+<?php foreach($_SESSION["functions"]["ClientMove"] as $number=>$key){?>
+         VirtualSelect.init({
+            ele: '#multiple-select-<?php echo $key?>',
+            options: getOptions(),
+            multiple: true,
+            selectedValue: getSelected("poke-<?php echo $key?>"),
+            placeholder: 'Servergruppen auswählen',
+          });
+
+         VirtualSelect.init({
+            ele: '#multiple-select-groupids-<?php echo $key?>',
+            options: getOptions(),
+            multiple: true,
+            selectedValue: getSelected("groupids-<?php echo $key?>"),
+            placeholder: 'Servergruppen auswählen',
+          });
+<?php }?>
+        </script>
     </body>
 </html>

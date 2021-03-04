@@ -2,7 +2,6 @@
     require_once($_SERVER["DOCUMENT_ROOT"] . '/_preload.php');
     $_SESSION["nav_expanded"] = TRUE;
     $saved = FALSE;
-
     if (array_key_exists("ChannelAutoCreate", $_SESSION["functions"])) {
         $cacKey = $_SESSION["functions"]["ChannelAutoCreate"];
 
@@ -55,8 +54,9 @@
         <meta name="author" content="" />
         <title>Funktion - Automatisches Channel erstellen</title>
         <link href="../css/styles.css" rel="stylesheet" />
-        <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" crossorigin="anonymous" />
         <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/js/all.min.js" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="../js/virtual-select.min.css" />
+        <script src="../js/virtual-select.min.js"></script>
     </head>
     <body class="sb-nav-fixed">
         <?php
@@ -95,27 +95,34 @@
                                 <div class="form-group row">
                                     <label class="col-sm-4 control-label" for="inputParentIDs">Eine mit Komma getrennte Liste (ohne Leerzeichen) mit Parent Channel IDs.</label>
                                     <div class="col-sm-4">
-                                        <input class="form-control" id="inputParentIDs" type="text" name="channel_check_subchannel" placeholder="enter channel ids" value=<?php echo '"' . $_SESSION["config"][$cacKey . "_channel_check_subchannel"] . '"' ?> required/>
+                                        <div name="channel_check_subchannel" id="multiple-select"></div>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="col-sm-4 control-label" for="inputChannelPasswords">Einträge mit Channel Passwörtern</label>
-                                    <div class="col-xs-4">
-                                        <label class="col-sm-12 control-label" for="inputChannelPasswords">Hauptchannel ID</label>
+                                    <div class="col-sm-2">
+                                        <label class="control-label" for="inputChannelPasswords">Hauptchannel ID</label>
                                     </div>
                                     <div class="col-xs-4">
                                         <label class="col-sm-12 control-label" for="inputChannelPasswords">Passwort</label>
                                     </div>
                                 </div>
-
 <?php
 $counter = 1;
 if( ! empty($channelPasswords) ){
 foreach($channelPasswords as $key=>$value){ ?>
                                     <div class="form-group row">
                                         <div class="col-sm-4"></div>
-                                        <div class="col-sm-1">
-                                            <input class="form-control" id="itemKey<?php echo "$counter";?>" type="text" name="itemKey<?php echo "$counter";?>"  value='<?php echo "$key"; ?>' />
+                                        <div class="col-sm-2">
+                                            <select name="itemKey<?php echo "$counter";?>" class="form-select">
+<?php foreach ($_SESSION['db_channels'] as $id=>$name){
+        if ( $id === $key) {?>
+                                                <option selected value="<?php echo $id?>"><?php print_r("(" . $id . ") " . $name)?></option>
+<?php   } else {?>
+                                                <option value="<?php echo $id?>"><?php print_r("(" . $id . ") " . $name)?></option>
+<?php   }
+}?>
+                                            </select>
                                         </div>
                                         =
                                         <div class="col-sm-3">
@@ -131,8 +138,13 @@ for ($x = 1; $x <= 3; $x++) { ?>
 
                                     <div class="form-group row">
                                         <div class="col-sm-4"></div>
-                                        <div class="col-sm-1">
-                                            <input class="form-control" id="newItemKey<?php echo "$x"?>" type="text" name="newItemKey<?php echo "$x";?>"/>
+                                        <div class="col-sm-2">
+                                            <select name="newItemKey<?php echo "$x";?>" class="form-select">
+                                                <option value="">-- Channel auswählen --</option>
+<?php foreach ($_SESSION['db_channels'] as $id=>$name){?>
+                                                <option value="<?php echo $id?>"><?php print_r("(" . $id . ") " . $name)?></option>
+<?php }?>
+                                            </select>
                                         </div>
                                         =
                                         <div class="col-sm-3">
@@ -166,7 +178,28 @@ for ($x = 1; $x <= 3; $x++) { ?>
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
         <script src="../js/scripts.js"></script>
-        <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
-        <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
+        <script>
+          function getChannels() {
+              var optionsData = [];
+
+<?php foreach ($_SESSION['db_channels'] as $id=>$name){?>
+              optionsData.push({ value: "<?php echo $id?>", label: "<?php print_r("(" . $id . ") " . $name)?>"});
+<?php }?>
+              return optionsData;
+         }
+
+          function getSelected() {
+              var optionsData = [<?php echo getJSSelectOption($_SESSION['db_channels'], $_SESSION["config"][$cacKey . "_channel_check_subchannel"]);?>];
+              return optionsData;
+         }
+
+         VirtualSelect.init({
+            ele: '#multiple-select',
+            options: getChannels(),
+            multiple: true,
+            selectedValue: getSelected(),
+            placeholder: 'Channel auswählen',
+         });
+        </script>
     </body>
 </html>

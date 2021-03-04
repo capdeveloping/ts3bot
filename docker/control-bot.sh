@@ -35,12 +35,21 @@ case $1 in
         createInstance)
                 mkdir /data/configs/"$2"/
                 cp /data/serverconfig.template /data/configs/"$2"/serverconfig.cfg
+                sqlite3 /data/db.sqlite3 'CREATE TABLE "'$2'_groups"(id INTEGER,name text);'
+                sqlite3 /data/db.sqlite3 'CREATE TABLE "'$2'_users"(uid text, name text);'
+                sqlite3 /data/db.sqlite3 'CREATE TABLE "'$2'_channels"(id INTEGER,name text);'
                 ;;
         renameInstance)
-                mv /data/configs/"$2" /data/configs/"$2"
+                mv /data/configs/"$2" /data/configs/"$3"
+                sqlite3 /data/db.sqlite3 'ALTER TABLE "'$2'_channels" RENAME TO '$3'_channels;'
+                sqlite3 /data/db.sqlite3 'ALTER TABLE "'$2'_users" RENAME TO '$3'_users;'
+                sqlite3 /data/db.sqlite3 'ALTER TABLE "'$2'_groups" RENAME TO '$3'_groups;'
                 ;;
         removeInstance)
                 rm /data/configs/"$2"/ -r
+                sqlite3 /data/db.sqlite3 'DROP TABLE "'$2'_groups";'
+                sqlite3 /data/db.sqlite3 'DROP TABLE "'$2'_users";'
+                sqlite3 /data/db.sqlite3 'DROP TABLE "'$2'_channels";'
                 ;;
         *)
                 echo "Sorry, I don't understand"

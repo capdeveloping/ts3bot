@@ -1,5 +1,30 @@
 #!/bin/bash
 
+# -------------------------------------------------- (FUNCTIONS)
+
+createSQLTables(){
+  firstServer=true
+  for folder in `find /data/configs/ -maxdepth 1 -type d`; do
+    folder="${folder##*/}"
+    if [ -n "$folder" ]; then
+      sqlite3 /data/db.sqlite3 'CREATE TABLE IF NOT EXISTS "'$folder'_users"(uid text, name text, ip text, groups text);'
+      sqlite3 /data/db.sqlite3 'CREATE TABLE IF NOT EXISTS "'$folder'_groups"(id INTEGER, name text);'
+      sqlite3 /data/db.sqlite3 'CREATE TABLE IF NOT EXISTS "'$folder'_channels"(id INTEGER, name text);'
+      firstServer=false
+    fi
+  done
+
+  if [ "$firstServer" = true ]; then
+      sqlite3 /data/db.sqlite3 'CREATE TABLE IF NOT EXISTS server1_users(uid text, name text, ip text, groups text);'
+      sqlite3 /data/db.sqlite3 'CREATE TABLE IF NOT EXISTS server1_groups(id INTEGER, name text);'
+      sqlite3 /data/db.sqlite3 'CREATE TABLE IF NOT EXISTS server1_channels(id INTEGER, name text);'
+  fi
+}
+
+# -------------------------------------------------- (MAIN)
+
+# -------------------------- (prepare start)
+
 echo "Europe/Berlin" > /etc/timezone
 ln -sf /usr/share/zoneinfo/Europe/Berlin /etc/localtime
 ln -sf /data/ts3_icons/ /
@@ -12,12 +37,14 @@ if [ ! -e "/data/serverconfig.template" ]; then
 fi
 
 if [ ! -e "/data/db.sqlite3" ]; then
-  echo "CREATE TABLE users(username text,password text);" > /data/db.schema
-  sqlite3 /data/db.sqlite3 < /data/db.schema
-  rm /data/db.schema
+  sqlite3 /data/db.sqlite3 'CREATE TABLE users(username text,password text);'
   sqlite3 /data/db.sqlite3 'insert into users (username, password) VALUES("admin", "$2y$11$D4OxW1TABL4T81ioPD2CC.5OHmm0/ONd1mZ2WhKMAIRydjb8M3XEq");'
   chown www-data:www-data /data/db.sqlite3
 fi
+
+createSQLTables
+
+# -------------------------- (start)
 
 su www-data -c "/control-bot.sh start" &
 

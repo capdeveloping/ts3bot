@@ -12,6 +12,8 @@
         $addWelcomeMessage = TRUE;
     }
 
+    print_r($_POST);
+
     if (isset($_POST['update'])){
         $_SESSION['config']["language"] = $_POST['language'];
         $_SESSION['config']["ts3_server_floodrate"] = $_POST['ts3_server_floodrate'];
@@ -172,7 +174,18 @@
                                         <div class="form-group row">
                                             <label class="col-sm-5 control-label" for="ts3_server_floodrate">Floodrate</label>
                                             <div class="col-sm-4">
-                                                <input class="form-control" id="ts3_server_floodrate" type="text" name="ts3_server_floodrate" placeholder="Enter new ts3_server_floodrate" value=<?php if(array_key_exists("ts3_server_floodrate", $_SESSION['config'])){ echo '"' . $_SESSION['config']["ts3_server_floodrate"] . '"' . '"';}else{ echo '""';} ?> required/>
+                                                <select name="ts3_server_floodrate" class="form-select" aria-label="select">
+<?php if ( $_SESSION['config']["ts3_server_floodrate"] === "unlimited") { ?>
+                                                    <option selected value="unlimited">unlimited</option>
+                                                    <option value="default">default</option>
+<?php } else if ( $_SESSION['config']["ts3_server_floodrate"] === "default"){?>
+                                                    <option value="unlimited">unlimited</option>
+                                                    <option selected value="default">default</option>
+<?php } else { ?>
+                                                    <option value="unlimited">unlimited</option>
+                                                    <option value="default">default</option>
+<?php } ?>
+                                                </select>
                                             </div>
                                         </div>
                                         <div class="form-group row">
@@ -190,7 +203,7 @@
                                         <div class="form-group row">
                                             <label class="col-sm-5 control-label" for="ts3_server_query_port">Query Port</label>
                                             <div class="col-sm-4">
-                                                <input class="form-control" id="ts3_server_query_port" type="text" name="ts3_server_query_port" placeholder="Enter new ts3_server_query_port" value=<?php if(array_key_exists("ts3_server_query_port", $_SESSION['config'])){ echo '"' . $_SESSION['config']["ts3_server_query_port"] . '"';}else{ echo '""';} ?> required/>
+                                                <input class="form-control" id="ts3_server_query_port" type="text" name="ts3_server_query_port" placeholder="Enter new ts3_server_query_port" value=<?php if(array_key_exists("ts3_server_query_port", $_SESSION['config'])){ echo '"' . $_SESSION['config']["ts3_server_query_port"] . '"';}else{ echo '"10011"';} ?> required/>
                                             </div>
                                         </div>
                                         <div class="form-group row">
@@ -224,15 +237,15 @@
                                             </div>
                                         </div>
                                         <div class="form-group row">
-                                            <label class="col-sm-5 control-label" for="bot_admin">Bot Admins (als Komma Liste)</label>
+                                            <label class="col-sm-5 control-label" for="bot_admin">Bot Admins</label>
                                             <div class="col-sm-4">
-                                                <input class="form-control" id="bot_admin" type="text" name="bot_admin" placeholder="Enter new bot_admin" value=<?php if(array_key_exists("bot_admin", $_SESSION['config'])){ echo '"' . $_SESSION['config']["bot_admin"] . '"';}else{ echo '""';} ?> />
+                                                <div name="bot_admin" id="multiple-select-admin"></div>
                                             </div>
                                         </div>
                                         <div class="form-group row">
-                                            <label class="col-sm-5 control-label" for="bot_full_admin">Bot Full Admins (als Komma Liste)</label>
+                                            <label class="col-sm-5 control-label" for="bot_full_admin">Bot Full Admins</label>
                                             <div class="col-sm-4">
-                                                <input class="form-control" id="bot_full_admin" type="text" name="bot_full_admin" placeholder="Enter new bot_full_admin" value=<?php if(array_key_exists("bot_full_admin", $_SESSION['config'])){ echo '"' . $_SESSION['config']["bot_full_admin"] . '"';}else{ echo '""';} ?> required/>
+                                                <div name="bot_full_admin" id="multiple-select-full-admin"></div>
                                             </div>
                                         </div>
                                     </div>
@@ -484,9 +497,46 @@ if ( ( isset($addWelcomeMessage) && $addWelcomeMessage ) || ( isset($invalidWelc
             </div>
         </div>
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/js/all.min.js" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="js/virtual-select.min.css" />
+        <script src="js/virtual-select.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
         <script src="js/scripts.js"></script>
-        <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
-        <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
+        <script>
+          function getUsers() {
+              var optionsData = [];
+
+<?php foreach ($_SESSION['db_users'] as $uid=>$name){?>
+              optionsData.push({ value: "<?php echo $uid;?>", label: "<?php print_r($name);?>"});
+<?php }?>
+              return optionsData;
+         }
+
+          function getSelectedAdmin() {
+              var optionsData = [<?php echo getJSSelectOption($_SESSION['db_users'], $_SESSION["config"]["bot_admin"]);?>];
+              return optionsData;
+         }
+
+          function getSelectedFullAdmin() {
+              var optionsData = [<?php echo getJSSelectOption($_SESSION['db_users'], $_SESSION["config"]["bot_full_admin"]);?>];
+              return optionsData;
+         }
+
+         VirtualSelect.init({
+            ele: '#multiple-select-full-admin',
+            options: getUsers(),
+            multiple: true,
+            selectedValue: getSelectedFullAdmin(),
+            placeholder: 'User auswählen',
+          });
+
+         VirtualSelect.init({
+            ele: '#multiple-select-admin',
+            options: getUsers(),
+            multiple: true,
+            selectedValue: getSelectedAdmin(),
+            placeholder: 'User auswählen',
+          });
+        </script>
     </body>
 </html>

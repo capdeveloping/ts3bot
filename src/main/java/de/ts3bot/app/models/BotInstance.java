@@ -29,6 +29,7 @@ public class BotInstance {
     private AdminMessageEvent adminMessageEvent;
     private UserMessageEvent userMessageEvent;
     private List<ClientAfkMode> clientAfkMode;
+    private CollectData collectData;
 
 
     //region Einzelne Inhalte müssen erneuert werden
@@ -54,8 +55,9 @@ public class BotInstance {
         TS3TextLoad ts3TextLoad = new TS3TextLoad(serverConfig);
         TS3ConfigWrite configWrite = new TS3ConfigWrite(serverConfig, reloadAfterConnect);
         leaveEvent = new LeaveServerEvent();
+        collectData = new CollectData();
         functionsOnOff();
-        taskTimer = new TaskTimer(clientAfkMode, serverConfig, serverConfig.getBotName(), versionChecker, updateGameChannel);
+        taskTimer = new TaskTimer(clientAfkMode, serverConfig, serverConfig.getBotName(), versionChecker, updateGameChannel, collectData);
         userMessageEvent = new UserMessageEvent(moveToClient);
         adminMessageEvent = new AdminMessageEvent(serverConfig, ts3TextLoad, configWrite, botInstanceManager, twitchController);
         reloadAfterConnect = new ReloadAfterConnect(serverConfig,
@@ -75,7 +77,8 @@ public class BotInstance {
                 welcomeMessageEvent,
                 twitchController,
                 acceptRulesEvent,
-                autoRemove);
+                autoRemove,
+                collectData);
         adminMessageEvent.setAfterConnect(reloadAfterConnect, taskTimer, serverConfig.getBotName());
         configWrite.setAfterConnect(reloadAfterConnect);
     }
@@ -183,7 +186,7 @@ public class BotInstance {
 
     private void startTimer(boolean stopTasks) {
         if( versionChecker != null) {
-            log.info( "{}: Starting CheckVersion Timer -> updating every day.", serverConfig.getBotName());
+            log.info("{}: Starting CheckVersion Timer -> updating every day.", serverConfig.getBotName());
             log.info("{}: Checking for new Bot Version", serverConfig.getBotName());
             taskTimer.checkNewVersion(stopTasks);
         }
@@ -195,6 +198,8 @@ public class BotInstance {
             log.info("{}: Starting updateGameChannel in 15 seconds -> update every 1 minute.", serverConfig.getBotName());
             taskTimer.updateGameChannel(stopTasks);
         }
+        log.info("{}: Getting all Informations about User/Groups/Channels.", serverConfig.getBotName());
+        taskTimer.collectingData(stopTasks);
     }
 
     private void registerListener() {

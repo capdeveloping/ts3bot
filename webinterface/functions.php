@@ -1,8 +1,8 @@
 <?php
 #region Instance
-function loadCurrentInstance(){
-    if(file_exists( $_SERVER["DOCUMENT_ROOT"] . "/.current")) {
-        $instance_name = file_get_contents( $_SERVER["DOCUMENT_ROOT"] . "/.current", "r") or die("Unable to open(read) '.current' file!");
+function loadCurrentInstance($document_root){
+    if(file_exists( $document_root . "/.current")) {
+        $instance_name = file_get_contents( $document_root . "/.current", "r") or die("Unable to open(read) '.current' file!");
         return $instance_name;
     }
     return NULL;
@@ -50,14 +50,14 @@ function countActiveInstances($instances){
     return $active;
 }
 
-function removeCurrentInstance(){
-    exec("rm " . $_SERVER["DOCUMENT_ROOT"] . "/.current", $resultexec);
+function removeCurrentInstance($document_root){
+    exec("rm " . $document_root . "/.current", $resultexec);
 }
 
-function saveCurrentInstance($POST, $instances){
+function saveCurrentInstance($POST, $instances, $document_root){
     foreach($instances as $key => $value){
         if (isset($POST[$key])){
-            $currentFile = fopen( $_SERVER["DOCUMENT_ROOT"] . "/.current", "w+") or die("Unable to open file!");
+            $currentFile = fopen( $document_root . "/.current", "w+") or die("Unable to open file!");
             fwrite($currentFile, array_key_first ( $POST ));
             fclose($currentFile);
             return TRUE;
@@ -507,5 +507,23 @@ function getlog($number_lines) {
 		$lines[] = "The logfile will be created with next startup.\n";
 	}
 	return $lines;
+}
+
+function getJSSelectOption($db_array, $commaStr){
+    $arrStr = "";
+    print_r($arrStr);
+    if ( empty($commaStr) ){
+        return $arrStr;
+    }
+
+    $tmpArray = explode(",", $commaStr);
+
+    foreach ($db_array as $key=>$value){
+        $found = array_search(strval($key), $tmpArray);
+        if ( $found !== false ){
+            $arrStr = $arrStr . "," . '"' . $key . '"';
+        }
+    }
+    return ltrim($arrStr, ',');
 }
 ?>
