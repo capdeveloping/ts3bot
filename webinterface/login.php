@@ -1,16 +1,6 @@
 <?php
-    include "_db.php";
     session_start();
-    if (isset($_POST['login'])){
-
-        $statement = $db->prepare('SELECT password FROM users where username = :username;');
-        $statement->bindValue(':username', $_POST["username"]);
-        $result = $statement->execute();
-        $result = $result->fetchArray();
-        if( ! empty($result) && password_verify($_POST["password"], $result[0])){
-            $_SESSION['userid'] = $_POST["username"];
-        }
-    }
+    include "_db.php";
 
     if( isset($_SESSION['userid']) ){
         header("Refresh:0; url=index.php");

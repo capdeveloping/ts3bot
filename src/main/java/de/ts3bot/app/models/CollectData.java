@@ -57,9 +57,8 @@ public class CollectData {
         for (ServerGroup serverGroup : api.getServerGroups()){
             groups.put(serverGroup.getId(), serverGroup.getName());
         }
-        TreeMap<Integer, String> sorted = new TreeMap<>(groups);
         if ( clearTable(conn, serverConfig.getBotName() + "_groups") ){
-            updateTable("INSERT INTO \"" + serverConfig.getBotName() + "_groups\"(id, name) VALUES(?,?)", sorted, conn);
+            updateTable("INSERT INTO \"" + serverConfig.getBotName() + "_groups\"(id, name) VALUES(?,?)", groups, conn);
         }
     }
 
@@ -68,10 +67,9 @@ public class CollectData {
         for (Channel channel : api.getChannels()){
             channels.put(channel.getId(), channel.getName());
         }
-        TreeMap<Integer, String> sorted = new TreeMap<>(channels);
 
         if ( clearTable(conn, serverConfig.getBotName() + "_channels") ){
-            updateTable("INSERT INTO \"" + serverConfig.getBotName() + "_channels\"(id, name) VALUES(?,?)", sorted, conn);
+            updateTable("INSERT INTO \"" + serverConfig.getBotName() + "_channels\"(id, name) VALUES(?,?)", channels, conn);
         }
     }
 
@@ -86,12 +84,12 @@ public class CollectData {
         }
     }
 
-    private void updateTable(String sql, TreeMap<Integer, String> treeMap, Connection conn) {
+    private void updateTable(String sql, HashMap<Integer, String> hashMap, Connection conn) {
         try {
             PreparedStatement pstmt = conn.prepareStatement(sql);
-            for (int key : treeMap.keySet()) {
+            for (int key : hashMap.keySet()) {
                 pstmt.setInt(1, key);
-                pstmt.setString(2, treeMap.get(key));
+                pstmt.setString(2, hashMap.get(key));
                 pstmt.executeUpdate();
             }
         } catch (SQLException e) {
