@@ -12,8 +12,6 @@
         $addWelcomeMessage = TRUE;
     }
 
-    print_r($_POST);
-
     if (isset($_POST['update'])){
         $_SESSION['config']["language"] = $_POST['language'];
         $_SESSION['config']["ts3_server_floodrate"] = $_POST['ts3_server_floodrate'];
