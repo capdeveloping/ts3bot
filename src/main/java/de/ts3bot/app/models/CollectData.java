@@ -3,13 +3,14 @@ package de.ts3bot.app.models;
 import com.github.theholywaffle.teamspeak3.TS3Api;
 import com.github.theholywaffle.teamspeak3.api.wrapper.Channel;
 import com.github.theholywaffle.teamspeak3.api.wrapper.DatabaseClient;
+import com.github.theholywaffle.teamspeak3.api.wrapper.Permission;
 import com.github.theholywaffle.teamspeak3.api.wrapper.ServerGroup;
+import de.ts3bot.app.models.data.CollectedData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.sql.*;
-import java.util.HashMap;
-import java.util.TreeMap;
+import java.util.*;
 
 public class CollectData {
     private final Logger log = LogManager.getLogger(CollectData.class.getName());
@@ -48,28 +49,71 @@ public class CollectData {
                 pstmt.executeUpdate();
             }
         } catch (SQLException e) {
-            log.info( "{}: sqlite error {}", serverConfig.getBotName(), e.getMessage());
+            log.error( "{}: sqlite error {}", serverConfig.getBotName(), e.getMessage());
         }
     }
 
     private void collectServerGroupData(Connection conn){
-        HashMap<Integer, String> groups = new HashMap<>();
+        HashMap<CollectedData, Integer> groupstmp = new HashMap<>();
         for (ServerGroup serverGroup : api.getServerGroups()){
-            groups.put(serverGroup.getId(), serverGroup.getName());
+            if (serverGroup.getId() < 6){
+                continue;
+            }
+            int sortOrder = 100000;
+            try {
+                for (Permission permission : api.getServerGroupPermissions(serverGroup.getId())) {
+                    if( ! permission.getName().equals("i_group_sort_id") ){
+                        continue;
+                    }
+                    sortOrder = permission.getValue();
+                    break;
+                }
+            }catch (Exception ex){
+                log.error( "{}: api permission error {}", serverConfig.getBotName(), ex.getMessage());
+            }
+            groupstmp.put(new CollectedData(serverGroup.getId(), serverGroup.getName()), sortOrder);
         }
+
+        List<CollectedData> groups = new ArrayList<>();
+        List<Integer> sorted = new ArrayList<>(groupstmp.values());
+        Collections.sort(sorted);
+
+        try {
+            for (int sortId : sorted) {
+                for (CollectedData group : new HashMap<>(groupstmp).keySet()) {
+                    if (groupstmp.get(group) == sortId) {
+                        groups.add(group);
+                        groupstmp.remove(group);
+                    }
+                }
+            }
+        }catch(Exception e){
+            log.error( "{}: api permission error {}", serverConfig.getBotName(), e.getMessage());
+        }
+        for(CollectedData group : groupstmp.keySet()){
+            groups.add(group);
+        }
+
         if ( clearTable(conn, serverConfig.getBotName() + "_groups") ){
             updateTable("INSERT INTO \"" + serverConfig.getBotName() + "_groups\"(id, name) VALUES(?,?)", groups, conn);
         }
     }
 
     private void collectChannelData(Connection conn){
-        HashMap<Integer, String> channels = new HashMap<>();
-        for (Channel channel : api.getChannels()){
-            channels.put(channel.getId(), channel.getName());
+        if ( ! clearTable(conn, serverConfig.getBotName() + "_channels") ) {
+            return;
         }
 
-        if ( clearTable(conn, serverConfig.getBotName() + "_channels") ){
-            updateTable("INSERT INTO \"" + serverConfig.getBotName() + "_channels\"(id, name) VALUES(?,?)", channels, conn);
+        try {
+            PreparedStatement pstmt = conn.prepareStatement("INSERT INTO \"" + serverConfig.getBotName() + "_channels\"(id, name) VALUES(?,?)");
+            for (Channel channel : api.getChannels()){
+                channel.getOrder();
+                pstmt.setInt(1, channel.getId());
+                pstmt.setString(2, channel.getName());
+                pstmt.executeUpdate();
+            }
+        } catch (SQLException e) {
+            log.error( "{}: sqlite error {}", serverConfig.getBotName(), e.getMessage());
         }
     }
 
@@ -79,21 +123,21 @@ public class CollectData {
             pstmt.executeUpdate();
             return true;
         } catch (SQLException e) {
-            log.info( "{}: sqlite error clearTable {}", serverConfig.getBotName(), e.getMessage());
+            log.error( "{}: sqlite error clearTable {}", serverConfig.getBotName(), e.getMessage());
             return false;
         }
     }
 
-    private void updateTable(String sql, HashMap<Integer, String> hashMap, Connection conn) {
+    private void updateTable(String sql, List<CollectedData> datas, Connection conn) {
         try {
             PreparedStatement pstmt = conn.prepareStatement(sql);
-            for (int key : hashMap.keySet()) {
-                pstmt.setInt(1, key);
-                pstmt.setString(2, hashMap.get(key));
+            for (CollectedData data : datas ) {
+                pstmt.setInt(1, data.getId());
+                pstmt.setString(2, data.getName());
                 pstmt.executeUpdate();
             }
         } catch (SQLException e) {
-            log.info( "{}: sqlite error {}", serverConfig.getBotName(), e.getMessage());
+            log.error( "{}: sqlite error {}", serverConfig.getBotName(), e.getMessage());
         }
     }
 
@@ -104,7 +148,7 @@ public class CollectData {
         try {
             conn = DriverManager.getConnection(url);
         } catch (SQLException e) {
-            log.info( "{}: sqlite error {}", serverConfig.getBotName(), e.getMessage());
+            log.error( "{}: sqlite error {}", serverConfig.getBotName(), e.getMessage());
         }
         return conn;
     }
