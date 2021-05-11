@@ -110,19 +110,6 @@
                                     </div>
                                 </div>
                             </div>
-                            <h4 class="col-sm-2" for="inputInstanceName">Start log</h4>
-                            <div class="card mb-4" style="margin-left: 20px;margin-right: 20px;margin-top: 10px">
-                                <div class="row">
-                                    <div class="col-lg-12">
-                                        <pre><?PHP if(isset($err_msg)){
-                                            echo $err_msg;
-                                        }else{
-                                            foreach ($startlogoutput as $line) { echo $line; }
-                                        }
-                                        ?>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </main>

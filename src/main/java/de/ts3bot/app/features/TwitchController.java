@@ -11,6 +11,7 @@ import com.github.twitch4j.events.ChannelGoOfflineEvent;
 import de.ts3bot.app.manager.FormatManager;
 import de.ts3bot.app.manager.ListManager;
 import de.ts3bot.app.models.TS3ServerConfig;
+import de.ts3bot.app.models.Twitchuser;
 import de.ts3bot.app.models.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -24,7 +25,7 @@ import java.util.List;
 public class TwitchController {
     private final Logger log = LogManager.getLogger(TwitchController.class.getName());
     private TwitchClient client;
-    private List<User> users;
+    private List<Twitchuser> users;
     private TS3ServerConfig serverConfig;
     private TS3Api api;
 
@@ -33,19 +34,6 @@ public class TwitchController {
         users = new ArrayList<>();
         readConfigFile();
         twitchConnect();
-    }
-
-    private void writeConfigFile(){
-        List<String> userList = new ArrayList<>();
-        userList.add("# Config mit der Verbidnung von Twitch Channelnamen zu TS3 UiDs");
-        userList.add("# Bsp. Config:");
-        userList.add("#    evillionslive #=# bKBZLHN0/KlgiZRA6FD18ESP/8k=");
-        for(User twitchUser : users) {
-            String user = twitchUser.getName() + " #=# "
-                    + twitchUser.getUid();
-            userList.add(user);
-        }
-        ListManager.writeLists(userList, serverConfig.getTwitchConfigName());
     }
 
     private void readConfigFile(){
@@ -60,7 +48,7 @@ public class TwitchController {
             for (String userStr : userList) {
                 if ( ! userStr.startsWith("#") && ! userStr.equals("")) {
                     String[] clientData = userStr.split(" #=# ");
-                    users.add(new User(clientData[0], clientData[1]));
+                    users.add(new Twitchuser(clientData[0], clientData[1], Boolean.parseBoolean(clientData[2])));
                 }
             }
         }
@@ -74,9 +62,7 @@ public class TwitchController {
         log.info("create twitch channel name to uid file");
         try (FileWriter fileWriter = new FileWriter(serverConfig.getTwitchConfigName());
              BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)) {
-            bufferedWriter.write("# Config mit der Verbidnung von Twitch Channelnamen zu TS3 UiDs\n");
-            bufferedWriter.write("# Bsp. Config:\n");
-            bufferedWriter.write("#    evillionslive #=# bKBZLHN0/KlgiZRA6FD18ESP/8k=");
+            bufferedWriter.write("");
         }
         catch(IOException ex) {
             log.error("writing to file: {}", ex.getMessage());
@@ -89,7 +75,7 @@ public class TwitchController {
                     .withClientId(serverConfig.getTwitchApiClientID())
                     .withDefaultAuthToken(new OAuth2Credential("twitch", serverConfig.getTwitchApiClientOauthToken()))
                     .withEnableHelix(true)
-                    .withEnableKraken(true)
+                    .withEnableKraken(false)
                     .build();
             client.getEventManager().getEventHandler(SimpleEventHandler.class).onEvent(ChannelGoLiveEvent.class, this::channelGoLive);
             client.getEventManager().getEventHandler(SimpleEventHandler.class).onEvent(ChannelGoOfflineEvent.class, this::channelGoOffline);
@@ -114,16 +100,21 @@ public class TwitchController {
     }
 
     private void channelGoLive(ChannelGoLiveEvent event){
-        for(User user : users){
-            if( user.getName().equals(event.getChannel().getName().toLowerCase()) && ! checkIfUserHasGroup(user.getUid())) {
+        for(Twitchuser user : users){
+            if( user.getName().equalsIgnoreCase(event.getStream().getUserName()) && ! checkIfUserHasGroup(user.getUid())) {
                 api.addClientToServerGroup(serverConfig.getTwitchLiveGruppe(), api.getDatabaseClientByUId(user.getUid()).getDatabaseId());
+                if(serverConfig.isTwitchSendServerMessage() && user.isServerpost()){
+                    String customMessage = serverConfig.getTwitchServerMessage().replace("%URL%","https://www.twitch.tv/" + user.getName());
+                    customMessage = customMessage.replace("%USER%",user.getName());
+                    api.sendServerMessage(customMessage);
+                }
             }
         }
     }
 
     private void channelGoOffline(ChannelGoOfflineEvent event){
         for(User user : users){
-            if( user.getName().equals(event.getChannel().getName().toLowerCase()) && checkIfUserHasGroup(user.getUid()) ){
+            if( user.getName().equalsIgnoreCase(event.getChannel().getName()) && checkIfUserHasGroup(user.getUid()) ){
                 api.removeClientFromServerGroup(serverConfig.getTwitchLiveGruppe(), api.getDatabaseClientByUId(user.getUid()).getDatabaseId());
             }
         }
@@ -134,19 +125,6 @@ public class TwitchController {
             if(serverGroup.getId() == serverConfig.getTwitchLiveGruppe()){
                 return true;
             }
-        }
-        return false;
-    }
-
-    public boolean addTwitchUser(String[] twitchUser){
-        try{
-            users.add(new User(twitchUser[0], twitchUser[1]));
-            client.getClientHelper().enableStreamEventListener(twitchUser[0]);
-            writeConfigFile();
-            return true;
-        }
-        catch (Exception ex){
-            log.error( FormatManager.StackTraceToString(ex) );
         }
         return false;
     }

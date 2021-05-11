@@ -59,7 +59,7 @@ public class BotInstance {
         functionsOnOff();
         taskTimer = new TaskTimer(clientAfkMode, serverConfig, serverConfig.getBotName(), versionChecker, updateGameChannel, collectData);
         userMessageEvent = new UserMessageEvent(moveToClient);
-        adminMessageEvent = new AdminMessageEvent(serverConfig, ts3TextLoad, configWrite, botInstanceManager, twitchController);
+        adminMessageEvent = new AdminMessageEvent(serverConfig, ts3TextLoad, configWrite, botInstanceManager);
         reloadAfterConnect = new ReloadAfterConnect(serverConfig,
                 ts3TextLoad,
                 configWrite,

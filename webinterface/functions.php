@@ -155,6 +155,28 @@ function fileReadContentWithSeparator($configPath, $separator){
     return $dictionary;
 }
 
+function fileReadContentWithMultipleSeparators($configPath, $separator){
+    $dictionary = [];
+    $counter = 0;
+    try{
+        $configFile = fopen($configPath, "r") or die("Unable to open file! => " . $configPath);
+        // Output one line until end-of-file
+        while(!feof($configFile)) {
+            $line = fgets($configFile);
+            if(empty($line)){
+                continue;
+            }
+            $line = explode($separator, $line);
+            $dictionary[$counter]["twitchname"] = trim($line[0]);
+            $dictionary[$counter]["uid"] = trim($line[1]);
+            $dictionary[$counter]["sendMessage"] = trim($line[2]);
+            $counter++;
+        }
+        fclose($configFile);
+    } catch(Throwable $ex) { }
+    return $dictionary;
+}
+
 function fileReadContentWithoutSeparator($configPath){
     $dictionary = [];
     try{
@@ -202,6 +224,20 @@ function writeConfigFileWithSeparator($content, $configPath, $separator){
                 continue;
             } else {
                 fwrite($configFile, $key . $separator . $value . "\n");
+            }
+        }
+        fclose($configFile);
+    } catch(Throwable $ex) { }
+}
+
+function writeConfigFileWithMultipleSeparators($content, $configPath, $separator){
+    try{
+        $configFile = fopen($configPath, "w+") or die("Unable to open file! => " . $configPath);
+        foreach($content as $key => $value){
+            if (empty($key)){
+                continue;
+            } else {
+                fwrite($configFile, $value["twitchname"] . $separator . $value["uid"] . $separator . $value["sendMessage"] . "\n");
             }
         }
         fclose($configFile);

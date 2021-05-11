@@ -9,7 +9,7 @@
         $twitchKey = $_SESSION["functions"]["Twitch"];
 
         if(filesize($_SESSION["config"][$twitchKey . "_twitch_config_name"])) {
-            $twitchUser = fileReadContentWithSeparator($_SESSION["config"][$twitchKey . "_twitch_config_name"], " #=# ");
+            $twitchUser = fileReadContentWithMultipleSeparators($_SESSION["config"][$twitchKey . "_twitch_config_name"], " #=# ");
         }else{
             $twitchUser = [];
         }
@@ -33,23 +33,28 @@
         foreach($_POST as $key => $value){
             if( str_starts_with($key, "newItemKey") && ! empty($value) ){
                 $number = str_replace("newItemKey", "", $key);
-                $twitchUser[$value] = $_POST["newItem" . $number];
+                $twitchUser[$number]["uid"] = $_POST["newItem" . $number];
+                $twitchUser[$number]["twitchname"] = $_POST["newItemKey" . $number];
+                $twitchUser[$number]["sendMessage"]= $_POST["newEnableMessage" . $number];
             }
             if( str_starts_with($key, "itemKey") && ! empty($value) ){
                 $number = str_replace("itemKey", "", $key);
-                $twitchUser[$value] = $_POST["item" . $number];
+                $twitchUser[$number]["uid"] = $_POST["item" . $number];
+                $twitchUser[$number]["twitchname"] = $_POST["itemKey" . $number];
+                $twitchUser[$number]["sendMessage"]= $_POST["enableMessage" . $number];
             }
         }
         $_SESSION["config"][$twitchKey . "_twitch_api_client_id"] = $_POST['twitch_api_client_id'];
         $_SESSION["config"][$twitchKey . "_twitch_api_client_oauth_token"] = $_POST['twitch_api_client_oauth_token'];
         $_SESSION["config"][$twitchKey . "_twitch_server_group"] = $_POST['twitch_server_group'];
+        $_SESSION["config"][$twitchKey . "_twitch_send_server_message"] = $_POST['twitch_send_server_message'];
+        $_SESSION["config"][$twitchKey . "_twitch_server_message"] = $_POST['twitch_server_message'];
 
-        writeConfigFileWithSeparator($twitchUser, $_SESSION["config"][$twitchKey . "_twitch_config_name"], " #=# ");
+        writeConfigFileWithMultipleSeparators($twitchUser, $_SESSION["config"][$twitchKey . "_twitch_config_name"], " #=# ");
 
         saveConfig($_SESSION["config"], $_SESSION["configPath"]);
         $saved = TRUE;
     }
-    print_r($_POST);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -139,8 +144,40 @@
                                         </select>
                                     </div>
                                 </div>
+                                <div class="form-group row" >
+                                    <label class="col-sm-4 control-label" for="twitch_send_server_message">Globale Ts3 Servernachricht Senden?</label>
+                                    <div class="col-sm-1">
+                                        <select name="twitch_send_server_message" class="form-select" aria-label="select">
+<?php if ($_SESSION["config"][$twitchKey . "_twitch_send_server_message"] === "true"){?>
+                                            <option selected value="true">ja</option>
+                                            <option value="false">nein</option>
+<?php } else if ( $_SESSION["config"][$twitchKey . "_twitch_send_server_message"] === "false"){?>
+                                            <option value="true">ja</option>
+                                            <option selected value="false">nein</option>
+<?php } else { ?>
+                                            <option value="false">nein</option>
+                                            <option value="true">ja</option>
+<?php } ?>
+                                        </select>
+                                    </div>
+                                </div>
                                 <div class="form-group row">
-                                    <label class="col-sm-3 control-label" for="inputTwitchUserFile"></label>
+                                    <label class="col-sm-4 control-label" for="inputTwitch_server_message" >Servernachricht</label>
+                                    <div class="col-sm-4">
+                                        <textarea name="twitch_server_message" class="form-control" id="inputTwitch_server_message" rows="3"><?php if( ! empty($_SESSION["config"][$twitchKey . "_twitch_server_message"]) ){ echo $_SESSION["config"][$twitchKey . "_twitch_server_message"]; }else{ echo "%USER% ist nun auf Twitch LIVE gegangen schaue doch gerne mal rein: %URL%";} ?></textarea>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-4"></div>
+                                    <div class="col-sm-3">
+                                        Folgende Inhalte können automatisch ersetzt werden:<br>
+                                        %USER% = Twitchusername<br>
+                                        %URL% = https://www.twitch.tv/twitchusername
+                                    </div>
+                                </div>
+                                <br>
+                                <div class="form-group row">
+                                    <div class="col-sm-3"></div>
                                     <div class="col-xs-5">
                                         <label class="col-sm-12 control-label" for="inputChannelPasswords">Twitchusername (kleingeschrieben)</label>
                                     </div>
@@ -154,16 +191,30 @@ $counter = 1;
 if( ! empty($twitchUser) ){
 foreach($twitchUser as $key=>$value){ ?>
                                     <div class="form-group row">
-                                        <div class="col-sm-3"></div>
+                                        <div class="col-sm-1"></div>
                                         <div class="col-sm-2">
-                                            <input class="form-control" id="itemKey<?php echo "$counter";?>" type="text" name="itemKey<?php echo "$counter";?>"  value='<?php echo "$key"; ?>' />
+                                            <select name=<?php echo '"enableMessage' . $counter . '"'; ?> class="form-select" aria-label="select">
+<?php if ($value["sendMessage"] === "true"){?>
+                                                <option selected value="true">Servernachricht senden</option>
+                                                <option value="false">Keine Servernachricht senden</option>
+<?php } else if ( $value["sendMessage"] === "false"){?>
+                                                <option value="true">Servernachricht senden</option>
+                                                <option selected value="false">Keine Servernachricht senden</option>
+<?php } else { ?>
+                                                <option value="false">Keine Servernachricht senden</option>
+                                                <option value="true">Servernachricht senden</option>
+<?php } ?>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <input class="form-control" id="itemKey<?php echo "$counter";?>" type="text" name="itemKey<?php echo "$counter";?>"  value='<?php print_r($value["twitchname"]); ?>' />
                                         </div>
                                         =
                                         <div class="col-sm-3">
                                             <select name="item<?php echo "$counter";?>" class="form-select" aria-label="select">
                                                 <option value="" >-- User auswählen --</option>
 <?php foreach ($_SESSION['db_users'] as $uid=>$name){
-    if ( strval($uid) === $value) {
+    if ( strval($uid) === $value["uid"]) {
 ?>
                                                 <option selected value="<?php echo $uid?>"><?php print_r($name)?></option>
 <?php } else {?>
@@ -181,7 +232,13 @@ foreach($twitchUser as $key=>$value){ ?>
 for ($x = 1; $x <= 3; $x++) { ?>
 
                                     <div class="form-group row">
-                                        <div class="col-sm-3"></div>
+                                        <div class="col-sm-1"></div>
+                                        <div class="col-sm-2">
+                                            <select name=<?php echo '"newEnableMessage' . $x . '"'; ?> class="form-select" aria-label="select">
+                                                <option value="false">Keine Servernachricht senden</option>
+                                                <option value="true">Servernachricht senden</option>
+                                            </select>
+                                        </div>
                                         <div class="col-sm-2">
                                             <input class="form-control" id="newItemKey<?php echo "$x"?>" type="text" name="newItemKey<?php echo "$x";?>"/>
                                         </div>

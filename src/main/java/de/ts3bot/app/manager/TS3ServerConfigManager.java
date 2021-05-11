@@ -135,6 +135,8 @@ public class TS3ServerConfigManager {
                     serverConfig.setTwitchApiClientOauthToken(prop.getProperty(key + "_twitch_api_client_oauth_token"));
                     serverConfig.setTwitchLiveGruppe(Integer.parseInt(prop.getProperty(key + "_twitch_server_group")));
                     serverConfig.setTwitchConfigName(prop.getProperty(key + "_twitch_config_name"));
+                    serverConfig.setTwtichServerMessage(prop.getProperty(key + "_twitch_server_message"));
+                    serverConfig.setTwitchSendServerMessage(Boolean.parseBoolean(prop.getProperty(key + "_twitch_send_server_message")));
                     break;
                 default:
                     LOG.error("Couldn't find the function \"" + funcNames.get(key) + "\"");

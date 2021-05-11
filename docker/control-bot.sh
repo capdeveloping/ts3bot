@@ -10,14 +10,14 @@ case $1 in
                 echo "#         Bot gestartet!       #" >> /data/logs/bot.log
                 # shellcheck disable=SC2028
                 echo "################################" >> /data/logs/bot.log
-                java -Duser.timezone=Europe/Berlin -jar /ts3bot.jar 2&> /data/logs/start.log &
+                java -Duser.timezone=Europe/Berlin -jar /ts3bot.jar 2&> /data/logs/bot.log &
                 ;;
         stop)
                 pkill -f 'java'
                 # shellcheck disable=SC2028
                 echo "################################" >> /data/logs/bot.log
                 # shellcheck disable=SC2028
-                echo "#         Bot getoppt!         #" >> /data/logs/bot.log
+                echo "#         Bot gestoppt!         #" >> /data/logs/bot.log
                 # shellcheck disable=SC2028
                 echo "################################" >> /data/logs/bot.log
                 ;;
@@ -30,7 +30,7 @@ case $1 in
                 echo "#       Bot neugestartet!      #" >> /data/logs/bot.log
                 # shellcheck disable=SC2028
                 echo "################################" >> /data/logs/bot.log
-                java -Duser.timezone=Europe/Berlin -jar /ts3bot.jar 2&> /data/logs/start.log &
+                java -Duser.timezone=Europe/Berlin -jar /ts3bot.jar 2&> /data/logs/bot.log &
                 ;;
         createInstance)
                 mkdir /data/configs/"$2"/

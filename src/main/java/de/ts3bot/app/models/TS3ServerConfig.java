@@ -44,8 +44,10 @@ public class TS3ServerConfig {
     //region Twitch Variables
     private String twitchApiClientID;
     private String twitchApiClientOauthToken;
+    private String twitchServerMessage;
     private String twitchConfigName;
     private int twitchLiveGruppe;
+    private boolean twitchSendServerMessage;
     //endregion
 
     private FunctionChannelAutoCreate functionChannelAutoCreate;
@@ -90,6 +92,14 @@ public class TS3ServerConfig {
 //endregion
 
 //region getter
+    public String getTwitchServerMessage() {
+        return twitchServerMessage;
+    }
+
+    public boolean isTwitchSendServerMessage() {
+        return twitchSendServerMessage;
+    }
+
     public FunctionChannelAutoCreate getFunctionChannelAutoCreate() {
         return functionChannelAutoCreate;
     }
@@ -235,6 +245,14 @@ public class TS3ServerConfig {
     //endregion
 
 //region setter
+    public void setTwitchSendServerMessage(boolean twitchSendServerMessage) {
+        this.twitchSendServerMessage = twitchSendServerMessage;
+    }
+
+    public void setTwtichServerMessage(String twitchServerMessage) {
+        this.twitchServerMessage = twitchServerMessage;
+    }
+
     public void setFunctionAutoRemove(FunctionModel functionAutoRemove) {
         this.functionAutoRemove = functionAutoRemove;
     }

@@ -39,15 +39,13 @@ public class AdminMessageEvent extends TS3EventAdapter {
     private String botName;
     private TaskTimer taskTimer;
     private BotInstanceManager botInstanceManager;
-    private TwitchController twitchController;
     private static final String GERMAN = "german";
 
-    public AdminMessageEvent(TS3ServerConfig serverConfig, TS3TextLoad textLoad, TS3ConfigWrite configWrite, BotInstanceManager botInstanceManager, TwitchController twitchController) {
+    public AdminMessageEvent(TS3ServerConfig serverConfig, TS3TextLoad textLoad, TS3ConfigWrite configWrite, BotInstanceManager botInstanceManager) {
         this.serverConfig = serverConfig;
         this.textLoad = textLoad;
         this.configWrite = configWrite;
         this.botInstanceManager = botInstanceManager;
-        this.twitchController = twitchController;
     }
 //region setter
     public void setAfterConnect(ReloadAfterConnect afterConnect, TaskTimer taskTimer, String botName) {
@@ -154,10 +152,6 @@ public class AdminMessageEvent extends TS3EventAdapter {
 
         if (message.startsWith("!rmuser")) {
             removeUserFromAllGroups(e, message);
-        }
-
-        if (message.startsWith("!twitchadduser")) {
-            twitchAddUser(e, message);
         }
 
         if (message.startsWith("!botconfigaddvalue")) {
@@ -295,22 +289,6 @@ public class AdminMessageEvent extends TS3EventAdapter {
             }
         }
         return false;
-    }
-
-    private void twitchAddUser(TextMessageEvent e, String message) {
-        if(twitchController == null){
-            return;
-        }
-        String[] twitchUser = message.replace("!twitchadduser ", "").split(" = ");
-        if ( twitchController.addTwitchUser(twitchUser) ){
-            FormatManager.checkAndSendLanguage(api, e.getInvokerId(), serverConfig.getLanguage(),
-                    "Successfully changed.",
-                    "Successfully changed.");
-        }else{
-            FormatManager.checkAndSendLanguage(api, e.getInvokerId(), serverConfig.getLanguage(),
-                    "Da ist etwas schief gelaufen.",
-                    "Something went wrong.");
-        }
     }
 
     private void csgoScrambleTeam(TextMessageEvent e) {
