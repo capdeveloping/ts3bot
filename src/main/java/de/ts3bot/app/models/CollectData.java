@@ -44,13 +44,12 @@ public class CollectData {
                 pstmt.setString(2, client.getNickname());
                 pstmt.setString(3, "");
                 pstmt.setString(4, "");
+                pstmt.setString(5, "0");
                 for(Client onlineClient : clients){
                     if(client.getUniqueIdentifier().equals(onlineClient.getUniqueIdentifier())){
                         // 1 ist online
                         pstmt.setString(5, "1");
-                    }else{
-                        // 0 ist offline
-                        pstmt.setString(5, "0");
+                        break;
                     }
                 }
                 pstmt.executeUpdate();

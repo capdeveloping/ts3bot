@@ -12,7 +12,7 @@ function getUsers() {
     if($value["online"]){
         $online = '<img width="15" height="15" src="../img/online.gif"> ';
     }
-    $jsLabel = $online . $value["name"] . " - (" . $value["uid"] . ")";
+    $jsLabel = $online . str_replace("'", "", $value["name"]) . " - (" . $value["uid"] . ")";
 ?>
     optionsData.push({ value: <?php echo $jsValue?>, label: '<?php echo $jsLabel;?>'});
 <?php }?>
