@@ -1,10 +1,7 @@
 package de.ts3bot.app.models;
 
 import com.github.theholywaffle.teamspeak3.TS3Api;
-import com.github.theholywaffle.teamspeak3.api.wrapper.Channel;
-import com.github.theholywaffle.teamspeak3.api.wrapper.DatabaseClient;
-import com.github.theholywaffle.teamspeak3.api.wrapper.Permission;
-import com.github.theholywaffle.teamspeak3.api.wrapper.ServerGroup;
+import com.github.theholywaffle.teamspeak3.api.wrapper.*;
 import de.ts3bot.app.models.data.CollectedData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -38,14 +35,24 @@ public class CollectData {
             return;
         }
 
-        String sql = "INSERT INTO \"" + serverConfig.getBotName() + "_users\"(uid, name, ip, groups) VALUES(?,?,?,?)";
+        String sql = "INSERT INTO \"" + serverConfig.getBotName() + "_users\"(uid, name, ip, groups, online) VALUES(?,?,?,?,?)";
         try {
             PreparedStatement pstmt = conn.prepareStatement(sql);
+            List<Client> clients = api.getClients();
             for(DatabaseClient client : api.getDatabaseClients()){
                 pstmt.setString(1, client.getUniqueIdentifier());
                 pstmt.setString(2, client.getNickname());
                 pstmt.setString(3, "");
                 pstmt.setString(4, "");
+                for(Client onlineClient : clients){
+                    if(client.getUniqueIdentifier().equals(onlineClient.getUniqueIdentifier())){
+                        // 1 ist online
+                        pstmt.setString(5, "1");
+                    }else{
+                        // 0 ist offline
+                        pstmt.setString(5, "0");
+                    }
+                }
                 pstmt.executeUpdate();
             }
         } catch (SQLException e) {

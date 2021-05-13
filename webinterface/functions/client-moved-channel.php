@@ -15,7 +15,6 @@
             $_SESSION["config"][$key . "_client_moved_group_notify"] = $_POST['clientPokeClient-' . $key];
             $_SESSION["config"][$key . "_client_moved_group_ids"] = $_POST['groupids-' . $key];
             $_SESSION["config"][$key . "_client_moved_group_action"] = $_POST['action-' . $key];
-            getJSGroups($_SESSION['db_groups'], $_SESSION["config"][$key . "_client_moved_group_notify"]);
         }
         $saved = TRUE;
         saveConfig($_SESSION["config"], $_SESSION["configPath"]);
@@ -166,16 +165,8 @@
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
         <script src="../js/scripts.js"></script>
+        <script src="../js/custom-scripts.php"></script>
         <script>
-          function getOptions() {
-              var optionsData = [];
-
-<?php foreach ($_SESSION['db_groups'] as $id=>$name){?>
-              optionsData.push({ value: "<?php echo $id?>", label: "<?php print_r("(" . $id . ") " . $name)?>"});
-<?php }?>
-              return optionsData;
-         }
-
           function getSelected(key) {
               var optionsData = [];
               switch(key) {
@@ -194,7 +185,7 @@
 <?php foreach($_SESSION["functions"]["ClientMove"] as $number=>$key){?>
          VirtualSelect.init({
             ele: '#multiple-select-<?php echo $key?>',
-            options: getOptions(),
+            options: getGroups(),
             multiple: true,
             selectedValue: getSelected("poke-<?php echo $key?>"),
             placeholder: 'Servergruppen auswählen',
@@ -202,7 +193,7 @@
 
          VirtualSelect.init({
             ele: '#multiple-select-groupids-<?php echo $key?>',
-            options: getOptions(),
+            options: getGroups(),
             multiple: true,
             selectedValue: getSelected("groupids-<?php echo $key?>"),
             placeholder: 'Servergruppen auswählen',

@@ -35,7 +35,7 @@
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userDropdown">
                     <a class="dropdown-item" href="/change-password.php">Password aendern</a>
-                        <div class="dropdown-divider"></div>
+                    <div class="dropdown-divider"></div>
                         <form class="form-horizontal" data-toggle="validator" name="logout" method="POST">
                             <div style="text-align: center;">
                                 <button name="logout" type="submit" class="btn btn-danger">Logout</button>

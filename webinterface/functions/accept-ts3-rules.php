@@ -92,31 +92,13 @@
                                 <div class="form-group row">
                                     <label class="col-sm-4 control-label" for="inputServergroup">Gast Gruppe bei der ersten Verbindung</label>
                                     <div class="col-sm-4">
-                                        <select name="accept_rules_first_group" class="form-select" aria-label="select">
-                                            <option value="">-- Servergruppe auswählen --</option>
-<?php foreach ($_SESSION['db_groups'] as $id=>$name){
-        if ( strval($id) === $_SESSION["config"][$acprKey . "_accept_rules_first_group"]) { ?>
-                                            <option selected value="<?php echo $id?>"><?php print_r("(" . $id . ") " . $name)?></option>
-<?php   } else {?>
-                                            <option value="<?php echo $id?>"><?php print_r("(" . $id . ") " . $name)?></option>
-<?php   }
-}?>
-                                        </select>
+                                        <div name="accept_rules_first_group" id="single-select-gast"></div>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="col-sm-4 control-label" for="inputServergroup2">Gast Gruppe die nach dem Akzeptieren vergeben werden soll</label>
                                     <div class="col-sm-4">
-                                        <select name="accept_rules_accepted_group" class="form-select" aria-label="select">
-                                            <option value="">-- Servergruppe auswählen --</option>
-<?php foreach ($_SESSION['db_groups'] as $id=>$name){
-        if ( strval($id) === $_SESSION["config"][$acprKey . "_accept_rules_accepted_group"]) { ?>
-                                            <option selected value="<?php echo $id?>"><?php print_r("(" . $id . ") " . $name)?></option>
-<?php   } else {?>
-                                            <option value="<?php echo $id?>"><?php print_r("(" . $id . ") " . $name)?></option>
-<?php   }
-}?>
-                                        </select>
+                                        <div name="accept_rules_accepted_group" id="single-select-accepted"></div>
                                     </div>
                                 </div>
                                 <div class="form-group row" >
@@ -193,7 +175,29 @@ for ($x = 1; $x <= 3; $x++) { ?>
         </div>
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="../js/virtual-select.min.css" />
+        <script src="../js/virtual-select.min.js"></script>
         <script src="../js/scripts.js"></script>
+        <script src="../js/custom-scripts.php"></script>
+        <script>
+            VirtualSelect.init({
+                ele: '#single-select-gast',
+                options: getChannels(),
+                multiple: false,
+                search: true,
+                selectedValue: ["<?php echo $_SESSION["config"][$acprKey . "_accept_rules_first_group"];?>"],
+                placeholder: 'Channel auswählen',
+            });
+
+            VirtualSelect.init({
+                ele: '#single-select-accepted',
+                options: getChannels(),
+                multiple: false,
+                search: true,
+                selectedValue: ["<?php echo $_SESSION["config"][$acprKey . "_accept_rules_accepted_group"];?>"],
+                placeholder: 'Channel auswählen',
+            });
+        </script>
         <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
         <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
         <script>

@@ -41,8 +41,6 @@
         <link href="../css/styles.css" rel="stylesheet" />
         <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" crossorigin="anonymous" />
         <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/js/all.min.js" crossorigin="anonymous"></script>
-        <link rel="stylesheet" href="../js/virtual-select.min.css" />
-        <script src="../js/virtual-select.min.js"></script>
     </head>
     <body class="sb-nav-fixed">
 <?php
@@ -200,9 +198,12 @@
             </div>
         </div>
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" crossorigin="anonymous"></script>
-        <script src="../js/scripts.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.js" crossorigin="anonymous"></script>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+        <link rel="stylesheet" href="../js/virtual-select.min.css" />
+        <script src="../js/virtual-select.min.js"></script>
+        <script src="../js/scripts.js"></script>
+        <script src="../js/custom-scripts.php"></script>
         <script>
             function countChar(val, key) {
                 var len = val.value.length;
@@ -221,15 +222,6 @@
                     document.getElementById("inputWelcomeEndDate-" + key).style.color = "green";
                 }
             };
-
-          function getGroups() {
-              var optionsData = [];
-
-<?php foreach ($_SESSION['db_groups'] as $id=>$name){?>
-              optionsData.push({ value: "<?php echo $id?>", label: "<?php print_r("(" . $id . ") " . $name)?>"});
-<?php }?>
-              return optionsData;
-          }
 
           function getSelected(key) {
               var optionsData = [];

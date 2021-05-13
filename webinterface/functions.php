@@ -544,21 +544,14 @@ function getlog($number_lines) {
 	}
 	return $lines;
 }
-
 function getJSSelectOption($db_array, $commaStr){
     $arrStr = "";
-    print_r($arrStr);
     if ( empty($commaStr) ){
         return $arrStr;
     }
-
     $tmpArray = explode(",", $commaStr);
-
-    foreach ($db_array as $key=>$value){
-        $found = array_search(strval($key), $tmpArray);
-        if ( $found !== false ){
-            $arrStr = $arrStr . "," . '"' . $key . '"';
-        }
+    foreach ($tmpArray as $key=>$value){
+        $arrStr = $arrStr . "," . '"' . $value . '"';
     }
     return ltrim($arrStr, ',');
 }

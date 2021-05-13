@@ -36,7 +36,7 @@ case $1 in
                 mkdir /data/configs/"$2"/
                 cp /data/serverconfig.template /data/configs/"$2"/serverconfig.cfg
                 sqlite3 /data/db.sqlite3 'CREATE TABLE "'$2'_groups"(id INTEGER,name text);'
-                sqlite3 /data/db.sqlite3 'CREATE TABLE "'$2'_users"(uid text, name text);'
+                sqlite3 /data/db.sqlite3 'CREATE TABLE "'$2'_users"(uid text, name text, ip text, groups text, online INTEGER);'
                 sqlite3 /data/db.sqlite3 'CREATE TABLE "'$2'_channels"(id INTEGER,name text);'
                 ;;
         renameInstance)

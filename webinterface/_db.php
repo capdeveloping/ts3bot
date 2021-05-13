@@ -24,11 +24,15 @@
                 $_SESSION['db_channels'][$row["id"]] = $row["name"];
             }
             $tablename = $_SESSION["instance_name"] . '_users';
-            $results = $db->query('SELECT uid, name FROM "' . $tablename . '" ;');
+            $results = $db->query('SELECT uid, name, online FROM "' . $tablename . '" ;');
 
             $_SESSION['db_users'] = [];
+            $counter=1;
             while ($row = $results->fetchArray()) {
-                $_SESSION['db_users'][$row["uid"]] = $row["name"];
+                $_SESSION['db_users'][$counter]["name"] = $row["name"];
+                $_SESSION['db_users'][$counter]["uid"] = $row["uid"];
+                $_SESSION['db_users'][$counter]["online"] = $row["online"];
+                $counter++;
             }
         }
     } catch (Throwable $e) {

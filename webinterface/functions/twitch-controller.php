@@ -132,16 +132,7 @@
                                 <div class="form-group row" >
                                     <label class="col-sm-4 control-label" for="inputTwitchGroup">Twitch Servergroup</label>
                                     <div class="col-sm-4">
-                                        <select name="twitch_server_group" class="form-select" aria-label="select">
-<?php foreach ($_SESSION['db_groups'] as $id=>$name){
-    if ( strval($id) === $_SESSION["config"][$twitchKey . "_twitch_server_group"]) {
-?>
-                                            <option selected value="<?php echo $id?>"><?php print_r("(" . $id . ") " . $name)?></option>
-<?php } else {?>
-                                            <option value="<?php echo $id?>"><?php print_r("(" . $id . ") " . $name)?></option>
-<?php }
-}?>
-                                        </select>
+                                        <div name="twitch_server_group" id="single-selected"></div>
                                     </div>
                                 </div>
                                 <div class="form-group row" >
@@ -211,17 +202,7 @@ foreach($twitchUser as $key=>$value){ ?>
                                         </div>
                                         =
                                         <div class="col-sm-3">
-                                            <select name="item<?php echo "$counter";?>" class="form-select" aria-label="select">
-                                                <option value="" >-- User auswählen --</option>
-<?php foreach ($_SESSION['db_users'] as $uid=>$name){
-    if ( strval($uid) === $value["uid"]) {
-?>
-                                                <option selected value="<?php echo $uid?>"><?php print_r($name)?></option>
-<?php } else {?>
-                                                <option value="<?php echo $uid?>"><?php print_r($name)?></option>
-<?php }
-}?>
-                                            </select>
+                                            <div name="item<?php echo "$counter"?>" id="single-selected-<?php echo $counter?>"></div>
                                         </div>
                                         <div class="text-center">
                                             <button name="rmItem<?php echo "$counter";?>" type="submit" class="btn btn-danger" ><i class="fas fa-trash-alt"></i></button>
@@ -244,17 +225,7 @@ for ($x = 1; $x <= 3; $x++) { ?>
                                         </div>
                                         =
                                         <div class="col-sm-3">
-                                            <select name="newItem<?php echo "$x"?>" class="form-select" aria-label="select">
-                                                <option value="" >-- User auswählen --</option>
-<?php foreach ($_SESSION['db_users'] as $uid=>$name){
-    if ( strval($uid) === "ServerQuery") {
-        continue;
-    ?>
-<?php } else {?>
-                                                <option value="<?php echo $uid?>"><?php print_r($name)?></option>
-<?php }
-}?>
-                                            </select>
+                                            <div name="newItem<?php echo "$x"?>" id="single-select-new-<?php echo $x?>"></div>
                                         </div>
                                     </div>
 <?php } ?>
@@ -279,6 +250,45 @@ for ($x = 1; $x <= 3; $x++) { ?>
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
         <script src="../js/scripts.js"></script>
+        <script src="../js/custom-scripts.php"></script>
+        <link rel="stylesheet" href="../js/virtual-select.min.css" />
+        <script src="../js/virtual-select.min.js"></script>
+        <script type="text/javascript">
+            VirtualSelect.init({
+                ele: '#single-selected',
+                options: getGroups(),
+                multiple: false,
+                search: true,
+                selectedValue: ["<?php echo $_SESSION["config"][$twitchKey . "_twitch_server_group"]?>"],
+                placeholder: 'Benutzer auswählen',
+            });
+<?php
+$counter = 1;
+if( ! empty($twitchUser) ){
+foreach($twitchUser as $key=>$value){?>
+
+            VirtualSelect.init({
+                ele: '#single-selected-<?php echo $counter?>',
+                options: getUsers(),
+                multiple: false,
+                search: true,
+                selectedValue: ["<?php echo $value["uid"]?>"],
+                placeholder: 'Benutzer auswählen',
+            });
+<?php $counter++;}
+}?>
+
+<?php for ($x = 1; $x <= 3; $x++){ ?>
+            VirtualSelect.init({
+                ele: '#single-select-new-<?php echo $x?>',
+                options: getUsers(),
+                multiple: false,
+                search: true,
+                selectedValue: "",
+                placeholder: 'Benutzer auswählen',
+            });
+<?php }?>
+        </script>
         <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
         <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
     </body>

@@ -500,16 +500,8 @@ if ( ( isset($addWelcomeMessage) && $addWelcomeMessage ) || ( isset($invalidWelc
         <script src="js/virtual-select.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
         <script src="js/scripts.js"></script>
-        <script>
-          function getUsers() {
-              var optionsData = [];
-
-<?php foreach ($_SESSION['db_users'] as $uid=>$name){?>
-              optionsData.push({ value: "<?php echo $uid;?>", label: "<?php print_r($name);?>"});
-<?php }?>
-              return optionsData;
-         }
-
+        <script src="js/custom-scripts.php"></script>
+        <script type="text/javascript">
           function getSelectedAdmin() {
               var optionsData = [<?php echo getJSSelectOption($_SESSION['db_users'], $_SESSION["config"]["bot_admin"]);?>];
               return optionsData;

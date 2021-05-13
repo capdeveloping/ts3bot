@@ -4,10 +4,11 @@
 
 createSQLTables(){
   firstServer=true
+  sqlite3 /data/db.sqlite3 "PRAGMA writable_schema = 1; DELETE FROM sqlite_master WHERE type = 'table' AND name NOT IN ('users'); PRAGMA writable_schema = 0; VACUUM;"
   for folder in `find /data/configs/ -maxdepth 1 -type d`; do
     folder="${folder##*/}"
     if [ -n "$folder" ]; then
-      sqlite3 /data/db.sqlite3 'CREATE TABLE IF NOT EXISTS "'$folder'_users"(uid text, name text, ip text, groups text);'
+      sqlite3 /data/db.sqlite3 'CREATE TABLE IF NOT EXISTS "'$folder'_users"(uid text, name text, ip text, groups text, online INTEGER);'
       sqlite3 /data/db.sqlite3 'CREATE TABLE IF NOT EXISTS "'$folder'_groups"(id INTEGER, name text);'
       sqlite3 /data/db.sqlite3 'CREATE TABLE IF NOT EXISTS "'$folder'_channels"(id INTEGER, name text);'
       firstServer=false
@@ -15,7 +16,7 @@ createSQLTables(){
   done
 
   if [ "$firstServer" = true ]; then
-      sqlite3 /data/db.sqlite3 'CREATE TABLE IF NOT EXISTS server1_users(uid text, name text, ip text, groups text);'
+      sqlite3 /data/db.sqlite3 'CREATE TABLE IF NOT EXISTS server1_users(uid text, name text, ip text, groups text, online INTEGER);'
       sqlite3 /data/db.sqlite3 'CREATE TABLE IF NOT EXISTS server1_groups(id INTEGER, name text);'
       sqlite3 /data/db.sqlite3 'CREATE TABLE IF NOT EXISTS server1_channels(id INTEGER, name text);'
   fi

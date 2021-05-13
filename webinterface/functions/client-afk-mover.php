@@ -207,24 +207,8 @@
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
         <script src="../js/scripts.js"></script>
-        <script>
-          function getGroups() {
-              var optionsData = [];
-
-<?php foreach ($_SESSION['db_groups'] as $id=>$name){?>
-              optionsData.push({ value: "<?php echo $id;?>", label: "<?php print_r("(" . $id . ") " . $name);?>"});
-<?php }?>
-              return optionsData;
-         }
-          function getChannels() {
-              var optionsData = [];
-
-<?php foreach ($_SESSION['db_channels'] as $id=>$name){?>
-              optionsData.push({ value: "<?php echo $id;?>", label: "<?php print_r("(" . $id . ") " . $name);?>"});
-<?php }?>
-              return optionsData;
-         }
-
+        <script src="../js/custom-scripts.php"></script>
+        <script type="text/javascript">
           function getSelected(key) {
               var optionsData = [];
               switch(key) {

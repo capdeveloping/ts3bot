@@ -55,8 +55,6 @@
         <title>Funktion - Automatisches Channel erstellen</title>
         <link href="../css/styles.css" rel="stylesheet" />
         <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/js/all.min.js" crossorigin="anonymous"></script>
-        <link rel="stylesheet" href="../js/virtual-select.min.css" />
-        <script src="../js/virtual-select.min.js"></script>
     </head>
     <body class="sb-nav-fixed">
         <?php
@@ -114,15 +112,7 @@ foreach($channelPasswords as $key=>$value){ ?>
                                     <div class="form-group row">
                                         <div class="col-sm-4"></div>
                                         <div class="col-sm-2">
-                                            <select name="itemKey<?php echo "$counter";?>" class="form-select">
-<?php foreach ($_SESSION['db_channels'] as $id=>$name){
-        if ( $id === $key) {?>
-                                                <option selected value="<?php echo $id?>"><?php print_r("(" . $id . ") " . $name)?></option>
-<?php   } else {?>
-                                                <option value="<?php echo $id?>"><?php print_r("(" . $id . ") " . $name)?></option>
-<?php   }
-}?>
-                                            </select>
+                                            <div name="itemKey<?php echo "$counter";?>" id="single-select-<?php echo $counter?>"></div>
                                         </div>
                                         =
                                         <div class="col-sm-3">
@@ -139,12 +129,7 @@ for ($x = 1; $x <= 3; $x++) { ?>
                                     <div class="form-group row">
                                         <div class="col-sm-4"></div>
                                         <div class="col-sm-2">
-                                            <select name="newItemKey<?php echo "$x";?>" class="form-select">
-                                                <option value="">-- Channel auswählen --</option>
-<?php foreach ($_SESSION['db_channels'] as $id=>$name){?>
-                                                <option value="<?php echo $id?>"><?php print_r("(" . $id . ") " . $name)?></option>
-<?php }?>
-                                            </select>
+                                            <div name="newItemKey<?php echo "$x";?>" id="single-select-new-<?php echo $x?>"></div>
                                         </div>
                                         =
                                         <div class="col-sm-3">
@@ -177,29 +162,49 @@ for ($x = 1; $x <= 3; $x++) { ?>
         </div>
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="../js/virtual-select.min.css" />
+        <script src="../js/virtual-select.min.js"></script>
         <script src="../js/scripts.js"></script>
+        <script src="../js/custom-scripts.php"></script>
         <script>
-          function getChannels() {
-              var optionsData = [];
+            function getSelected() {
+                var optionsData = [<?php echo getJSSelectOption($_SESSION['db_channels'], $_SESSION["config"][$cacKey . "_channel_check_subchannel"]);?>];
+                return optionsData;
+            }
 
-<?php foreach ($_SESSION['db_channels'] as $id=>$name){?>
-              optionsData.push({ value: "<?php echo $id?>", label: "<?php print_r("(" . $id . ") " . $name)?>"});
+            VirtualSelect.init({
+                ele: '#multiple-select',
+                options: getChannels(),
+                multiple: true,
+                selectedValue: getSelected(),
+                placeholder: '-- Channel auswählen --',
+            });
+<?php
+$counter = 1;
+if( ! empty($channelPasswords) ){
+    foreach($channelPasswords as $key=>$value){ ?>
+            VirtualSelect.init({
+                ele: '#single-select-<?php echo $counter?>',
+                options: getChannels(),
+                multiple: false,
+                search: true,
+                selectedValue: ["<?php echo $key;?>"],
+                placeholder: '-- Channel auswählen --',
+            });
+<?php $counter++; }
+}
+?>
+
+<?php for ($x = 1; $x <= 3; $x++){ ?>
+            VirtualSelect.init({
+                ele: '#single-select-new-<?php echo $x?>',
+                options: getChannels(),
+                multiple: false,
+                search: true,
+                selectedValue: "",
+                placeholder: '-- Channel auswählen --',
+            });
 <?php }?>
-              return optionsData;
-         }
-
-          function getSelected() {
-              var optionsData = [<?php echo getJSSelectOption($_SESSION['db_channels'], $_SESSION["config"][$cacKey . "_channel_check_subchannel"]);?>];
-              return optionsData;
-         }
-
-         VirtualSelect.init({
-            ele: '#multiple-select',
-            options: getChannels(),
-            multiple: true,
-            selectedValue: getSelected(),
-            placeholder: 'Channel auswählen',
-         });
         </script>
     </body>
 </html>
