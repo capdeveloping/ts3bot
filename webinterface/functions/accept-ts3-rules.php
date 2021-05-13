@@ -182,20 +182,20 @@ for ($x = 1; $x <= 3; $x++) { ?>
         <script>
             VirtualSelect.init({
                 ele: '#single-select-gast',
-                options: getChannels(),
+                options: getGroups(),
                 multiple: false,
                 search: true,
                 selectedValue: ["<?php echo $_SESSION["config"][$acprKey . "_accept_rules_first_group"];?>"],
-                placeholder: 'Channel auswählen',
+                placeholder: 'Gruppe auswählen',
             });
 
             VirtualSelect.init({
                 ele: '#single-select-accepted',
-                options: getChannels(),
+                options: getGroups(),
                 multiple: false,
                 search: true,
                 selectedValue: ["<?php echo $_SESSION["config"][$acprKey . "_accept_rules_accepted_group"];?>"],
-                placeholder: 'Channel auswählen',
+                placeholder: 'Gruppe auswählen',
             });
         </script>
         <script src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js" crossorigin="anonymous"></script>
