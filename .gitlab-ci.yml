@@ -40,9 +40,6 @@ build jar file:
   image: gradle:6.8.3
   script:
     - gradle --build-cache buildjar
-  artifacts:
-    paths:
-      - build/libs/
   except:
     - /^doku-/
 
