@@ -157,7 +157,7 @@ function fileReadContentWithSeparator($configPath, $separator){
 
 function fileReadContentWithMultipleSeparators($configPath, $separator){
     $dictionary = [];
-    $counter = 0;
+    $counter = 1;
     try{
         $configFile = fopen($configPath, "r") or die("Unable to open file! => " . $configPath);
         // Output one line until end-of-file

@@ -2,7 +2,6 @@
     session_start();
 
     require_once($_SERVER["DOCUMENT_ROOT"] . '/_preload.php');
-
     $_SESSION["nav_expanded"] = TRUE;
     $saved = FALSE;
     if (array_key_exists("Twitch", $_SESSION["functions"])) {
@@ -22,27 +21,29 @@
     foreach($_POST as $key => $value){
         if( str_starts_with($key, "rmItem")){
             $number = str_replace("rmItem", "", $key);
-            unset($twitchUser[$_POST['itemKey' . $number]]);
-            writeConfigFileWithSeparator($twitchUser, $_SESSION["config"][$twitchKey . "_twitch_config_name"], " #=# ");
+            unset($twitchUser[$number]);
+            writeConfigFileWithMultipleSeparators($twitchUser, $_SESSION["config"][$twitchKey . "_twitch_config_name"], " #=# ");
             $saved = TRUE;
         }
     }
 
     if (isset($_POST['save'])){
         $twitchUser = [];
+        $number = 1;
         foreach($_POST as $key => $value){
             if( str_starts_with($key, "newItemKey") && ! empty($value) ){
-                $number = str_replace("newItemKey", "", $key);
-                $twitchUser[$number]["uid"] = $_POST["newItem" . $number];
-                $twitchUser[$number]["twitchname"] = $_POST["newItemKey" . $number];
-                $twitchUser[$number]["sendMessage"]= $_POST["newEnableMessage" . $number];
+                $keyNumber = str_replace("newItemKey", "", $key);
+                $twitchUser[$number]["uid"] = $_POST["newItem" . $keyNumber];
+                $twitchUser[$number]["twitchname"] = $_POST["newItemKey" . $keyNumber];
+                $twitchUser[$number]["sendMessage"]= $_POST["newEnableMessage" . $keyNumber];
             }
             if( str_starts_with($key, "itemKey") && ! empty($value) ){
-                $number = str_replace("itemKey", "", $key);
-                $twitchUser[$number]["uid"] = $_POST["item" . $number];
-                $twitchUser[$number]["twitchname"] = $_POST["itemKey" . $number];
-                $twitchUser[$number]["sendMessage"]= $_POST["enableMessage" . $number];
+                $keyNumber = str_replace("itemKey", "", $key);
+                $twitchUser[$number]["uid"] = $_POST["item" . $keyNumber];
+                $twitchUser[$number]["twitchname"] = $_POST["itemKey" . $keyNumber];
+                $twitchUser[$number]["sendMessage"]= $_POST["enableMessage" . $keyNumber];
             }
+            $number++;
         }
         $_SESSION["config"][$twitchKey . "_twitch_api_client_id"] = $_POST['twitch_api_client_id'];
         $_SESSION["config"][$twitchKey . "_twitch_api_client_oauth_token"] = $_POST['twitch_api_client_oauth_token'];
@@ -260,7 +261,7 @@ for ($x = 1; $x <= 3; $x++) { ?>
                 multiple: false,
                 search: true,
                 selectedValue: ["<?php echo $_SESSION["config"][$twitchKey . "_twitch_server_group"]?>"],
-                placeholder: 'Benutzer auswählen',
+                placeholder: 'Gruppe auswählen',
             });
 <?php
 $counter = 1;
