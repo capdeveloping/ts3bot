@@ -1,5 +1,5 @@
 <?php
-    require_once('_preload.php');
+    require_once('templates/preload.php');
 
     $saved = FALSE;
     if (isset($_POST['addClientAfk'])){
@@ -122,30 +122,19 @@
         saveConfig($_SESSION['config'], $_SESSION['configPath']);
         $saved = TRUE;
     }
+
 ?>
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-        <meta name="description" content="" />
-        <meta name="author" content="" />
-        <title>Funktion - Basis Einstellungen</title>
-        <link href="css/styles.css" rel="stylesheet" />
-        <link href="https://cdn.datatables.net/1.10.20/css/dataTables.bootstrap4.min.css" rel="stylesheet" crossorigin="anonymous" />
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/js/all.min.js" crossorigin="anonymous"></script>
-    </head>
+<?php
+    // region import header
+    $website_title = "Core Settings";
+    require_once($_SERVER["DOCUMENT_ROOT"] . '/templates/header.php');
+    //endregion
+?>
     <body class="sb-nav-fixed">
-        <?php
-            require_once('_nav-header.php');
-        ?>
+<?php require_once('templates/nav-header.php'); ?>
         <div id="layoutSidenav">
-            <div id="layoutSidenav_nav">
-                <?php
-                    require_once('_nav.php');
-                ?>
-            </div>
+<?php require_once('templates/nav.php'); ?>
             <div id="layoutSidenav_content">
                 <main>
                     <div class="container-fluid">
@@ -164,9 +153,20 @@
                                         </div>
                                         <br>
                                         <div class="form-group row">
-                                            <label class="col-sm-5 control-label" for="language">Sprache</label>
+                                            <label class="col-sm-5 control-label" for="language">Bot Kommunikationssprache</label>
                                             <div class="col-sm-4">
-                                                <input class="form-control" id="language" type="text" name="language" placeholder="Enter new language" value=<?php if(array_key_exists("language", $_SESSION['config'])){ echo '"' . $_SESSION['config']["language"] . '"' . '"';}else{ echo '""';} ?> required/>
+                                                <select name="language" class="form-select" aria-label="select">
+<?php if ( $_SESSION['config']["language"] === "german") { ?>
+                                                    <option selected value="german">deutsch</option>
+                                                    <option value="english">englisch</option>
+<?php } else if ( $_SESSION['config']["language"] === "english"){?>
+                                                    <option value="german">deutsch</option>
+                                                    <option selected value="english">englisch</option>
+<?php } else { ?>
+                                                    <option value="german">deutsch</option>
+                                                    <option value="english">englisch</option>
+<?php } ?>
+                                                </select>
                                             </div>
                                         </div>
                                         <div class="form-group row">
@@ -255,6 +255,10 @@
                                             Funktionen
                                         </div>
                                         <br>
+<?php   if ( $_SESSION['db_users'] == array() && $_SESSION['db_groups'] == array() && $_SESSION['db_channels'] == array()){?>
+                                        <label class="col-sm-10 control-label" >Erste Verbindung ausstehend. Anschließend können Funktionen aktiviert werden!</label>
+                                        <br>
+<?php   } else {?>
                                         <label class="col-sm-5 control-label" >Können nur einmal vewendet werden</label>
                                         <br>
                                         <div class="form-group row">
@@ -333,8 +337,8 @@
                                         <label class="col-sm-5 control-label">Können mehrmals vewendet werden</label>
                                         <br>
 <?php
-if( isset($_SESSION['functions']["ClientAFK"])){
-    foreach($_SESSION['functions']["ClientAFK"] as $number=>$key){ ?>
+    if( isset($_SESSION['functions']["ClientAFK"])){
+        foreach($_SESSION['functions']["ClientAFK"] as $number=>$key){ ?>
                                         <div class="form-group row">
                                             <div class="col-sm-1">
                                                 <label class="switch">
@@ -346,15 +350,15 @@ if( isset($_SESSION['functions']["ClientAFK"])){
                                             <div class="col-sm-4">
                                                 <input readonly class="form-control" id=<?php echo '"inputClientAfk-' . $key . '"'; ?> type="text" name=<?php echo '"clientafk_key-' . $key . '"' ?>  value=<?php echo '"' . $key . '"'; ?> />
                                             </div>
-<?php if( count($_SESSION['functions']["ClientAFK"]) != $number + 1 ){ ?>
+<?php   if( count($_SESSION['functions']["ClientAFK"]) != $number + 1 ){ ?>
                                         </div>
-<?php   }
+<?php       }
+        }
     }
-}
-if ( ( isset($addClientAfk) && $addClientAfk ) || ( isset($invalidClientAfk) && $invalidClientAfk ) || ! isset($_SESSION['functions']["ClientAFK"]) || (isset($_SESSION['functions']["ClientAFK"]) && count($_SESSION['functions']["ClientAFK"]) == 0) ) {
-    if(isset($_SESSION['functions']["ClientAFK"]) && count($_SESSION['functions']["ClientAFK"]) != 0){?>
+    if ( ( isset($addClientAfk) && $addClientAfk ) || ( isset($invalidClientAfk) && $invalidClientAfk ) || ! isset($_SESSION['functions']["ClientAFK"]) || (isset($_SESSION['functions']["ClientAFK"]) && count($_SESSION['functions']["ClientAFK"]) == 0) ) {
+        if(isset($_SESSION['functions']["ClientAFK"]) && count($_SESSION['functions']["ClientAFK"]) != 0){?>
                                         </div>
-<?php } ?>
+<?php   } ?>
                                         <div class="form-group row">
                                             <div class="col-sm-1">
                                                 <label class="switch">
@@ -370,16 +374,16 @@ if ( ( isset($addClientAfk) && $addClientAfk ) || ( isset($invalidClientAfk) && 
                                                 <button type="submit" class="btn btn-success" name="addClientAfk"><i class="fas fa-plus"></i></button>
                                             </div>
                                         </div>
-<?php } else { ?>
+<?php   } else { ?>
                                             <div class="text-center">
                                                 <button type="submit" class="btn btn-success" name="addClientAfk"><i class="fas fa-plus"></i></button>
                                             </div>
                                         </div>
-<?php } ?>
+<?php   } ?>
 
 <?php
-if( isset($_SESSION['functions']["ClientMove"])){
-    foreach($_SESSION['functions']["ClientMove"] as $number=>$key){ ?>
+    if( isset($_SESSION['functions']["ClientMove"])){
+        foreach($_SESSION['functions']["ClientMove"] as $number=>$key){ ?>
                                         <div class="form-group row">
                                             <div class="col-sm-1">
                                                 <label class="switch">
@@ -391,15 +395,15 @@ if( isset($_SESSION['functions']["ClientMove"])){
                                             <div class="col-sm-4">
                                                 <input readonly class="form-control" id=<?php echo '"inputClientMove-' . $key . '"'; ?> type="text" name=<?php echo '"clientmove_key-' . $key . '"' ?>  value=<?php echo '"' . $key . '"'; ?> />
                                             </div>
-<?php if( count($_SESSION['functions']["ClientMove"]) != $number + 1 ){ ?>
+<?php   if( count($_SESSION['functions']["ClientMove"]) != $number + 1 ){ ?>
                                         </div>
-<?php   }
+<?php       }
+        }
     }
-}
-if ( ( isset($addClientMove) && $addClientMove ) || ( isset($invalidClientMove) && $invalidClientMove ) || ! isset($_SESSION['functions']["ClientMove"]) || (isset($_SESSION['functions']["ClientMove"]) && count($_SESSION['functions']["ClientMove"]) == 0) ) {
-    if(isset($_SESSION['functions']["ClientMove"]) && count($_SESSION['functions']["ClientMove"]) != 0){?>
+    if ( ( isset($addClientMove) && $addClientMove ) || ( isset($invalidClientMove) && $invalidClientMove ) || ! isset($_SESSION['functions']["ClientMove"]) || (isset($_SESSION['functions']["ClientMove"]) && count($_SESSION['functions']["ClientMove"]) == 0) ) {
+        if(isset($_SESSION['functions']["ClientMove"]) && count($_SESSION['functions']["ClientMove"]) != 0){?>
                                         </div>
-<?php } ?>
+<?php   } ?>
                                         <div class="form-group row">
                                             <div class="col-sm-1">
                                                 <label class="switch">
@@ -415,17 +419,17 @@ if ( ( isset($addClientMove) && $addClientMove ) || ( isset($invalidClientMove) 
                                                 <button type="submit" class="btn btn-success" name="addClientMove"><i class="fas fa-plus"></i></button>
                                             </div>
                                         </div>
-<?php } else { ?>
+<?php   } else { ?>
                                             <div class="text-center">
                                                 <button type="submit" class="btn btn-success" name="addClientMove"><i class="fas fa-plus"></i></button>
                                             </div>
                                         </div>
-<?php } ?>
+<?php   } ?>
 
 
 <?php
-if( isset($_SESSION['functions']["WelcomeMessage"])){
-    foreach($_SESSION['functions']["WelcomeMessage"] as $number=>$key){ ?>
+    if( isset($_SESSION['functions']["WelcomeMessage"])){
+        foreach($_SESSION['functions']["WelcomeMessage"] as $number=>$key){ ?>
                                         <div class="form-group row">
                                             <div class="col-sm-1">
                                                 <label class="switch">
@@ -437,15 +441,15 @@ if( isset($_SESSION['functions']["WelcomeMessage"])){
                                             <div class="col-sm-4">
                                                 <input readonly class="form-control" id=<?php echo '"inputWelcomeMessage-' . $key . '"'; ?> type="text" name=<?php echo '"welcomemessage_key-' . $key . '"' ?>  value=<?php echo '"' . $key . '"'; ?> />
                                             </div>
-<?php if( count($_SESSION['functions']["WelcomeMessage"]) != $number + 1 ){ ?>
+<?php   if( count($_SESSION['functions']["WelcomeMessage"]) != $number + 1 ){ ?>
                                         </div>
-<?php   }
+<?php       }
+        }
     }
-}
-if ( ( isset($addWelcomeMessage) && $addWelcomeMessage ) || ( isset($invalidWelcomeMessage) && $invalidWelcomeMessage ) || ! isset($_SESSION['functions']["WelcomeMessage"]) || (isset($_SESSION['functions']["WelcomeMessage"]) && count($_SESSION['functions']["WelcomeMessage"]) == 0) ) {
-    if(isset($_SESSION['functions']["WelcomeMessage"]) && count($_SESSION['functions']["WelcomeMessage"]) != 0){?>
+    if ( ( isset($addWelcomeMessage) && $addWelcomeMessage ) || ( isset($invalidWelcomeMessage) && $invalidWelcomeMessage ) || ! isset($_SESSION['functions']["WelcomeMessage"]) || (isset($_SESSION['functions']["WelcomeMessage"]) && count($_SESSION['functions']["WelcomeMessage"]) == 0) ) {
+        if(isset($_SESSION['functions']["WelcomeMessage"]) && count($_SESSION['functions']["WelcomeMessage"]) != 0){?>
                                         </div>
-<?php } ?>
+<?php   } ?>
                                         <div class="form-group row">
                                             <div class="col-sm-1">
                                                 <label class="switch">
@@ -461,11 +465,12 @@ if ( ( isset($addWelcomeMessage) && $addWelcomeMessage ) || ( isset($invalidWelc
                                                 <button type="submit" class="btn btn-success" name="addWelcomeMessage"><i class="fas fa-plus"></i></button>
                                             </div>
                                         </div>
-<?php } else { ?>
+<?php   } else { ?>
                                             <div class="text-center">
                                                 <button type="submit" class="btn btn-success" name="addWelcomeMessage"><i class="fas fa-plus"></i></button>
                                             </div>
                                         </div>
+<?php   } ?>
 <?php } ?>
                                     </div>
                                 </div>
@@ -487,20 +492,9 @@ if ( ( isset($addWelcomeMessage) && $addWelcomeMessage ) || ( isset($invalidWelc
                         </form>
                     </div>
                 </main>
-                <footer class="py-4 bg-light mt-auto">
-                    <?php
-                        require_once('_footer.php');
-                    ?>
-                </footer>
+<?php require_once('templates/footer.php'); ?>
             </div>
         </div>
-        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" crossorigin="anonymous"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/js/all.min.js" crossorigin="anonymous"></script>
-        <link rel="stylesheet" href="js/virtual-select.min.css" />
-        <script src="js/virtual-select.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-        <script src="js/scripts.js"></script>
-        <script src="js/custom-scripts.php"></script>
         <script type="text/javascript">
           function getSelectedAdmin() {
               var optionsData = [<?php echo getJSSelectOption($_SESSION['db_users'], $_SESSION["config"]["bot_admin"]);?>];

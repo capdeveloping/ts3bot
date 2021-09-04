@@ -28,6 +28,7 @@ public class CollectData {
         collectServerGroupData(conn);
         collectUserData(conn);
         closeDatabase(conn);
+        log.info("{}: Getting all Informations about User/Groups/Channels.", serverConfig.getBotName());
     }
 
     private void collectUserData(Connection conn){

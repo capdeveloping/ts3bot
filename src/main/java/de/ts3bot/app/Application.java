@@ -2,7 +2,6 @@ package de.ts3bot.app;
 
 /*
  * Created by Captain on 24.10.2015.
- * Ts3Bot LevelSystem
  * Start Datei
  */
 
@@ -16,8 +15,8 @@ import java.util.List;
 
 public class Application {
     private static final Logger LOG  = LogManager.getLogger(Application.class);
-    private static String configpath = "/data/configs";
-    private static String instancepath = "/data/configs/instancemanager.cfg";
+    private static String configpath;
+    private static String instancepath;
 
     private static final Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {
         public void uncaughtException(Thread t, Throwable e) {
@@ -31,9 +30,12 @@ public class Application {
     }
 
     public static void main(String[] args) {
-        LogInstance.renameLogFile();
         Thread.setDefaultUncaughtExceptionHandler(handler);
         Thread.currentThread().setUncaughtExceptionHandler(handler);
+
+        if( ! checkRunArguments(args) ){
+            System.exit(1);
+        }
         try {
             if( ! BotInstanceConfigManager.checkConfigFiles(configpath, instancepath) ){
                 LOG.info("CFGs created please configure these cfgs and restart the bot.");
@@ -47,6 +49,27 @@ public class Application {
         } catch (RuntimeException throwable) {
             handleCrash(Thread.currentThread(), throwable);
         }
+    }
+
+    private static boolean checkRunArguments(String[] args){
+        boolean runArgumentsSet = true;
+        for(String arg : args){
+            if(arg.startsWith("configPath=")){
+                configpath = arg.replace("configPath=","");
+            }
+            if(arg.startsWith("instanceFile=")){
+                instancepath = arg.replace("instanceFile=","");
+            }
+        }
+        if(configpath == null){
+            LOG.error("Missing configPath as run argument!");
+            runArgumentsSet = false;
+        }
+        if(instancepath == null){
+            LOG.error("Missing instanceFile as run argument!");
+            runArgumentsSet = false;
+        }
+        return runArgumentsSet;
     }
 
     private static void loadInstances(List<InstanceData> instanceDataList, BotInstanceManager botInstanceManager){

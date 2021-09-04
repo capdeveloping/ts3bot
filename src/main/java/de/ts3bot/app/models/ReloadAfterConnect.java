@@ -4,7 +4,6 @@ import com.github.theholywaffle.teamspeak3.TS3Api;
 import de.ts3bot.app.TaskTimer;
 import de.ts3bot.app.features.*;
 import de.ts3bot.app.features.autochannel.AutomaticChannel;
-import de.ts3bot.app.library.configload.TS3ConfigWrite;
 import de.ts3bot.app.library.configload.TS3TextLoad;
 import de.ts3bot.app.library.listener.*;
 
@@ -21,7 +20,6 @@ public class ReloadAfterConnect {
     private TS3ServerConfig serverConfig;
     private TS3TextLoad ts3TextLoad;
     private TS3Viewer ts3Viewer;
-    private TS3ConfigWrite configWrite;
     private MoveToClient moveToClient;
     private List<ClientAfkMode> clientAfkMode;
     private List<ClientJoinedChannelEvent> clientMovedEvent;
@@ -38,7 +36,7 @@ public class ReloadAfterConnect {
     private AutoRemove autoRemove;
     private CollectData collectData;
 
-    ReloadAfterConnect(TS3ServerConfig serverConfig, TS3TextLoad ts3TextLoad, TS3ConfigWrite configWrite, MoveToClient moveToClient,
+    ReloadAfterConnect(TS3ServerConfig serverConfig, TS3TextLoad ts3TextLoad, MoveToClient moveToClient,
                        List<ClientAfkMode> clientAfkMode, TaskTimer taskTimer, BroadcastMessage broadcastMessage, UserMessageEvent userMessageEvent,
                        AdminMessageEvent adminMessageEvent, NewVersionChecker versionChecker, TS3Viewer ts3Viewer, AutomaticChannel automaticChannel,
                        UpdateGameServerChannel updateGameServerChannel, List<ClientJoinedChannelEvent> clientMovedEvent,
@@ -46,7 +44,6 @@ public class ReloadAfterConnect {
                        AutoRemove autoRemove, CollectData collectData) {
         this.serverConfig = serverConfig;
         this.ts3TextLoad = ts3TextLoad;
-        this.configWrite = configWrite;
         this.moveToClient = moveToClient;
         this.clientAfkMode = clientAfkMode;
         this.taskTimer = taskTimer;
@@ -137,7 +134,6 @@ public class ReloadAfterConnect {
         taskTimer.setServerConfig(serverConfig);
         adminMessageEvent.setServerConfig(serverConfig);
         ts3TextLoad.setTs3ServerConfig(serverConfig);
-        configWrite.setServerConfig(serverConfig);
         collectData.setServerConfig(serverConfig);
         if(automaticChannel != null) {
             automaticChannel.setServerConfig(serverConfig);
@@ -182,51 +178,7 @@ public class ReloadAfterConnect {
             versionChecker.setBotFullAdminList(serverConfig.getBotFullAdmin());
         }
     }
-
-    public void updateFunction(String function, boolean stopTasks){
-        switch (function){
-            case "Friendlist" :
-                userMessageEvent.setStopMoveFunc(stopTasks);
-                break;
-            case "ClientMove" :
-                for(ClientJoinedChannelEvent clientMovedEv : clientMovedEvent){
-                    clientMovedEv.setStopFunction(stopTasks);
-                }
-                break;
-            case "Broadcast" :
-                broadcastMessage.setStopFunction(stopTasks);
-                break;
-            case "AcceptRules" :
-                acceptRulesEvent.setStopFunction(stopTasks);
-                break;
-            case "AutoRemove" :
-                autoRemove.setStopFunction(stopTasks);
-                break;
-            case "ChannelAutoCreate" :
-                automaticChannel.setStopFunction(stopTasks);
-                break;
-            case "WelcomeMessage" :
-                welcomeMessageEvent.setStopFunction(stopTasks);
-                break;
-            case "VersionChecker" :
-                taskTimer.checkNewVersion(stopTasks);
-                break;
-            case "UpdateGameChannel" :
-                taskTimer.updateGameChannel(stopTasks);
-                break;
-            case "Viewer" :
-                ts3Viewer.startTimer(stopTasks);
-                break;
-            default:
-                break;
-        }
-    }
-
 //region setter/getter
-    public List<String> getDeactivatedFuntions() {
-        return deactivatedFuntions;
-    }
-
     public TS3Api getApi() {
         return api;
     }

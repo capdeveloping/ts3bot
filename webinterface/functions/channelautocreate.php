@@ -1,5 +1,5 @@
 <?php
-    require_once($_SERVER["DOCUMENT_ROOT"] . '/_preload.php');
+    require_once($_SERVER["DOCUMENT_ROOT"] . '/templates/preload.php');
     $_SESSION["nav_expanded"] = TRUE;
     $saved = FALSE;
     if (array_key_exists("ChannelAutoCreate", $_SESSION["functions"])) {
@@ -43,29 +43,19 @@
         saveConfig($_SESSION["config"], $_SESSION["configPath"]);
         $saved = TRUE;
     }
+
 ?>
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-        <meta name="description" content="" />
-        <meta name="author" content="" />
-        <title>Funktion - Automatisches Channel erstellen</title>
-        <link href="../css/styles.css" rel="stylesheet" />
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/js/all.min.js" crossorigin="anonymous"></script>
-    </head>
+<?php
+    // region import header
+    $website_title = "Function - Channel auto create";
+    require_once($_SERVER["DOCUMENT_ROOT"] . '/templates/header.php');
+    //endregion
+?>
     <body class="sb-nav-fixed">
-        <?php
-            require_once($_SERVER["DOCUMENT_ROOT"] . '/_nav-header.php');
-        ?>
+<?php require_once($_SERVER["DOCUMENT_ROOT"] . '/templates/nav-header.php'); ?>
         <div id="layoutSidenav">
-            <div id="layoutSidenav_nav">
-                <?php
-                    require_once($_SERVER["DOCUMENT_ROOT"] . '/_nav.php');
-                ?>
-            </div>
+<?php require_once($_SERVER["DOCUMENT_ROOT"] . '/templates/nav.php'); ?>
             <div id="layoutSidenav_content">
                 <main>
                     <div class="container-fluid">
@@ -153,19 +143,9 @@ for ($x = 1; $x <= 3; $x++) { ?>
                         </div>
                     </div>
                 </main>
-                <footer class="py-4 bg-light mt-auto">
-                    <?php
-                        require_once($_SERVER["DOCUMENT_ROOT"] . '/_footer.php');
-                    ?>
-                </footer>
+<?php require_once($_SERVER["DOCUMENT_ROOT"] . '/templates/footer.php'); ?>
             </div>
         </div>
-        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-        <link rel="stylesheet" href="../js/virtual-select.min.css" />
-        <script src="../js/virtual-select.min.js"></script>
-        <script src="../js/scripts.js"></script>
-        <script src="../js/custom-scripts.php"></script>
         <script>
             function getSelected() {
                 var optionsData = [<?php echo getJSSelectOption($_SESSION['db_channels'], $_SESSION["config"][$cacKey . "_channel_check_subchannel"]);?>];

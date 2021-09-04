@@ -1,36 +1,36 @@
 #!/bin/bash
-
+logfile="/data/logs/bot.log"
 export LANG="C.UTF-8"
 
 case $1 in
         start)
                 # shellcheck disable=SC2028
-                echo "################################" >> /data/logs/bot.log
+                echo "################################" >> $logfile
                 # shellcheck disable=SC2028
-                echo "#         Bot gestartet!       #" >> /data/logs/bot.log
+                echo "#         Bot gestartet!       #" >> $logfile
                 # shellcheck disable=SC2028
-                echo "################################" >> /data/logs/bot.log
-                java -Duser.timezone=Europe/Berlin -jar /ts3bot.jar 2&> /data/logs/bot.log &
-                ;;
+                echo "################################" >> $logfile
+                java -Duser.timezone=Europe/Berlin -jar /ts3bot.jar configPath=/data/configs/ instanceFile=/data/configs/instancemanager.cfg 2&>> $logfile &
+                                ;;
         stop)
                 pkill -f 'java'
                 # shellcheck disable=SC2028
-                echo "################################" >> /data/logs/bot.log
+                echo "################################" >> $logfile
                 # shellcheck disable=SC2028
-                echo "#         Bot gestoppt!         #" >> /data/logs/bot.log
+                echo "#         Bot gestoppt!         #" >> $logfile
                 # shellcheck disable=SC2028
-                echo "################################" >> /data/logs/bot.log
+                echo "################################" >> $logfile
                 ;;
         restart)
                 pkill -f 'java'
                 sleep 5
                 # shellcheck disable=SC2028
-                echo "################################" >> /data/logs/bot.log
+                echo "################################" >> $logfile
                 # shellcheck disable=SC2028
-                echo "#       Bot neugestartet!      #" >> /data/logs/bot.log
+                echo "#       Bot neugestartet!      #" >> $logfile
                 # shellcheck disable=SC2028
-                echo "################################" >> /data/logs/bot.log
-                java -Duser.timezone=Europe/Berlin -jar /ts3bot.jar 2&> /data/logs/bot.log &
+                echo "################################" >> $logfile
+                java -Duser.timezone=Europe/Berlin -jar /ts3bot.jar configPath=/data/configs/ instanceFile=/data/configs/instancemanager.cfg 2&>> $logfile &
                 ;;
         createInstance)
                 mkdir /data/configs/"$2"/

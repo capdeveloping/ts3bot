@@ -5,7 +5,7 @@ package de.ts3bot.app;
  *
  */
 public class BotInfo {
-    private static String version = "1.1.10";
+    private static String version = "1.1.11";
     private static String info = "Version: " + version +
             "\n\nTeamSpeak 3 Bot." +
             "Zusätzlich können weitere Funktionen angeschaltet werden.(siehe [url=https://github.com/capdeveloping/ts3bot]https://github.com/capdeveloping/ts3bot[/url])" +

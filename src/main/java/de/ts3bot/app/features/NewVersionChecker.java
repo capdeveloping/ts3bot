@@ -1,5 +1,6 @@
 package de.ts3bot.app.features;
 
+import de.ts3bot.app.manager.VersionNumberComparator;
 import com.github.theholywaffle.teamspeak3.TS3Api;
 import com.github.theholywaffle.teamspeak3.api.event.ClientJoinEvent;
 import com.github.theholywaffle.teamspeak3.api.event.TS3EventAdapter;
@@ -8,8 +9,13 @@ import de.ts3bot.app.BotInfo;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by Captain on 02.10.2016.
@@ -80,20 +86,27 @@ public class NewVersionChecker extends TS3EventAdapter {
     }
 
     private boolean check() {
-        String version = null;
+        final List<String> versions = new ArrayList<>();
         try {
-            String url = "https://registry.hub.docker.com/v1/repositories/capdeveloping/ts3bot/tags";
-            version = new Scanner(new URL(url).openStream(), "UTF-8").useDelimiter("\\A").next();
+            String url2 = "https://registry.hub.docker.com/v1/repositories/capdeveloping/ts3bot/tags";
+            URL url = new URL(url2);
+            InputStream is = url.openConnection().getInputStream();
+
+            BufferedReader reader = new BufferedReader( new InputStreamReader( is )  );
+            Pattern p = Pattern.compile("([0-9]+)\\.([0-9]+)\\.([0-9]+)");
+            String line = reader.readLine();
+            Matcher m = p.matcher(line);
+            while(m.find()) {
+                versions.add(m.group());
+            }
+            reader.close();
         }catch (Exception e){
             log.error(e.getMessage());
         }
-        if (version == null){
-            return false;
-        }
+        versions.sort(VersionNumberComparator.getInstance());
 
-        version = version.substring(version.lastIndexOf(":") + 3, version.lastIndexOf("}") - 1);
-        if( ! version.equals( BotInfo.getVersion() )){
-            onlineVersion = version;
+        if( ! versions.get(versions.size()-1).equals( BotInfo.getVersion() )){
+            onlineVersion = versions.get(versions.size()-1);
             return true;
         }
         return false;

@@ -6,7 +6,6 @@ import de.ts3bot.app.TaskTimer;
 import de.ts3bot.app.features.*;
 import de.ts3bot.app.features.autochannel.AutomaticChannel;
 import de.ts3bot.app.library.configload.TS3Controller;
-import de.ts3bot.app.library.configload.TS3ConfigWrite;
 import de.ts3bot.app.library.configload.TS3TextLoad;
 import de.ts3bot.app.library.listener.*;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -53,16 +52,14 @@ public class BotInstance {
         this.serverConfig = serverConfig;
 
         TS3TextLoad ts3TextLoad = new TS3TextLoad(serverConfig);
-        TS3ConfigWrite configWrite = new TS3ConfigWrite(serverConfig, reloadAfterConnect);
         leaveEvent = new LeaveServerEvent();
         collectData = new CollectData();
         functionsOnOff();
         taskTimer = new TaskTimer(clientAfkMode, serverConfig, serverConfig.getBotName(), versionChecker, updateGameChannel, collectData);
         userMessageEvent = new UserMessageEvent(moveToClient);
-        adminMessageEvent = new AdminMessageEvent(serverConfig, ts3TextLoad, configWrite, botInstanceManager);
+        adminMessageEvent = new AdminMessageEvent(serverConfig, ts3TextLoad);
         reloadAfterConnect = new ReloadAfterConnect(serverConfig,
                 ts3TextLoad,
-                configWrite,
                 moveToClient,
                 clientAfkMode,
                 taskTimer,
@@ -80,7 +77,6 @@ public class BotInstance {
                 autoRemove,
                 collectData);
         adminMessageEvent.setAfterConnect(reloadAfterConnect, taskTimer, serverConfig.getBotName());
-        configWrite.setAfterConnect(reloadAfterConnect);
     }
 
     private void functionsOnOff(){
@@ -199,6 +195,7 @@ public class BotInstance {
             taskTimer.updateGameChannel(stopTasks);
         }
         log.info("{}: Getting all Informations about User/Groups/Channels.", serverConfig.getBotName());
+        log.info("{}: At first start wait some seconds for the task to finish.", serverConfig.getBotName());
         taskTimer.collectingData(stopTasks);
     }
 

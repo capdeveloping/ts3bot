@@ -48,8 +48,9 @@ public class TS3Controller {
             config.setConnectionHandler(new ConnectionHandler() {
 
                 @Override
-                public void onConnect(TS3Query ts3Query) {everyReconnect(ts3Query.getApi(), botInstance);}
-
+                public void onConnect(TS3Query ts3Query) {
+                    everyReconnect(ts3Query.getApi(), botInstance);
+                }
                 @Override
                 public void onDisconnect(TS3Query ts3Query) {
                     botInstance.stopConfig();

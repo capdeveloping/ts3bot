@@ -37,7 +37,7 @@ cleanup:
 
 build jar file:
   stage: build-jar
-  image: gradle:6.8.3
+  image: gradle:7.1.1
   script:
     - gradle --build-cache buildjar
   except:

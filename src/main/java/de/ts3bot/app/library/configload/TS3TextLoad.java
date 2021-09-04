@@ -30,15 +30,9 @@ public class TS3TextLoad {
                 "\n!botconfigreload" +
                 "\n!botadminlistreload" +
                 "\n!broadcastclientsreload" +
-                "\n!botfunction" +
                 "\n!botuptime" +
-                "\n!botconfigadd" +
-                "\n!botconfigsave" +
-                "\n!twitchadduser" +
                 "\n!csgoscramble");
         setInfoFullAdmin("Volle Admin BefehlsListe :" +
-                "\n!quit" +
-                "\n!botinstance" +
                 "\n!botconfigreloadall" +
                 "\n!botfulladminlistreload" +
                 "\n!botreloadadminlists" +
