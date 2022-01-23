@@ -24,12 +24,16 @@
     require_once($_SERVER["DOCUMENT_ROOT"] . '/templates/header.php');
     //endregion
 ?>
-    <body class="sb-nav-fixed">
-<?php require_once($_SERVER["DOCUMENT_ROOT"] . '/templates/nav-header.php'); ?>
-        <div id="layoutSidenav">
+    <body id="page-top">
+        <!-- Page Wrapper -->
+        <div id="wrapper">
 <?php require_once($_SERVER["DOCUMENT_ROOT"] . '/templates/nav.php'); ?>
-            <div id="layoutSidenav_content">
-                <main>
+            <!-- Content Wrapper -->
+            <div id="content-wrapper" class="d-flex flex-column">
+                <!-- Main Content -->
+                <div id="content">
+<?php require_once($_SERVER["DOCUMENT_ROOT"] . '/templates/nav-header.php'); ?>
+                    <!-- Begin Page Content -->
                     <div class="container-fluid">
                         <h1 class="mt-4">New Version Checker</h1>
                         <ol class="breadcrumb mb-4">
@@ -43,35 +47,42 @@
                                 Settings
                             </div>
                             <br>
-                            <form class="form-horizontal" data-toggle="validator" name="save" method="POST">
-                                <div class="form-group row">
-                                    <label class="col-sm-4 control-label" for="inputTime">Checkintervall für neue Version</label>
-                                    <div class="col-sm-4 input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text">in Stunden</span>
+                            <div class="card-body">
+                                <form class="form-horizontal" data-toggle="validator" name="save" method="POST">
+                                    <div class="form-group row">
+                                        <label class="col-sm-4 control-label" for="inputTime">Checkintervall für neue Version</label>
+                                        <div class="col-sm-4 input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text">in Stunden</span>
+                                            </div>
+                                            <input class="form-control" id="inputTime" type="text" name="version_check_time" placeholder="enter update intervall" value='<?php echo $_SESSION["config"][$newVersionKey . "_version_check_time"] ?>' required/>
                                         </div>
-                                        <input class="form-control" id="inputTime" type="text" name="version_check_time" placeholder="enter update intervall" value='<?php echo $_SESSION["config"][$newVersionKey . "_version_check_time"] ?>' required/>
                                     </div>
-                                </div>
-                                <div class="col-md-3"></div>
-                                <?php if($saved) { ?>
-                                <div id="savedDiv" class="row saved-row">
-                                    <label class="saved-label">Config gespeichert. Bitte den Bot neustarten!</label>
-                                </div>
-                                <?php }?>
-                                <div class="row">&nbsp;</div>
-                                <div class="row" style="display: block;">
-                                    <div class="text-center">
-                                        <button type="submit" class="btn btn-primary" name="save"><i class="fas fa-save"></i>&nbsp;speichern</button>
+                                    <div class="col-md-3"></div>
+                                    <?php if($saved) { ?>
+                                    <div id="savedDiv" class="row saved-row">
+                                        <label class="saved-label">Config gespeichert. Bitte den Bot neustarten!</label>
                                     </div>
-                                </div>
-                                <div class="row">&nbsp;</div>
-                            </form>
+                                    <?php }?>
+                                    <div class="row">&nbsp;</div>
+                                    <div class="row" style="display: block;">
+                                        <div class="text-center">
+                                            <button type="submit" class="btn btn-primary" name="save"><i class="fas fa-save"></i>&nbsp;speichern</button>
+                                        </div>
+                                    </div>
+                                    <div class="row">&nbsp;</div>
+                                </form>
+                            </div>
+                            <!-- End of card-body -->
                         </div>
                     </div>
-                </main>
+                    <!-- End of Page Content -->
+                </div>
+                <!-- End of Main Content -->
 <?php require_once($_SERVER["DOCUMENT_ROOT"] . '/templates/footer.php'); ?>
             </div>
+            <!-- End of Content Wrapper -->
         </div>
+        <!-- End of Page Wrapper -->
     </body>
 </html>

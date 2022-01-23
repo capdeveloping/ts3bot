@@ -7,7 +7,7 @@
 
     if(isset($_POST['updatePW'])){
         $statement = $db->prepare('SELECT password FROM users WHERE username = :username;');
-        $statement->bindValue(':username', $_SESSION['userid']);
+        $statement->bindValue(':username', $_SESSION['user']['username']);
         $result = $statement->execute();
         $result = $result->fetchArray();
         if( empty($result) || ! password_verify($_POST["oldPw"], $result[0])){
@@ -19,8 +19,9 @@
 
         if( ! $passwordMissMatch && ! $wrongPassword){
             $password = password_hash($_POST["newPw"], PASSWORD_BCRYPT, ['cost' => 12]);
-            $statement = $db->prepare('UPDATE users SET password = :password WHERE username = "admin";');
+            $statement = $db->prepare('UPDATE users SET password = :password WHERE username = :username;');
             $statement->bindValue(':password', $password);
+            $statement->bindValue(':username', $_SESSION['user']['username']);
             $result = $statement->execute();
             $saved = TRUE;
         }
@@ -29,18 +30,22 @@
 <!DOCTYPE html>
 <?php
     // region import header
-    $website_title = "Change admin password";
+    $website_title = "Change password";
     require_once($_SERVER["DOCUMENT_ROOT"] . '/templates/header.php');
     //endregion
 ?>
-    <body class="sb-nav-fixed">
-<?php include $_SERVER["DOCUMENT_ROOT"] . "/templates/nav-header.php"; ?>
-        <div id="layoutSidenav">
-<?php include $_SERVER["DOCUMENT_ROOT"] . "/templates/nav.php"; ?>
-            <div id="layoutSidenav_content">
-                <main>
+    <body id="page-top">
+        <!-- Page Wrapper -->
+        <div id="wrapper">
+<?php require_once('templates/nav.php'); ?>
+            <!-- Content Wrapper -->
+            <div id="content-wrapper" class="d-flex flex-column">
+                <!-- Main Content -->
+                <div id="content">
+<?php require_once('templates/nav-header.php'); ?>
+                    <!-- Begin Page Content -->
                     <div class="container-fluid">
-                        <h1 class="mt-4">Core</h1>
+                        <h1 class="mt-4">Change Password</h1>
                         <form class="form-horizontal" data-toggle="validator" name="updatePW" method="POST">
                             <div class="card mb-4">
                                 <br>
@@ -96,9 +101,12 @@
                             </div>
                         </form>
                     </div>
-                </main>
-<?php include $_SERVER["DOCUMENT_ROOT"] . "/templates/footer.php"; ?>
+                    <!-- End of Page Content -->
+<?php require_once('templates/footer.php'); ?>
+                </div>
+                <!-- End of Main Content -->
             </div>
+            <!-- End of Content Wrapper -->
         </div>
     </body>
 </html>

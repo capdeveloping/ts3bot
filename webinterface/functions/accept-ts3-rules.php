@@ -51,18 +51,16 @@
     require_once($_SERVER["DOCUMENT_ROOT"] . '/templates/header.php');
     //endregion
 ?>
-    <body class="sb-nav-fixed">
-        <?php
-            require_once($_SERVER["DOCUMENT_ROOT"] . '/templates/nav-header.php');
-        ?>
-        <div id="layoutSidenav">
-            <div id="layoutSidenav_nav">
-                <?php
-                    require_once($_SERVER["DOCUMENT_ROOT"] . '/templates/nav.php');
-                ?>
-            </div>
-            <div id="layoutSidenav_content">
-                <main>
+    <body id="page-top">
+        <!-- Page Wrapper -->
+        <div id="wrapper">
+<?php require_once($_SERVER["DOCUMENT_ROOT"] . '/templates/nav.php'); ?>
+            <!-- Content Wrapper -->
+            <div id="content-wrapper" class="d-flex flex-column">
+                <!-- Main Content -->
+                <div id="content">
+<?php require_once($_SERVER["DOCUMENT_ROOT"] . '/templates/nav-header.php'); ?>
+                    <!-- Begin Page Content -->
                     <div class="container-fluid">
                         <h1 class="mt-4">Accept Rules</h1>
                         <ol class="breadcrumb mb-4">
@@ -70,11 +68,14 @@
                             <li class="breadcrumb-item">Funktionen</li>
                             <li class="breadcrumb-item active">Accept Rules</li>
                         </ol>
+                        <!-- card -->
                         <div class="card mb-4">
+                            <!-- card-body -->
                             <div class="card-header">
                                 <i class="fas fa-chart-area mr-1"></i>
                                 Settings
                             </div>
+                            <!-- End of card-body -->
                             <br>
                             <div class="col-md-3"></div>
                             <?php if($saved) { ?>
@@ -83,91 +84,96 @@
                             </div>
                             <?php }?>
                             <br>
-                            <form class="form-horizontal" data-toggle="validator" name="update" method="POST">
-                                <div class="form-group row">
-                                    <label class="col-sm-4 control-label" for="inputServergroup">Gast Gruppe bei der ersten Verbindung</label>
-                                    <div class="col-sm-4">
-                                        <div name="accept_rules_first_group" id="single-select-gast"></div>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="col-sm-4 control-label" for="inputServergroup2">Gast Gruppe die nach dem Akzeptieren vergeben werden soll</label>
-                                    <div class="col-sm-4">
-                                        <div name="accept_rules_accepted_group" id="single-select-accepted"></div>
-                                    </div>
-                                </div>
-                                <div class="form-group row" >
-                                    <div class="col-sm-12 input-group">
-                                        <label class="col-sm-4 control-label" for="inputPokeText">Nachricht die der Client als Poke Nachricht erhalten soll.</label>
-                                        <div class="input-group-prepend">
-                                            <span id="charNum" class="input-group-text"><?php echo "verbleibend: " . 100 - strlen($_SESSION["config"][$acprKey . "_accept_rules_poke_message"]); ?></span>
-                                        </div>
+                            <!-- card-body -->
+                            <div class="card-body">
+                                <form class="form-horizontal" data-toggle="validator" name="update" method="POST">
+                                    <div class="form-group row">
+                                        <label class="col-sm-4 control-label" for="inputServergroup">Gast Gruppe bei der ersten Verbindung</label>
                                         <div class="col-sm-4">
-                                            <textarea name="accept_rules_poke_message" class="form-control" onkeyup="countChar(this)" id="inputPokeText" placeholder="Text eingeben die der Client als Poke Nachricht erhalten soll" rows="1"><?php echo $_SESSION["config"][$acprKey . "_accept_rules_poke_message"]; ?></textarea>
+                                            <div name="accept_rules_first_group" id="single-select-gast"></div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="form-group row" >
-                                    <label class="col-sm-4 control-label" for="inputText">Nachricht die der Client als Private Nachricht erhalten soll.</label>
-                                    <div class="col-sm-7" >
-                                        <textarea class="col-sm-7" name="privateMessage" id="privateMessage" placeholder="Private Message eingeben" rows="3"><?php echo "$messageContent" ?></textarea>
+                                    <div class="form-group row">
+                                        <label class="col-sm-4 control-label" for="inputServergroup2">Gast Gruppe die nach dem Akzeptieren vergeben werden soll</label>
+                                        <div class="col-sm-4">
+                                            <div name="accept_rules_accepted_group" id="single-select-accepted"></div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group row" >
-                                    <label class="col-sm-4 control-label" for="inputTrenner">TeamSpeak Namen Trenner</label>
-                                    <div class="col-sm-4">
-                                        <input class="form-control" id="inputTrenner" type="text" name="accept_rules_name_seperators" placeholder="-,/,|" value=<?php echo '"' . $_SESSION["config"][$acprKey . "_accept_rules_name_seperators"] . '"' ?> required/>
+                                    <div class="form-group row" >
+                                        <div class="col-sm-12 input-group">
+                                            <label class="col-sm-4 control-label" for="inputPokeText">Nachricht die der Client als Poke Nachricht erhalten soll.</label>
+                                            <div class="input-group-prepend">
+                                                <span id="charNum" class="input-group-text"><?php echo "verbleibend: " . 100 - strlen($_SESSION["config"][$acprKey . "_accept_rules_poke_message"]); ?></span>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <textarea name="accept_rules_poke_message" class="form-control" onkeyup="countChar(this)" id="inputPokeText" placeholder="Text eingeben die der Client als Poke Nachricht erhalten soll" rows="1"><?php echo $_SESSION["config"][$acprKey . "_accept_rules_poke_message"]; ?></textarea>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group row" >
-                                    <label class="col-sm-7 control-label" for="inputForbiddenNames">Verbotene Teamspeaknamen in einem regex format</label>
-                                </div>
+                                    <div class="form-group row" >
+                                        <label class="col-sm-4 control-label" for="inputText">Nachricht die der Client als Private Nachricht erhalten soll.</label>
+                                        <div class="col-sm-7" >
+                                            <textarea class="col-sm-7" name="privateMessage" id="privateMessage" placeholder="Private Message eingeben" rows="3"><?php echo "$messageContent" ?></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row" >
+                                        <label class="col-sm-4 control-label" for="inputTrenner">TeamSpeak Namen Trenner</label>
+                                        <div class="col-sm-4">
+                                            <input class="form-control" id="inputTrenner" type="text" name="accept_rules_name_seperators" placeholder="-,/,|" value=<?php echo '"' . $_SESSION["config"][$acprKey . "_accept_rules_name_seperators"] . '"' ?> required/>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row" >
+                                        <label class="col-sm-7 control-label" for="inputForbiddenNames">Verbotene Teamspeaknamen in einem regex format</label>
+                                    </div>
 <?php
 $counter = 1;
 if( ! empty($forbiddenNames) ){
 foreach($forbiddenNames as $key=>$value){ ?>
-                                    <div class="form-group row">
-                                        <div class="col-sm-4"></div>
-                                        <div class="col-sm-4">
-                                            <input class="form-control" id="item<?php echo "$counter";?>" type="text" name="item<?php echo "$counter";?>"  value='<?php echo "$key"; ?>' />
+                                        <div class="form-group row">
+                                            <div class="col-sm-4"></div>
+                                            <div class="col-sm-4">
+                                                <input class="form-control" id="item<?php echo "$counter";?>" type="text" name="item<?php echo "$counter";?>"  value='<?php echo "$key"; ?>' />
+                                            </div>
+                                            <div class="text-center">
+                                                <button name="rmItem<?php echo "$counter";?>" type="submit" class="btn btn-danger" ><i class="fas fa-trash-alt"></i></button>
+                                            </div>
                                         </div>
-                                        <div class="text-center">
-                                            <button name="rmItem<?php echo "$counter";?>" type="submit" class="btn btn-danger" ><i class="fas fa-trash-alt"></i></button>
-                                        </div>
-                                    </div>
 <?php $counter++; }
 }
 for ($x = 1; $x <= 3; $x++) { ?>
 
-                                    <div class="form-group row">
-                                        <div class="col-sm-4"></div>
-                                        <div class="col-sm-4">
-                                            <input class="form-control" id="newItem<?php echo "$x"?>" type="text" name="newItem<?php echo "$x";?>"/>
+                                        <div class="form-group row">
+                                            <div class="col-sm-4"></div>
+                                            <div class="col-sm-4">
+                                                <input class="form-control" id="newItem<?php echo "$x"?>" type="text" name="newItem<?php echo "$x";?>"/>
+                                            </div>
+                                        </div>
+<?php } ?>
+                                    <div class="text-center">
+                                        <button type="submit" class="btn btn-success" name="save"><i class="fas fa-plus"></i></button>
+                                    </div>
+                                    <br>
+                                    <div class="row">&nbsp;</div>
+                                    <div class="row" style="display: block;">
+                                        <div class="text-center">
+                                            <button type="submit" class="btn btn-primary" name="save"><i class="fas fa-save"></i>&nbsp;speichern</button>
                                         </div>
                                     </div>
-<?php } ?>
-                                <div class="text-center">
-                                    <button type="submit" class="btn btn-success" name="save"><i class="fas fa-plus"></i></button>
-                                </div>
-                                <br>
-                                <div class="row">&nbsp;</div>
-                                <div class="row" style="display: block;">
-                                    <div class="text-center">
-                                        <button type="submit" class="btn btn-primary" name="save"><i class="fas fa-save"></i>&nbsp;speichern</button>
-                                    </div>
-                                </div>
-                                <div class="row">&nbsp;</div>
-                            </form>
+                                    <div class="row">&nbsp;</div>
+                                </form>
+                            </div>
+                            <!-- End of card-body -->
                         </div>
+                        <!-- End of card -->
                     </div>
-                </main>
-                <footer class="py-4 bg-light mt-auto">
-                    <?php
-                        require_once($_SERVER["DOCUMENT_ROOT"] . '/templates/footer.php');
-                    ?>
-                </footer>
+                    <!-- End of Page Content -->
+                </div>
+                <!-- End of Main Content -->
+<?php require_once($_SERVER["DOCUMENT_ROOT"] . '/templates/footer.php'); ?>
             </div>
+            <!-- End of Content Wrapper -->
         </div>
+        <!-- End of Page Wrapper -->
         <script>
             VirtualSelect.init({
                 ele: '#single-select-gast',

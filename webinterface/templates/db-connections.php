@@ -8,10 +8,9 @@
     }
     $db = new MyDB();
     try{
-        if( isset($_SESSION['userid']) ){
+        if( isset($_SESSION['user']['username']) && ! isset($_POST['login']) ){
             $tablename = $_SESSION["instance_name"] . '_groups';
             $results = $db->query('SELECT * FROM "' . $tablename . '" ;');
-
             $_SESSION['db_groups'] = [];
             while ($row = $results->fetchArray()) {
                 $_SESSION['db_groups'][$row["id"]] = $row["name"];
@@ -42,12 +41,14 @@
     }
 
     if (isset($_POST['login'])){
-        $statement = $db->prepare('SELECT password FROM users where username = :username;');
+        $statement = $db->prepare('SELECT * FROM users where username = :username;');
         $statement->bindValue(':username', $_POST["username"]);
         $result = $statement->execute();
         $result = $result->fetchArray();
-        if( ! empty($result) && password_verify($_POST["password"], $result[0])){
-            $_SESSION['userid'] = $_POST["username"];
+        if( ! empty($result['password']) && password_verify($_POST["password"], $result['password'])){
+            $_SESSION['user']['username'] = $_POST["username"];
+            $_SESSION['user']['isadmin'] = $result['isadmin'];
+            $_SESSION['user']['instances'] = $result['instances'];
             unset($_SESSION['login_failed']);
         }else{
             $_SESSION['login_failed'] = TRUE;

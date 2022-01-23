@@ -9,12 +9,16 @@
     require_once($_SERVER["DOCUMENT_ROOT"] . '/templates/header.php');
     //endregion
 ?>
-    <body class="sb-nav-fixed">
-<?php require_once('templates/nav-header.php'); ?>
-        <div id="layoutSidenav">
+    <body id="page-top">
+        <!-- Page Wrapper -->
+        <div id="wrapper">
 <?php require_once('templates/nav.php'); ?>
-            <div id="layoutSidenav_content">
-                <main>
+            <!-- Content Wrapper -->
+            <div id="content-wrapper" class="d-flex flex-column">
+                <!-- Main Content -->
+                <div id="content">
+<?php require_once('templates/nav-header.php'); ?>
+                    <!-- Begin Page Content -->
                     <div class="container-fluid">
                         <h1 class="mt-4">Bot Informationen</h1>
                         <br>
@@ -57,9 +61,13 @@
                             </div>
                         </div>
                     </div>
-                </main>
+                    <!-- End of Page Content -->
+                </div>
+                <!-- End of Main Content -->
 <?php require_once('templates/footer.php'); ?>
             </div>
+            <!-- End of Content Wrapper -->
         </div>
+        <!-- End of Page Wrapper -->
     </body>
 </html>

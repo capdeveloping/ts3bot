@@ -101,17 +101,21 @@
     require_once($_SERVER["DOCUMENT_ROOT"] . '/templates/header.php');
     //endregion
 ?>
-    <body class="sb-nav-fixed">
-<?php require_once('templates/nav-header.php'); ?>
-        <div id="layoutSidenav">
+    <body id="page-top">
+        <!-- Page Wrapper -->
+        <div id="wrapper">
 <?php require_once('templates/nav.php'); ?>
-            <div id="layoutSidenav_content">
-                <main>
+            <!-- Content Wrapper -->
+            <div id="content-wrapper" class="d-flex flex-column">
+                <!-- Main Content -->
+                <div id="content">
+<?php require_once('templates/nav-header.php'); ?>
+                    <!-- Begin Page Content -->
                     <div class="container-fluid">
                         <h1 class="mt-4">Core</h1>
                         <ol class="breadcrumb mb-4">
                             <li class="breadcrumb-item">Settings</a></li>
-                            <li class="breadcrumb-item active">Instazen</li>
+                            <li class="breadcrumb-item active">Instanzen</li>
                         </ol>
                         <form class="form-horizontal" data-toggle="validator" name="addFunction" method="POST">
                             <div class="card mb-4">
@@ -120,89 +124,96 @@
                                     Settings
                                 </div>
                                 <br>
+                                <div class="card-body">
 <?php
 $counter = 1;
 foreach($_SESSION["instances"] as $key => $value){
 ?>
-                                <div class="form-group row">
-                                    <div class="col-sm-3"></div>
-                                    <label class="col-sm-2 control-label" for=<?php echo '"inputKey-' . $key . '"';?> >Instanz <?php echo $counter; ?></label>
-                                    <div class="col-sm-2 input-group">
-                                        <div class="input-group-prepend">
-                                            <button class="btn btn-outline-secondary" type="button" data-toggle="collapse" data-target=<?php echo '"#collapse-' . $key . '"';?> aria-expanded="false" aria-controls=<?php echo '"collapse-' . $key . '"';?> >?</button>
+                                    <div class="form-group row">
+                                        <div class="col-sm-1"></div>
+                                        <label class="col-sm-2 control-label" for=<?php echo '"inputKey-' . $key . '"';?> >Instanz <?php echo $counter; ?></label>
+                                        <div class="col-sm-2 input-group">
+                                            <div class="input-group-prepend">
+                                                <button class="btn btn-outline-secondary" type="button" data-toggle="collapse" data-target=<?php echo '"#collapse-' . $key . '"';?> aria-expanded="false" aria-controls=<?php echo '"collapse-' . $key . '"';?> >?</button>
+                                            </div>
+                                            <input class="form-control" <?php if( strcmp($oldkey, $key) == 0 && $renameInvalid){ echo 'style="border-color: #ff0000 ;"';}?> id=<?php echo '"inputKey-' . $key . '"';?> type="text" name=<?php echo '"instancename-' . $key . '"';?> value=<?php if( strcmp($oldkey, $key) == 0 && $renameInvalid){ echo '"' . $newkey . '"';}else{echo '"' . $key . '"';}?> />
+                                            <div class=<?php if( strcmp($oldkey, $key) == 0 && $renameInvalid){ echo '"collapse show"';}else{echo "collapse";}?> id=<?php echo '"collapse-' . $key . '"';?>>
+                                                <div class="card">Instanzname darf nur aus Zahlen, Buchstaben und einem Minus bestehen!</div>
+                                            </div>
                                         </div>
-                                        <input class="form-control" <?php if( strcmp($oldkey, $key) == 0 && $renameInvalid){ echo 'style="border-color: #ff0000 ;"';}?> id=<?php echo '"inputKey-' . $key . '"';?> type="text" name=<?php echo '"instancename-' . $key . '"';?> value=<?php if( strcmp($oldkey, $key) == 0 && $renameInvalid){ echo '"' . $newkey . '"';}else{echo '"' . $key . '"';}?> />
-                                        <div class=<?php if( strcmp($oldkey, $key) == 0 && $renameInvalid){ echo '"collapse show"';}else{echo "collapse";}?> id=<?php echo '"collapse-' . $key . '"';?>>
-                                            <div class="card card-body">Instanzname darf nur aus Zahlen, Buchstaben und einem Minus bestehen!</div>
+                                        <div class="col-sm-1">
+                                            <label class="switch">
+                                              <input name=<?php echo '"enable-' . $key . '"';?> id=<?php echo '"switch-' . $key . '"';?> type="checkbox" <?php if( filter_var($_SESSION["instances"][$key]["instance_activ"], FILTER_VALIDATE_BOOLEAN)){ echo "checked";} ?> />
+                                              <span class="slider round"></span>
+                                            </label>
+                                        </div>
+                                        <div class="col-sm-2 text-center">
+                                            <button type="submit" class="btn btn-danger" name=<?php echo '"delete-' . $key . '"';?>><i class="fas fa-trash-alt"></i></button>
+                                        </div>
+                                        &nbsp;&nbsp;
+                                        <div class="col-sm-2 text-center">
+                                            <button type="submit" class="btn btn-warning" name=<?php echo '"rename-' . $key . '"'; ?> ></i>Umbennen</button>
                                         </div>
                                     </div>
-                                    <div class="col-sm-1">
-                                        <label class="switch">
-                                          <input name=<?php echo '"enable-' . $key . '"';?> id=<?php echo '"switch-' . $key . '"';?> type="checkbox" <?php if( filter_var($_SESSION["instances"][$key]["instance_activ"], FILTER_VALIDATE_BOOLEAN)){ echo "checked";} ?> />
-                                          <span class="slider round"></span>
-                                        </label>
-                                    </div>
-                                    <div class="text-center">
-                                        <button type="submit" class="btn btn-danger" name=<?php echo '"delete-' . $key . '"';?>><i class="fas fa-trash-alt"></i></button>
-                                    </div>
-                                    &nbsp;&nbsp;
-                                    <div class="text-center">
-                                        <button type="submit" class="btn btn-warning" name=<?php echo '"rename-' . $key . '"'; ?> ></i>Umbennen</button>
-                                    </div>
-                                </div>
 <?php
 $counter++;
 } ?>
 <?php if ($addNewInstance || $invalidInstance) { ?>
-                                <div class="form-group row">
-                                    <div class="col-sm-3"></div>
-                                    <label class="col-sm-2 control-label" for="inputInstanceName">Instanz <?php echo $counter; ?></label>
-                                    <div class="col-sm-2 input-group">
-                                        <div class="input-group-prepend">
-                                            <button class="btn btn-outline-secondary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">?</button>
-                                        </div>
-                                        <input class="form-control" <?php if($invalidInstance){ echo 'style="border-color: #ff0000 ;"';}?> id="inputInstanceName" type="text" name="newinstancename" placeholder="enter instance name" value=""/>
-                                        <div class=<?php if($invalidInstance){ echo '"collapse show"';}else{echo "collapse";}?> id="collapseExample">
-                                            <div class="card card-body">
-                                                Instanzname darf nur aus Zahlen, Buchstaben und einem Minus bestehen!
+                                    <div class="form-group row">
+                                        <div class="col-sm-1"></div>
+                                        <label class="col-sm-2 control-label" for="inputInstanceName">Instanz <?php echo $counter; ?></label>
+                                        <div class="col-sm-2 input-group">
+                                            <div class="input-group-prepend">
+                                                <button class="btn btn-outline-secondary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">?</button>
+                                            </div>
+                                            <input class="form-control" <?php if($invalidInstance){ echo 'style="border-color: #ff0000 ;"';}?> id="inputInstanceName" type="text" name="newinstancename" placeholder="enter instance name" value=""/>
+                                            <div class=<?php if($invalidInstance){ echo '"collapse show"';}else{echo "collapse";}?> id="collapseExample">
+                                                <div class="card">
+                                                    Instanzname darf nur aus Zahlen, Buchstaben und einem Minus bestehen!
+                                                </div>
                                             </div>
                                         </div>
+                                        <div class="col-sm-1">
+                                            <label class="switch">
+                                              <input name="enableNewInstance" id="switchNewInstance" type="checkbox" >
+                                              <span class="slider round"></span>
+                                            </label>
+                                        </div>
+                                        <div class="col-sm-1 text-center">
+                                            <button type="submit" class="btn btn-danger" name="remove"><i class="fas fa-trash-alt"></i></button>
+                                        </div>
                                     </div>
-                                    <div class="col-sm-1">
-                                        <label class="switch">
-                                          <input name="enableNewInstance" id="switchNewInstance" type="checkbox" >
-                                          <span class="slider round"></span>
-                                        </label>
-                                    </div>
-                                    <div class="text-center">
-                                        <button type="submit" class="btn btn-danger" name="remove"><i class="fas fa-trash-alt"></i></button>
-                                    </div>
-                                </div>
 <?php } ?>
-                                <div class="text-center">
-                                    <button type="submit" class="btn btn-success" name="addNewInstance"><i class="fas fa-plus"></i></button>
-                                </div>
-
-                                <br>
-                                <div class="col-md-3"></div>
-                                <?php if($saved) { ?>
-                                <div id="savedDiv" class="row saved-row">
-                                    <label class="saved-label">Config gespeichert. Bitte den Bot neustarten!</label>
-                                </div>
-                                <?php }?>
-                                <div class="row">&nbsp;</div>
-                                <div class="row" style="display: block;">
                                     <div class="text-center">
-                                        <button type="submit" class="btn btn-primary" name="update"><i class="fas fa-save"></i>&nbsp;speichern</button>
+                                        <button type="submit" class="btn btn-success" name="addNewInstance"><i class="fas fa-plus"></i></button>
                                     </div>
+
+                                    <br>
+                                    <div class="col-md-1"></div>
+                                    <?php if($saved) { ?>
+                                    <div id="savedDiv" class="row saved-row">
+                                        <label class="saved-label">Config gespeichert. Bitte den Bot neustarten!</label>
+                                    </div>
+                                    <?php }?>
+                                    <div class="row">&nbsp;</div>
+                                    <div class="row" style="display: block;">
+                                        <div class="text-center">
+                                            <button type="submit" class="btn btn-primary" name="update"><i class="fas fa-save"></i>&nbsp;speichern</button>
+                                        </div>
+                                    </div>
+                                    <div class="row">&nbsp;</div>
                                 </div>
-                                <div class="row">&nbsp;</div>
+                                <!-- End of card-body -->
                             </div>
                         </form>
                     </div>
-                </main>
-<?php require_once('/templates/footer.php'); ?>
+                    <!-- End of Page Content -->
+                </div>
+                <!-- End of Main Content -->
+<?php require_once('templates/footer.php'); ?>
             </div>
+            <!-- End of Content Wrapper -->
         </div>
+        <!-- End of Page Wrapper -->
     </body>
 </html>

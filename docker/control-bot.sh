@@ -5,31 +5,31 @@ export LANG="C.UTF-8"
 case $1 in
         start)
                 # shellcheck disable=SC2028
-                echo "################################" >> $logfile
+                echo "[INFO ] ################################" >> $logfile
                 # shellcheck disable=SC2028
-                echo "#         Bot gestartet!       #" >> $logfile
+                echo "[INFO ] #         Bot gestartet!       #" >> $logfile
                 # shellcheck disable=SC2028
-                echo "################################" >> $logfile
+                echo "[INFO ] ################################" >> $logfile
                 java -Duser.timezone=Europe/Berlin -jar /ts3bot.jar configPath=/data/configs/ instanceFile=/data/configs/instancemanager.cfg 2&>> $logfile &
                                 ;;
         stop)
                 pkill -f 'java'
                 # shellcheck disable=SC2028
-                echo "################################" >> $logfile
+                echo "[INFO ] ################################" >> $logfile
                 # shellcheck disable=SC2028
-                echo "#         Bot gestoppt!         #" >> $logfile
+                echo "[INFO ] #         Bot gestoppt!         #" >> $logfile
                 # shellcheck disable=SC2028
-                echo "################################" >> $logfile
+                echo "[INFO ] ################################" >> $logfile
                 ;;
         restart)
                 pkill -f 'java'
                 sleep 5
                 # shellcheck disable=SC2028
-                echo "################################" >> $logfile
+                echo "[INFO ] ################################" >> $logfile
                 # shellcheck disable=SC2028
-                echo "#       Bot neugestartet!      #" >> $logfile
+                echo "[INFO ] #       Bot neugestartet!      #" >> $logfile
                 # shellcheck disable=SC2028
-                echo "################################" >> $logfile
+                echo "[INFO ] ################################" >> $logfile
                 java -Duser.timezone=Europe/Berlin -jar /ts3bot.jar configPath=/data/configs/ instanceFile=/data/configs/instancemanager.cfg 2&>> $logfile &
                 ;;
         createInstance)
@@ -52,6 +52,6 @@ case $1 in
                 sqlite3 /data/db.sqlite3 'DROP TABLE "'$2'_channels";'
                 ;;
         *)
-                echo "Sorry, I don't understand"
+                echo "[INFO ] Sorry, I don't understand"
                 ;;
 esac

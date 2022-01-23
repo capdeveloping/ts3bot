@@ -1,9 +1,17 @@
 <?php
     session_start();
+    if (isset($_POST['logout'])){
+        $_SESSION = array(); // destroy all $_SESSION data
+        setcookie("PHPSESSID", "", time() - 3600, "/");
+        header("Refresh:0; url=/login.php");
+        session_destroy();
+        session_write_close();
+        exit();
+    }
 
     include $_SERVER["DOCUMENT_ROOT"] . "/templates/lang_selector.php";
 
-    if( ! isset($_SESSION['userid']) ){
+    if( ! isset($_SESSION['user']['username']) ){
         header("Refresh:0; url=/login.php");
         exit();
     }

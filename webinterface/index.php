@@ -9,12 +9,16 @@
     require_once($_SERVER["DOCUMENT_ROOT"] . '/templates/header.php');
     //endregion
 ?>
-    <body class="sb-nav-fixed">
-<?php include $_SERVER["DOCUMENT_ROOT"] . "/templates/nav-header.php";?>
-        <div id="layoutSidenav">
-<?php include $_SERVER["DOCUMENT_ROOT"] . "/templates/nav.php"; ?>
-            <div id="layoutSidenav_content">
-                <main>
+    <body id="page-top">
+        <!-- Page Wrapper -->
+        <div id="wrapper">
+<?php require_once('templates/nav.php'); ?>
+            <!-- Content Wrapper -->
+            <div id="content-wrapper" class="d-flex flex-column">
+                <!-- Main Content -->
+                <div id="content">
+<?php require_once('templates/nav-header.php'); ?>
+                    <!-- Begin Page Content -->
                     <div class="container-fluid">
                         <h1 class="mt-4">Dashboard</h1>
                         <hr>
@@ -65,46 +69,49 @@ if( filter_var($_SESSION["instances"][$key]["instance_activ"], FILTER_VALIDATE_B
 } ?>
                         </form>
                     </div>
-                </main>
-<?php include $_SERVER["DOCUMENT_ROOT"] . "/templates/footer.php"; ?>
+                    <!-- End of Page Content -->
+                </div>
+                <!-- End of Main Content -->
+<?php require_once('templates/footer.php'); ?>
             </div>
+            <!-- End of Content Wrapper -->
         </div>
+        <!-- End of Page Wrapper -->
+        <script type="text/javascript">
+        // Load google charts
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
+
+        // Draw the chart and set the chart values
+        function drawChart() {
+          var data = google.visualization.arrayToDataTable([
+          ['Task', ''],
+          <?php if( ! empty($_SESSION["instances"]) ){ ?>
+          ['Online', <?php echo intval(countActiveInstances($_SESSION["instances"])); ?>],
+          ['Offline', <?php echo intval(count($_SESSION["instances"]) - countActiveInstances($_SESSION["instances"])); ?>],
+          <?php }else{ ?>
+          ['Keine Instanzen', <?php echo intval("1");?>],
+          <?php } ?>
+        ]);
+
+          // Optional; add a title and set the width and height of the chart
+          var options = {
+            chartArea:{
+                left:10,
+                top:10,
+                bottom:10,
+                width:"100%",
+                height:"100%"
+            },
+            legend: 'none',
+            is3D: true,
+            colors: ['#1cdc00', '#ff3600']
+          };
+
+          // Display the chart inside the <div> element with id="piechart"
+          var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+          chart.draw(data, options);
+        }
+        </script>
     </body>
 </html>
-
-<script type="text/javascript">
-// Load google charts
-google.charts.load('current', {'packages':['corechart']});
-google.charts.setOnLoadCallback(drawChart);
-
-// Draw the chart and set the chart values
-function drawChart() {
-  var data = google.visualization.arrayToDataTable([
-  ['Task', ''],
-  <?php if( ! empty($_SESSION["instances"]) ){ ?>
-  ['Online', <?php echo intval(countActiveInstances($_SESSION["instances"])); ?>],
-  ['Offline', <?php echo intval(count($_SESSION["instances"]) - countActiveInstances($_SESSION["instances"])); ?>],
-  <?php }else{ ?>
-  ['Keine Instanzen', <?php echo intval("1");?>],
-  <?php } ?>
-]);
-
-  // Optional; add a title and set the width and height of the chart
-  var options = {
-    chartArea:{
-        left:10,
-        top:10,
-        bottom:10,
-        width:"100%",
-        height:"100%"
-    },
-    legend: 'none',
-    is3D: true,
-    colors: ['#1cdc00', '#ff3600']
-  };
-
-  // Display the chart inside the <div> element with id="piechart"
-  var chart = new google.visualization.PieChart(document.getElementById('piechart'));
-  chart.draw(data, options);
-}
-</script>

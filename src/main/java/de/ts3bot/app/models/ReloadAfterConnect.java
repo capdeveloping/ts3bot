@@ -15,7 +15,6 @@ import java.util.List;
  * Aktualisiere alles was sich auf der Variable bezieht
  */
 public class ReloadAfterConnect {
-    private List<String> deactivatedFuntions;
     private TS3Api api;
     private TS3ServerConfig serverConfig;
     private TS3TextLoad ts3TextLoad;
@@ -54,7 +53,6 @@ public class ReloadAfterConnect {
         this.versionChecker = versionChecker;
         this.automaticChannel = automaticChannel;
         this.clientMovedEvent = clientMovedEvent;
-        deactivatedFuntions = new ArrayList<>();
         this.updateGameServerChannel = updateGameServerChannel;
         this.welcomeMessageEvent = welcomeMessageEvent;
         this.twitchController = twitchController;
@@ -178,6 +176,7 @@ public class ReloadAfterConnect {
             versionChecker.setBotFullAdminList(serverConfig.getBotFullAdmin());
         }
     }
+
 //region setter/getter
     public TS3Api getApi() {
         return api;

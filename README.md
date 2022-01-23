@@ -50,7 +50,6 @@ Passwort: password
 
 # docker-compose
 ## for teamspeak server as container on same host
-## Ich empfehle erstmal mit einem Basic Auth zu arbeiten.
 ```
 version: "2"
 

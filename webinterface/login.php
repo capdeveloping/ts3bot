@@ -1,12 +1,12 @@
 <?php
     session_start();
+    $_SESSION = array();
     include $_SERVER["DOCUMENT_ROOT"] . "/templates/db-connections.php";
-
-    if( isset($_SESSION['userid']) ){
+    if( isset($_SESSION['user']['username']) ){
         header("Refresh:0; url=index.php");
         exit();
     }
-
+    // TODO: Session not getting destroyed as it should :(
 ?>
 <!DOCTYPE html>
 <?php
@@ -15,46 +15,58 @@
     require_once($_SERVER["DOCUMENT_ROOT"] . '/templates/header.php');
     //endregion
 ?>
-    <body class="bg-primary">
-        <div id="layoutAuthentication">
-            <div id="layoutAuthentication_content">
-                <main>
-                    <div class="container">
-                        <div class="row justify-content-center">
-                            <div class="col-lg-5">
-                                <div class="card shadow-lg border-0 rounded-lg mt-5">
-                                    <div class="card-header"><h3 class="text-center font-weight-light my-4">Login</h3></div>
-                                    <div class="card-body">
-                                        <form class="form-horizontal" data-toggle="validator" name="login" method="POST">
-                                            <div class="form-group">
-                                                <label class="small mb-1" for="inputUsername">Username</label>
-                                                <input name="username" <?php if( isset($_SESSION['login_failed']) && $_SESSION['login_failed']){echo "style=\"border-color: red;\"";}?> class="form-control py-4" id="inputUsername" type="username" placeholder="Enter username" />
-                                            </div>
-                                            <div class="form-group">
-                                                <label class="small mb-1" for="inputPassword">Password</label>
-                                                <input name="password" <?php if( isset($_SESSION['login_failed']) && $_SESSION['login_failed']){echo "style=\"border-color: red;\"";}?> class="form-control py-4" id="inputPassword" type="password" placeholder="Enter password" />
-                                            </div>
-                                            <div class="form-group d-flex align-items-center justify-content-between mt-4 mb-0">
-<?php if( isset($_SESSION['login_failed']) && $_SESSION['login_failed']){?>
-                                                <label class="small mb-1" style="color: #ef0000; font-weight: bold;">Wrong username or password!</label>
-<?php } else { ?>
-                                                <a class="small" href="#"></a>
-<?php }?>
-                                                <button name="login" type="submit" class="btn btn-primary">Login</button>
-                                            </div>
-                                        </form>
+<body class="bg-gradient-primary">
+
+    <div class="container">
+
+        <!-- Outer Row -->
+        <div class="row justify-content-center">
+
+            <div class="col-xl-10 col-lg-12 col-md-9">
+
+                <div class="card o-hidden border-0 shadow-lg my-5">
+                    <div class="card-body p-0">
+                        <!-- Nested Row within Card Body -->
+                        <div class="row">
+
+                            <div class="col-lg-6 d-none d-lg-block bg-login-image"></div>
+                            <div class="col-lg-6">
+                                <div class="p-5">
+                                    <div class="text-center">
+                                        <h1 class="h4 text-gray-900 mb-4">Welcome Back!</h1>
                                     </div>
+                                    <form class="form-horizontal" data-toggle="validator" name="login" method="POST">
+                                        <div class="form-group">
+                                            <input name="username"
+                                                <?php if( isset($_SESSION['login_failed']) && $_SESSION['login_failed']){echo "style=\"border-color: red;\"";}?>
+                                                class="form-control form-control-user" id="inputUsername" type="username" placeholder="Enter username" />
+                                        </div>
+                                        <div class="form-group">
+                                            <input name="password"
+                                                <?php if( isset($_SESSION['login_failed']) && $_SESSION['login_failed']){echo "style=\"border-color: red;\"";}?>
+                                                class="form-control form-control-user" id="inputPassword" type="password" placeholder="Password" >
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="custom-control custom-checkbox small">
+                                                <input type="checkbox" class="custom-control-input" id="customCheck">
+                                                <label class="custom-control-label" for="customCheck">Remember
+                                                    Me</label>
+                                            </div>
+                                        </div>
+                                        <button name="login" type="submit" class="btn btn-primary btn-user btn-block">Login</button>
+                                        <hr>
+                                    </form>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </main>
-            </div>
-            <div id="layoutAuthentication_footer">
-<?php require_once('_footer.php'); ?>
+                </div>
             </div>
         </div>
-        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
-    </body>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+
+</body>
+
 </html>

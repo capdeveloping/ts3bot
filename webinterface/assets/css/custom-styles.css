@@ -1,0 +1,210 @@
+@charset "UTF-8";
+/*!
+* Start Bootstrap - SB Admin v6.0.2 (https://startbootstrap.com/template/sb-admin)
+* Copyright 2013-2020 Start Bootstrap
+* Licensed under MIT (https://github.com/StartBootstrap/startbootstrap-sb-admin/blob/master/LICENSE)
+*/
+/*!
+ * Bootstrap v4.5.3 (https://getbootstrap.com/)
+ * Copyright 2011-2020 The Bootstrap Authors
+ * Copyright 2011-2020 Twitter, Inc.
+ * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
+ */
+
+.row > div{
+    height:100%;
+    width:100%;
+}
+
+.card:hover{
+    box-shadow: 0 0 1em #4e73df;
+    transition: 1s;
+}
+
+.nav-item-1.active ~ .indicator{
+    transform: translateY(calc(52.8px * 0))
+}
+.nav-item-2.active ~ .indicator{
+    transform: translateY(calc(70px * 1))
+}
+.nav-item-3.active ~ .indicator{
+    transform: translateY(calc(65px * 2))
+}
+.nav-item-4.active ~ .indicator{
+    transform: translateY(calc(62.8px * 3))
+}
+.nav-item-5.active ~ .indicator{
+    transform: translateY(calc(61px * 4))
+}
+.nav-item-6.active ~ .indicator{
+    transform: translateY(calc(59.8px * 5))
+}
+a .nav-item-expanded-4.active ~ .indicator{
+    transform: translateY(calc(52.8px * 7))
+}
+.nav-item-expanded-5.active ~ .indicator{
+    transform: translateY(calc(51px * 8))
+}
+.nav-item-expanded-6.active ~ .indicator{
+    transform: translateY(calc(51px * 9))
+}
+.nav-item-expanded-7.active ~ .indicator{
+    transform: translateY(calc(51px * 10))
+}
+.nav-item-expanded-8.active ~ .indicator{
+    transform: translateY(calc(51px * 11))
+}
+.nav-item-expanded-9.active ~ .indicator{
+    transform: translateY(calc(51px * 12))
+}
+
+.indicator::before{
+    content: '';
+    position: absolute;
+    top: -68%;
+    left: 10px;
+    width: 23px;
+    height: 19px;
+    background: #ff000000;
+    border-bottom-right-radius: 68px;
+    box-shadow: 5px 7px 0 0 #fff;
+    z-index: 5;
+}
+
+.indicator{
+    position: absolute;
+    width: 55px;
+    height: 52px;
+    background: #4e73df;
+    top: 73px;
+    left: 186px;
+    border-radius: 50%;
+    border: 7px solid #fff;
+    transition-property: all;
+    transition-duration: 0.1s;
+    transition-timing-function: cubic-bezier(0.74, 0.17, 0.98, 0.97);
+    transition-delay: 0s;
+    z-index: 5;
+}
+
+.indicator::after{
+    content: '';
+    position: absolute;
+    top: 119%;
+    left: 10px;
+    width: 23px;
+    height: 18px;
+    background: transparent;
+    border-top-right-radius: 68px;
+    box-shadow: 7px -6px 0 0 #fff;
+    z-index: 5;
+}
+
+@media (max-width: 767px){
+    .indicator {
+        visibility: hidden;
+        transition-duration: 0.1s;
+        transition-delay: 0s;
+    }
+}
+
+.nav .nav-link .sb-nav-link-text,
+.sb-sidenav-menu .nav-link .sb-nav-link-text {
+  margin-right: 0.5rem;
+}
+
+.form-select {
+    display: block;
+    width: 100%;
+    padding: .375rem 2.25rem .375rem .75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #212529;
+    background-color: #fff;
+    background-image: url('/assets/img/arrow-down-sign-to-navigate.svg');
+    background-repeat: no-repeat;
+    background-position: right .75rem center;
+    background-size: 16px 12px;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+    appearance: none;
+}
+
+/* The switch - the box around the slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 52px;
+  height: 25px;
+  margin-top: 0.3rem;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #f00;
+  -webkit-transition: .2s;
+  transition: .2s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #0fb900;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+.topbar.navbar-light .navbar-nav .nav-item .nav-link {
+    color: #858796!important;
+}
+
+.saved-label {
+    text-align: center;
+    display: block;
+}
+
+.saved-row {
+    margin: 0px;
+    padding: 5px 0px;
+    background: greenyellow;
+    display: block;
+}

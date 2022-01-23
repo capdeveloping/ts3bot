@@ -1,8 +1,7 @@
-image: docker:19.03.1
+image: docker:latest
 
 stages:
   - cleanup
-#  - sonar
   - build-jar
   - build-container
   - deploy
@@ -27,13 +26,6 @@ cleanup:
   script: docker image prune -f
   only:
     - /^update-/
-
-#sonar:
-#  stage: sonar
-#  image: gradle:latest
-#  script:
-#    - chmod +x ./gradlew
-#    - ./gradlew sonarqube
 
 build jar file:
   stage: build-jar
@@ -67,14 +59,14 @@ update test bot:
 push to github repo:
   stage: push
   image: debian:stable-slim
+  rules:
+    - if: $AUTO_BUILD == "false" && $CI_COMMIT_BRANCH == "master"
   script:
     - apt update -y && apt install git -y
     - export UPDATE_GIT_URL="git remote set-url public-repo $GITHUB_URL"
     - export ADD_GIT_URL="git remote add public-repo $GITHUB_URL"
     - if [ `git remote | grep public-repo` == "public-repo" ]; then $UPDATE_GIT_URL; else $ADD_GIT_URL; fi
     - git push public-repo HEAD:master
-  only:
-    - master
 
 push to docker hub:
   # Official docker image.
@@ -95,21 +87,21 @@ push to docker hub:
 update prod bot:
   image: tiangolo/docker-with-compose
   stage: update
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
   script:
     - export VERSION=$(grep -E "version " build.gradle | cut -d "'" -f2)
     - cd docker && apk add wget
     - wget -O docker-compose.yml --header "PRIVATE-TOKEN:$GITLAB_API_TOKEN" $DOCKER_COMPOSE_FILE_URL
     - docker-compose up -d
-  only:
-    - master
 
 stop test bot:
   image: tiangolo/docker-with-compose
   stage: remove
+  rules:
+    - if: $AUTO_BUILD == "false" && $CI_COMMIT_BRANCH == "master"
   script:
     - export VERSION=$(grep -E "version " build.gradle | cut -d "'" -f2)
     - cd docker && apk add wget
     - wget -O docker-compose.yml --header "PRIVATE-TOKEN:$GITLAB_API_TOKEN" $DOCKER_COMPOSE_TEST_FILE_URL
     - docker stop ts3bot-test
-  only:
-    - master

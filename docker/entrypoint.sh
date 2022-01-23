@@ -38,8 +38,8 @@ if [ ! -e "/data/serverconfig.template" ]; then
 fi
 
 if [ ! -e "/data/db.sqlite3" ]; then
-  sqlite3 /data/db.sqlite3 'CREATE TABLE users(username text,password text);'
-  sqlite3 /data/db.sqlite3 'insert into users (username, password) VALUES("admin", "$2y$11$D4OxW1TABL4T81ioPD2CC.5OHmm0/ONd1mZ2WhKMAIRydjb8M3XEq");'
+  sqlite3 /data/db.sqlite3 'CREATE TABLE users(username text, password text, isadmin text, instances text);'
+  sqlite3 /data/db.sqlite3 'insert into users (username, password, isadmin, instances) VALUES("admin", "$2y$11$D4OxW1TABL4T81ioPD2CC.5OHmm0/ONd1mZ2WhKMAIRydjb8M3XEq", "true", "server1");'
   chown www-data:www-data /data/db.sqlite3
 fi
 

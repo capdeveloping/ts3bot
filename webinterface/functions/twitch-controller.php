@@ -65,12 +65,16 @@
     require_once($_SERVER["DOCUMENT_ROOT"] . '/templates/header.php');
     //endregion
 ?>
-    <body class="sb-nav-fixed">
-<?php require_once($_SERVER["DOCUMENT_ROOT"] . '/templates/nav-header.php'); ?>
-        <div id="layoutSidenav">
+    <body id="page-top">
+        <!-- Page Wrapper -->
+        <div id="wrapper">
 <?php require_once($_SERVER["DOCUMENT_ROOT"] . '/templates/nav.php'); ?>
-            <div id="layoutSidenav_content">
-                <main>
+            <!-- Content Wrapper -->
+            <div id="content-wrapper" class="d-flex flex-column">
+                <!-- Main Content -->
+                <div id="content">
+<?php require_once($_SERVER["DOCUMENT_ROOT"] . '/templates/nav-header.php'); ?>
+                    <!-- Begin Page Content -->
                     <div class="container-fluid">
                         <h1 class="mt-4">Twitch Controller</h1>
                         <ol class="breadcrumb mb-4">
@@ -78,7 +82,7 @@
                             <li class="breadcrumb-item">Funktionen</li>
                             <li class="breadcrumb-item active">Twitch Controller</li>
                         </ol>
-                        <div class="card mb-4">
+                        <div class="card shadow mb-4">
                             <div class="card-header">
                                 <i class="fas fa-chart-area mr-1"></i>
                                 Settings
@@ -92,7 +96,7 @@
                             <br>
                             <?php }?>
                             <br>
-                            <div style="align-self: center;">
+                            <div class="card-body" style="align-self: center;">
                                 <div class="col-sm-4"></div>
                                 <div class="row" >
                                     <h4>Wie erstelle ich einen token und woher bekomme ich eine client id?</h4>
@@ -104,135 +108,139 @@
                                     <p>   Der Twitch Account muss die Channel nicht abonniert haben. Es kann auch dafür ein neuer Account erstellt werden.</p>
                                     <p>4. Nun kann die CLIENT ID und der ACCESS TOKEN von dort kopiert werden.</p>
                                 </div>
-                            </div>
-                            <br>
-                            <form class="form-horizontal" data-toggle="validator" name="save" method="POST">
-                                <div class="form-group row">
-                                    <label class="col-sm-4 control-label" for="inputTwitchId">Twitch client id</label>
-                                    <div class="col-sm-4">
-                                        <input class="form-control" id="inputTwitchId" type="text" name="twitch_api_client_id" placeholder="twitch client id" value=<?php echo '"' . $_SESSION["config"][$twitchKey . "_twitch_api_client_id"] . '"' ?> required/>
-                                    </div>
-                                </div>
-                                <div class="form-group row" >
-                                    <label class="col-sm-4 control-label" for="inputTwitchOauth">Twitch OAuth Token</label>
-                                    <div class="col-sm-4">
-                                        <input class="form-control" id="inputTwitchOauth" type="password" name="twitch_api_client_oauth_token" placeholder="twitch client oauth token" value=<?php echo '"' . $_SESSION["config"][$twitchKey . "_twitch_api_client_oauth_token"] . '"' ?> required/>
-                                    </div>
-                                </div>
-                                <div class="form-group row" >
-                                    <label class="col-sm-4 control-label" for="inputTwitchGroup">Twitch Servergroup</label>
-                                    <div class="col-sm-4">
-                                        <div name="twitch_server_group" id="single-selected"></div>
-                                    </div>
-                                </div>
-                                <div class="form-group row" >
-                                    <label class="col-sm-4 control-label" for="twitch_send_server_message">Globale Ts3 Servernachricht Senden?</label>
-                                    <div class="col-sm-2">
-                                        <select name="twitch_send_server_message" class="form-select" aria-label="select">
-<?php if ($_SESSION["config"][$twitchKey . "_twitch_send_server_message"] === "true"){?>
-                                            <option selected value="true">ja</option>
-                                            <option value="false">nein</option>
-<?php } else if ( $_SESSION["config"][$twitchKey . "_twitch_send_server_message"] === "false"){?>
-                                            <option value="true">ja</option>
-                                            <option selected value="false">nein</option>
-<?php } else { ?>
-                                            <option value="false">nein</option>
-                                            <option value="true">ja</option>
-<?php } ?>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="col-sm-4 control-label" for="inputTwitch_server_message" >Servernachricht</label>
-                                    <div class="col-sm-4">
-                                        <textarea name="twitch_server_message" class="form-control" id="inputTwitch_server_message" rows="3"><?php if( ! empty($_SESSION["config"][$twitchKey . "_twitch_server_message"]) ){ echo $_SESSION["config"][$twitchKey . "_twitch_server_message"]; }else{ echo "%USER% ist nun auf Twitch LIVE gegangen schaue doch gerne mal rein: %URL%";} ?></textarea>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-sm-4"></div>
-                                    <div class="col-sm-3">
-                                        Folgende Inhalte können automatisch ersetzt werden:<br>
-                                        %USER% = Twitchusername<br>
-                                        %URL% = https://www.twitch.tv/twitchusername
-                                    </div>
-                                </div>
                                 <br>
-                                <div class="form-group row">
-                                    <div class="col-sm-3"></div>
-                                    <div class="col-xs-5">
-                                        <label class="col-sm-12 control-label" for="inputChannelPasswords">Twitchusername (kleingeschrieben)</label>
+                                <form class="form-horizontal" data-toggle="validator" name="save" method="POST">
+                                    <div class="form-group row">
+                                        <label class="col-sm-4 control-label" for="inputTwitchId">Twitch client id</label>
+                                        <div class="col-sm-4">
+                                            <input class="form-control" id="inputTwitchId" type="text" name="twitch_api_client_id" placeholder="twitch client id" value=<?php echo '"' . $_SESSION["config"][$twitchKey . "_twitch_api_client_id"] . '"' ?> required/>
+                                        </div>
                                     </div>
-                                    <div class="col-xs-4">
-                                        <label class="col-sm-12 control-label" for="inputChannelPasswords">Teamspeak User</label>
+                                    <div class="form-group row" >
+                                        <label class="col-sm-4 control-label" for="inputTwitchOauth">Twitch OAuth Token</label>
+                                        <div class="col-sm-4">
+                                            <input class="form-control" id="inputTwitchOauth" type="password" name="twitch_api_client_oauth_token" placeholder="twitch client oauth token" value=<?php echo '"' . $_SESSION["config"][$twitchKey . "_twitch_api_client_oauth_token"] . '"' ?> required/>
+                                        </div>
                                     </div>
-                                </div>
+                                    <div class="form-group row" >
+                                        <label class="col-sm-4 control-label" for="inputTwitchGroup">Twitch Servergroup</label>
+                                        <div class="col-sm-4">
+                                            <div name="twitch_server_group" id="single-selected"></div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row" >
+                                        <label class="col-sm-4 control-label" for="twitch_send_server_message">Globale Ts3 Servernachricht Senden?</label>
+                                        <div class="col-sm-2">
+                                            <select name="twitch_send_server_message" class="form-select" aria-label="select">
+<?php if ( isset($_SESSION["config"][$twitchKey . "_twitch_send_server_message"]) && $_SESSION["config"][$twitchKey . "_twitch_send_server_message"] === "true"){?>
+                                                <option selected value="true">ja</option>
+                                                <option value="false">nein</option>
+<?php } else if ( $_SESSION["config"][$twitchKey . "_twitch_send_server_message"] === "false"){?>
+                                                <option value="true">ja</option>
+                                                <option selected value="false">nein</option>
+<?php } else { ?>
+                                                <option value="false">nein</option>
+                                                <option value="true">ja</option>
+<?php } ?>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-sm-4 control-label" for="inputTwitch_server_message" >Servernachricht</label>
+                                        <div class="col-sm-4">
+                                            <textarea name="twitch_server_message" class="form-control" id="inputTwitch_server_message" rows="3"><?php if( ! empty($_SESSION["config"][$twitchKey . "_twitch_server_message"]) ){ echo $_SESSION["config"][$twitchKey . "_twitch_server_message"]; }else{ echo "%USER% ist nun auf Twitch LIVE gegangen schaue doch gerne mal rein: %URL%";} ?></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-4"></div>
+                                        <div class="col-sm-3">
+                                            Folgende Inhalte können automatisch ersetzt werden:<br>
+                                            %USER% = Twitchusername<br>
+                                            %URL% = https://www.twitch.tv/twitchusername
+                                        </div>
+                                    </div>
+                                    <br>
+                                    <div class="form-group row">
+                                        <div class="col-sm-3"></div>
+                                        <div class="col-xs-5">
+                                            <label class="col-sm-12 control-label" for="inputChannelPasswords">Twitchusername (kleingeschrieben)</label>
+                                        </div>
+                                        <div class="col-xs-4">
+                                            <label class="col-sm-12 control-label" for="inputChannelPasswords">Teamspeak User</label>
+                                        </div>
+                                    </div>
 
 <?php
 $counter = 1;
 if( ! empty($twitchUser) ){
 foreach($twitchUser as $key=>$value){ ?>
-                                    <div class="form-group row">
-                                        <div class="col-sm-1"></div>
-                                        <div class="col-sm-2">
-                                            <select name=<?php echo '"enableMessage' . $counter . '"'; ?> class="form-select" aria-label="select">
+                                        <div class="form-group row">
+                                            <div class="col-sm-1"></div>
+                                            <div class="col-sm-4">
+                                                <select name=<?php echo '"enableMessage' . $counter . '"'; ?> class="form-select" aria-label="select">
 <?php if ($value["sendMessage"] === "true"){?>
-                                                <option selected value="true">Servernachricht senden</option>
-                                                <option value="false">Keine Servernachricht senden</option>
+                                                    <option selected value="true">Servernachricht senden</option>
+                                                    <option value="false">Keine Servernachricht senden</option>
 <?php } else if ( $value["sendMessage"] === "false"){?>
-                                                <option value="true">Servernachricht senden</option>
-                                                <option selected value="false">Keine Servernachricht senden</option>
+                                                    <option value="true">Servernachricht senden</option>
+                                                    <option selected value="false">Keine Servernachricht senden</option>
 <?php } else { ?>
-                                                <option value="false">Keine Servernachricht senden</option>
-                                                <option value="true">Servernachricht senden</option>
+                                                    <option value="false">Keine Servernachricht senden</option>
+                                                    <option value="true">Servernachricht senden</option>
 <?php } ?>
-                                            </select>
+                                                </select>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <input class="form-control" id="itemKey<?php echo "$counter";?>" type="text" name="itemKey<?php echo "$counter";?>"  value='<?php print_r($value["twitchname"]); ?>' />
+                                            </div>
+                                            =
+                                            <div class="col-sm-3">
+                                                <div name="item<?php echo "$counter"?>" id="single-selected-<?php echo $counter?>"></div>
+                                            </div>
+                                            <div class="text-center">
+                                                <button name="rmItem<?php echo "$counter";?>" type="submit" class="btn btn-danger" ><i class="fas fa-trash-alt"></i></button>
+                                            </div>
                                         </div>
-                                        <div class="col-sm-2">
-                                            <input class="form-control" id="itemKey<?php echo "$counter";?>" type="text" name="itemKey<?php echo "$counter";?>"  value='<?php print_r($value["twitchname"]); ?>' />
-                                        </div>
-                                        =
-                                        <div class="col-sm-3">
-                                            <div name="item<?php echo "$counter"?>" id="single-selected-<?php echo $counter?>"></div>
-                                        </div>
-                                        <div class="text-center">
-                                            <button name="rmItem<?php echo "$counter";?>" type="submit" class="btn btn-danger" ><i class="fas fa-trash-alt"></i></button>
-                                        </div>
-                                    </div>
 <?php $counter++; }
 }
 for ($x = 1; $x <= 3; $x++) { ?>
 
-                                    <div class="form-group row">
-                                        <div class="col-sm-1"></div>
-                                        <div class="col-sm-2">
-                                            <select name=<?php echo '"newEnableMessage' . $x . '"'; ?> class="form-select" aria-label="select">
-                                                <option value="false">Keine Servernachricht senden</option>
-                                                <option value="true">Servernachricht senden</option>
-                                            </select>
+                                        <div class="form-group row">
+                                            <div class="col-sm-1"></div>
+                                            <div class="col-sm-4">
+                                                <select name=<?php echo '"newEnableMessage' . $x . '"'; ?> class="form-select" aria-label="select">
+                                                    <option value="false">Keine Servernachricht senden</option>
+                                                    <option value="true">Servernachricht senden</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <input class="form-control" id="newItemKey<?php echo "$x"?>" type="text" name="newItemKey<?php echo "$x";?>"/>
+                                            </div>
+                                            =
+                                            <div class="col-sm-3">
+                                                <div name="newItem<?php echo "$x"?>" id="single-select-new-<?php echo $x?>"></div>
+                                            </div>
                                         </div>
-                                        <div class="col-sm-2">
-                                            <input class="form-control" id="newItemKey<?php echo "$x"?>" type="text" name="newItemKey<?php echo "$x";?>"/>
-                                        </div>
-                                        =
-                                        <div class="col-sm-3">
-                                            <div name="newItem<?php echo "$x"?>" id="single-select-new-<?php echo $x?>"></div>
-                                        </div>
-                                    </div>
 <?php } ?>
-                                <div class="row">&nbsp;</div>
-                                <div class="row" style="display: block;">
-                                    <div class="text-center">
-                                        <button type="submit" class="btn btn-primary" name="save"><i class="fas fa-save"></i>&nbsp;speichern</button>
+                                    <div class="row">&nbsp;</div>
+                                    <div class="row" style="display: block;">
+                                        <div class="text-center">
+                                            <button type="submit" class="btn btn-primary" name="save"><i class="fas fa-save"></i>&nbsp;speichern</button>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="row">&nbsp;</div>
-                            </form>
+                                    <div class="row">&nbsp;</div>
+                                </form>
+                            </div>
                         </div>
                     </div>
-                </main>
+                    <!-- End of Page Content -->
+                </div>
+                <!-- End of Main Content -->
 <?php require_once($_SERVER["DOCUMENT_ROOT"] . '/templates/footer.php'); ?>
             </div>
+            <!-- End of Content Wrapper -->
         </div>
+        <!-- End of Page Wrapper -->
         <script type="text/javascript">
             VirtualSelect.init({
                 ele: '#single-selected',

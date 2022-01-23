@@ -17,12 +17,32 @@
         <script src="https://cdn.datatables.net/1.10.20/js/dataTables.bootstrap4.min.js" crossorigin="anonymous"></script>
         <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
         <!-- endregion public sources-->
+        <!-- Custom fonts for this template-->
+        <link href="/assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+
+        <!-- Bootstrap core JavaScript-->
+        <script src="/assets/vendor/jquery/jquery.min.js"></script>
+        
+        <!-- Core plugin JavaScript-->
+        <script src="/assets/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+        <!-- Custom scripts for all pages-->
+        <script src="/assets/js/sb-admin-2.min.js"></script>
+
+
 
         <!-- region private sources-->
-        <link href="/assets/css/styles.css" rel="stylesheet" />
+        <!-- <link href="/assets/css/styles.css" rel="stylesheet" />-->
+        <link href="/assets/css/sb-admin-2.css" rel="stylesheet" />
+        <link href="/assets/css/sb-admin-2.min.css" rel="stylesheet" />
+        <link href="/assets/css/custom-styles.css" rel="stylesheet" />
         <link rel="stylesheet" href="/assets/js/virtual-select.min.css" />
         <script src="/assets/js/virtual-select.min.js"></script>
         <script src="/assets/js/scripts.js"></script>
+        <script src="/assets/js/sb-admin-2.js"></script>
+        <script src="/assets/js/sb-admin-2.min.js"></script>
         <script src="/assets/js/custom-scripts.php"></script>
         <!-- endregion private sources-->
     </head>

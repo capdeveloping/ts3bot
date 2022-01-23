@@ -28,12 +28,16 @@
     require_once($_SERVER["DOCUMENT_ROOT"] . '/templates/header.php');
     //endregion
 ?>
-    <body class="sb-nav-fixed">
-<?php require_once($_SERVER["DOCUMENT_ROOT"] . '/templates/nav-header.php'); ?>
-        <div id="layoutSidenav">
+    <body id="page-top">
+        <!-- Page Wrapper -->
+        <div id="wrapper">
 <?php require_once($_SERVER["DOCUMENT_ROOT"] . '/templates/nav.php'); ?>
-            <div id="layoutSidenav_content">
-                <main>
+            <!-- Content Wrapper -->
+            <div id="content-wrapper" class="d-flex flex-column">
+                <!-- Main Content -->
+                <div id="content">
+<?php require_once($_SERVER["DOCUMENT_ROOT"] . '/templates/nav-header.php'); ?>
+                    <!-- Begin Page Content -->
                     <div class="container-fluid">
                         <h1 class="mt-4">Client moved to channel</h1>
                         <ol class="breadcrumb mb-4">
@@ -60,66 +64,69 @@
                                             Settings für die Funktion mit der ID: <?php echo $key; ?>
                                         </div>
                                         <br>
-                                        <div class="form-group">
-                                            <div class="row">
-                                                <div class="col-sm-7">
-                                                    <label class="control-label" for=<?php echo '"clientJoindChannel-' . $key . '"'; ?>  >Client joint den channel</label>
-                                                </div>
-                                                <div class="col-sm-4">
-                                                    <select name=<?php echo '"clientJoindChannel-' . $key . '"'; ?> class="form-select" aria-label="select" placeholder=" -- Channel auswählen -- ">
+                                        <div class="card-body">
+                                            <div class="form-group">
+                                                <div class="row">
+                                                    <div class="col-sm-7">
+                                                        <label class="control-label" for=<?php echo '"clientJoindChannel-' . $key . '"'; ?>  >Client joint den channel</label>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <select name=<?php echo '"clientJoindChannel-' . $key . '"'; ?> class="form-select" aria-label="select" placeholder=" -- Channel auswählen -- ">
 <?php   foreach ($_SESSION['db_channels'] as $id=>$name){
             if ( strval($id) === $_SESSION["config"][$key . "_client_moved_channel"]) {
 ?>
-                                                        <option selected value="<?php echo $id?>"><?php print_r("(" . $id . ") " . $name)?></option>
+                                                            <option selected value="<?php echo $id?>"><?php print_r("(" . $id . ") " . $name)?></option>
 <?php       } else {?>
-                                                        <option value="<?php echo $id?>"><?php print_r("(" . $id . ") " . $name)?></option>
+                                                            <option value="<?php echo $id?>"><?php print_r("(" . $id . ") " . $name)?></option>
 <?php       }
         }?>
-                                                    </select>
+                                                        </select>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <div class="row">
-                                                <div class="col-sm-7">
-                                                    <label class="control-label" for=<?php echo '"clientPokeClient-' . $key . '"'; ?> >Clients dieser Server Groupen sollen angestupst</label>
-                                                </div>
-                                                <div class="col-sm-4">
-                                                    <div name=<?php echo '"clientPokeClient-' . $key . '"'; ?> id="multiple-select-<?php echo $key?>"></div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <div class="row">
-                                                <div class="col-sm-7">
-                                                    <label class="control-label" for=<?php echo '"groupids-' . $key . '"'; ?> >Gruppen auf die geachtet oder die ignoriert werden sollen</label>
-                                                </div>
-                                                <div class="col-sm-4">
-                                                    <div name=<?php echo '"groupids-' . $key . '"'; ?> id="multiple-select-groupids-<?php echo $key?>"></div>
+                                            <div class="form-group">
+                                                <div class="row">
+                                                    <div class="col-sm-7">
+                                                        <label class="control-label" for=<?php echo '"clientPokeClient-' . $key . '"'; ?> >Clients dieser Server Groupen sollen angestupst</label>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <div name=<?php echo '"clientPokeClient-' . $key . '"'; ?> id="multiple-select-<?php echo $key?>"></div>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <div class="row">
-                                                <div class="col-sm-7">
-                                                    <label class="control-label" for=<?php echo '"action-' . $key . '"'; ?> >Ignoriere die oberen Gruppen oder überprüfe nur diese</label>
+                                            <div class="form-group">
+                                                <div class="row">
+                                                    <div class="col-sm-7">
+                                                        <label class="control-label" for=<?php echo '"groupids-' . $key . '"'; ?> >Gruppen auf die geachtet oder die ignoriert werden sollen</label>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <div name=<?php echo '"groupids-' . $key . '"'; ?> id="multiple-select-groupids-<?php echo $key?>"></div>
+                                                    </div>
                                                 </div>
-                                                <div class="col-sm-4">
-                                                    <select name=<?php echo '"action-' . $key . '"'; ?> class="form-select" id="basic">
+                                            </div>
+                                            <div class="form-group">
+                                                <div class="row">
+                                                    <div class="col-sm-7">
+                                                        <label class="control-label" for=<?php echo '"action-' . $key . '"'; ?> >Ignoriere die oberen Gruppen oder überprüfe nur diese</label>
+                                                    </div>
+                                                    <div class="col-sm-4">
+                                                        <select name=<?php echo '"action-' . $key . '"'; ?> class="form-select" id="basic">
 <?php if ($_SESSION["config"][$key . "_client_moved_group_action"] === "ignore"){?>
-                                                        <option selected value="ignore">ignore</option>
-                                                        <option value="only">only</option>
+                                                            <option selected value="ignore">ignore</option>
+                                                            <option value="only">only</option>
 <?php } else if ($_SESSION["config"][$key . "_client_moved_group_action"] === "only"){?>
-                                                        <option value="ignore">ignore</option>
-                                                        <option selected value="only">only</option>
+                                                            <option value="ignore">ignore</option>
+                                                            <option selected value="only">only</option>
 <?php } else { ?>
-                                                        <option value="ignore">ignore</option>
-                                                        <option value="only">only</option>
+                                                            <option value="ignore">ignore</option>
+                                                            <option value="only">only</option>
 <?php } ?>
-                                                    </select>
+                                                        </select>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
+                                        <!-- End of card-body -->
                                     </div>
                                 </div>
 <?php if($number % 2 != 0 || count($_SESSION["functions"]["ClientMove"]) == 0 ){ ?>
@@ -142,10 +149,14 @@
                             <div class="row">&nbsp;</div>
                         </form>
                     </div>
-                </main>
+                    <!-- End of Page Content -->
+                </div>
+                <!-- End of Main Content -->
 <?php require_once($_SERVER["DOCUMENT_ROOT"] . '/templates/footer.php'); ?>
             </div>
+            <!-- End of Content Wrapper -->
         </div>
+        <!-- End of Page Wrapper -->
         <script>
           function getSelected(key) {
               var optionsData = [];

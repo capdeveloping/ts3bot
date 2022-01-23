@@ -504,23 +504,7 @@ function startScriptWithParams($action, $param1, $param2 = NULL){
     print_r($output);
 }
 
-function getstartlog() {
-	$lines=array();
-	if( file_exists("/data/logs/start.log") ) {
-		$fp = fopen("/data/logs/start.log", "r");
-		$buffer=array();
-		while($line = fgets($fp, 4096)) {
-			array_push($buffer, $line);
-		}
-		fclose($fp);
-		foreach($buffer as $line) {
-            array_push($lines, $line);
-		}
-	}
-	return $lines;
-}
-
-function getlog($number_lines) {
+function getlog($number_lines,$filters,$filter2,$inactivefilter = NULL) {
 	$lines=array();
 	if( file_exists("/data/logs/bot.log") ) {
 		$fp = fopen("/data/logs/bot.log", "r");
@@ -529,21 +513,46 @@ function getlog($number_lines) {
 			array_push($buffer, $line);
 		}
 		fclose($fp);
-		$buffer = array_reverse($buffer);
+		$lastfilter = 'init';
 		foreach($buffer as $line) {
-            array_push($lines, $line);
-            if (count($lines)>$number_lines) {
-                break;
-            }
-            continue;
+			if(substr($line, 0, 2) != "20" && in_array($lastfilter, $filters)) {
+				array_push($lines, $line);
+				if (count($lines)>$number_lines) {
+					break;
+				}
+				continue;
+			}
+			foreach($filters as $filter) {
+				if(($filter != NULL && strstr($line, $filter) && $filter2 == NULL) ||
+				        ($filter2 != NULL && strstr($line, $filter2) && $filter != NULL && strstr($line, $filter))) {
+					if($filter == "CRITICAL" || $filter == "ERROR") {
+						array_push($lines, '<span class="text-danger">'.$line.'</span>');
+					} elseif($filter == "WARNING") {
+						array_push($lines, '<span class="text-warning">'.$line.'</span>');
+					} else {
+						array_push($lines, $line);
+					}
+					$lastfilter = $filter;
+					if (count($lines)>$number_lines) {
+						break 2;
+					}
+					break;
+				} elseif($inactivefilter != NULL) {
+					foreach($inactivefilter as $defilter) {
+						if($defilter != NULL && strstr($line, $defilter)) {
+							$lastfilter = $defilter;
+						}
+					}
+				}
+			}
 		}
-		$lines = array_reverse($lines);
 	} else {
 		$lines[] = "No log entry found...\n";
 		$lines[] = "The logfile will be created with next startup.\n";
 	}
 	return $lines;
 }
+
 function getJSSelectOption($db_array, $commaStr){
     $arrStr = "";
     if ( empty($commaStr) ){

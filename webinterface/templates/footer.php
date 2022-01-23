@@ -1,7 +1,9 @@
-                <footer class="py-4 bg-light mt-auto">
-                    <div class="container-fluid">
-                        <div class="d-flex align-items-center justify-content-between small">
-                            <div class="text-muted">Copyright &copy; Capdeveloping 2021</div>
-                        </div>
+            <!-- Footer -->
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <div class="text-muted">Copyright &copy; Capdeveloping 2021</div>
                     </div>
-                </footer>
+                </div>
+            </footer>
+            <!-- End of Footer -->
