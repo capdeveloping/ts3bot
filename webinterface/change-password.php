@@ -6,6 +6,8 @@
     $wrongPassword = FALSE;
 
     if(isset($_POST['updatePW'])){
+        $db = new MyDB();
+
         $statement = $db->prepare('SELECT password FROM users WHERE username = :username;');
         $statement->bindValue(':username', $_SESSION['user']['username']);
         $result = $statement->execute();
@@ -25,6 +27,8 @@
             $result = $statement->execute();
             $saved = TRUE;
         }
+
+        $db->close();
     }
 ?>
 <!DOCTYPE html>

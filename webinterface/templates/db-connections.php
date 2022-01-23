@@ -6,7 +6,9 @@
             $this->busyTimeout(2000);
         }
     }
+
     $db = new MyDB();
+
     try{
         if( isset($_SESSION['user']['username']) && ! isset($_POST['login']) ){
             $tablename = $_SESSION["instance_name"] . '_groups';
@@ -54,5 +56,6 @@
             $_SESSION['login_failed'] = TRUE;
         }
     }
+
     $db->close();
 ?>
