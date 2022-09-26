@@ -73,7 +73,7 @@ clean up docker test images:
   # Official docker image.
   stage: pre-push
   script:
-    - export VERSION=$(grep 'name="version"' code/templates/header.php | awk -F'"' '{print $4}')
+    - export VERSION=$(grep -E "version " build.gradle | cut -d "'" -f2)
     - docker image rm "ts3bot:test"
     - docker image rm "ts3bot:test-$VERSION"
   only:
