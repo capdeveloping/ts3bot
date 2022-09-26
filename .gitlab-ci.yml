@@ -77,7 +77,7 @@ clean up docker test images:
     - docker image rm "ts3bot:test"
     - docker image rm "ts3bot:test-$VERSION"
   only:
-    - main
+    - master
 
 push to docker hub:
   # Official docker image.
