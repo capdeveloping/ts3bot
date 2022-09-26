@@ -74,8 +74,8 @@ clean up docker test images:
   stage: pre-push
   script:
     - export VERSION=$(grep -E "version " build.gradle | cut -d "'" -f2)
-    - docker image rm "ts3bot:test"
-    - docker image rm "ts3bot:test-$VERSION"
+    - docker image rm "ts3bot:test" &> /dev/null || true
+    - docker image rm "ts3bot:test-$VERSION" docker image rm "ts3bot:test" &> /dev/null || true
   only:
     - master
 
