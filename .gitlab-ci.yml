@@ -5,6 +5,7 @@ stages:
   - build-jar
   - build-container
   - deploy
+  - pre-push
   - push
   - update
   - remove
@@ -41,20 +42,20 @@ create staging container:
     - export VERSION=$(grep -E "version " build.gradle | cut -d "'" -f2)
     - cp build/libs/ts3bot-$VERSION-all.jar docker/ts3bot.jar
     - cp -r webinterface/ docker/html
-    - docker build docker -t ts3bot:$VERSION-$CI_PIPELINE_ID
+    - docker build docker -t ts3bot:test-$VERSION -t ts3bot:test
   only:
     - /^update-/
 
-update test bot:
-  image: tiangolo/docker-with-compose
-  stage: deploy
-  script:
-    - export VERSION=$(grep -E "version " build.gradle | cut -d "'" -f2)
-    - cd docker && apk add wget
-    - wget -O docker-compose.yml --header "PRIVATE-TOKEN:$GITLAB_API_TOKEN" $DOCKER_COMPOSE_TEST_FILE_URL
-    - docker-compose up -d
-  only:
-    - /^update-/
+#update test bot:
+#  image: tiangolo/docker-with-compose
+#  stage: deploy
+#  script:
+#    - export VERSION=$(grep -E "version " build.gradle | cut -d "'" -f2)
+#    - cd docker && apk add wget
+#    - wget -O docker-compose.yml --header "PRIVATE-TOKEN:$GITLAB_API_TOKEN" $DOCKER_COMPOSE_TEST_FILE_URL
+#    - docker-compose up -d
+#  only:
+#    - /^update-/
 
 push to github repo:
   stage: push
@@ -68,6 +69,16 @@ push to github repo:
     - if [ `git remote | grep public-repo` == "public-repo" ]; then $UPDATE_GIT_URL; else $ADD_GIT_URL; fi
     - git push public-repo HEAD:master
 
+clean up docker test images:
+  # Official docker image.
+  stage: pre-push
+  script:
+    - export VERSION=$(grep 'name="version"' code/templates/header.php | awk -F'"' '{print $4}')
+    - docker image rm "ts3bot:test"
+    - docker image rm "ts3bot:test-$VERSION"
+  only:
+    - main
+
 push to docker hub:
   # Official docker image.
   stage: push
@@ -78,30 +89,30 @@ push to docker hub:
     - cp build/libs/ts3bot-$VERSION-all.jar docker/ts3bot.jar
     - cp -r webinterface/ docker/html
     - docker build docker -t "$CI_REGISTRY_IMAGE:latest" -t "$CI_REGISTRY_IMAGE:$VERSION"
-    - docker push "$CI_REGISTRY_IMAGE"
+    - docker push "$CI_REGISTRY_IMAGE" --all-tags
     - docker image rm "$CI_REGISTRY_IMAGE:latest"
     - docker image rm "$CI_REGISTRY_IMAGE:$VERSION"
   only:
     - master
 
-update prod bot:
-  image: tiangolo/docker-with-compose
-  stage: update
-  rules:
-    - if: $CI_COMMIT_BRANCH == "master"
-  script:
-    - export VERSION=$(grep -E "version " build.gradle | cut -d "'" -f2)
-    - cd docker && apk add wget
-    - wget -O docker-compose.yml --header "PRIVATE-TOKEN:$GITLAB_API_TOKEN" $DOCKER_COMPOSE_FILE_URL
-    - docker-compose up -d
+#update prod bot:
+#  image: tiangolo/docker-with-compose
+#  stage: update
+#  rules:
+#    - if: $CI_COMMIT_BRANCH == "master"
+#  script:
+#    - export VERSION=$(grep -E "version " build.gradle | cut -d "'" -f2)
+#    - cd docker && apk add wget
+#    - wget -O docker-compose.yml --header "PRIVATE-TOKEN:$GITLAB_API_TOKEN" $DOCKER_COMPOSE_FILE_URL
+#    - docker-compose up -d
 
-stop test bot:
-  image: tiangolo/docker-with-compose
-  stage: remove
-  rules:
-    - if: $AUTO_BUILD == "false" && $CI_COMMIT_BRANCH == "master"
-  script:
-    - export VERSION=$(grep -E "version " build.gradle | cut -d "'" -f2)
-    - cd docker && apk add wget
-    - wget -O docker-compose.yml --header "PRIVATE-TOKEN:$GITLAB_API_TOKEN" $DOCKER_COMPOSE_TEST_FILE_URL
-    - docker stop ts3bot-test
+#stop test bot:
+#  image: tiangolo/docker-with-compose
+#  stage: remove
+#  rules:
+#    - if: $AUTO_BUILD == "false" && $CI_COMMIT_BRANCH == "master"
+#  script:
+#    - export VERSION=$(grep -E "version " build.gradle | cut -d "'" -f2)
+#    - cd docker && apk add wget
+#    - wget -O docker-compose.yml --header "PRIVATE-TOKEN:$GITLAB_API_TOKEN" $DOCKER_COMPOSE_TEST_FILE_URL
+#    - docker stop ts3bot-test
