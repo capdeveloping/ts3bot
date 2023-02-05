@@ -85,13 +85,14 @@ push to docker hub:
   before_script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
   script:
+    - datestr=`date '+%Y%m%d'`
     - export VERSION=$(grep -E "version " build.gradle | cut -d "'" -f2)
     - cp build/libs/ts3bot-$VERSION-all.jar docker/ts3bot.jar
     - cp -r webinterface/ docker/html
-    - docker build docker -t "$CI_REGISTRY_IMAGE:latest" -t "$CI_REGISTRY_IMAGE:$VERSION"
+    - docker build docker -t "$CI_REGISTRY_IMAGE:latest" -t "$CI_REGISTRY_IMAGE:$VERSION.$datestr"
     - docker push "$CI_REGISTRY_IMAGE" --all-tags
     - docker image rm "$CI_REGISTRY_IMAGE:latest"
-    - docker image rm "$CI_REGISTRY_IMAGE:$VERSION"
+    - docker image rm "$CI_REGISTRY_IMAGE:$VERSION.$datestr"
   only:
     - master
 
