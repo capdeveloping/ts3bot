@@ -90,6 +90,7 @@ push to docker hub:
   script:
     - datestr=`date '+%Y%m%d'`
     - export VERSION=$(grep -E "version " build.gradle | cut -d "'" -f2)
+    - find webinterface/ -exec sed -i 's/%%VERSION_NUMBER%%/'$VERSION'/g' {} \;
     - cp build/libs/ts3bot-$VERSION-all.jar docker/ts3bot.jar
     - cp -r webinterface/ docker/html
     - docker build docker -t "$CI_REGISTRY_IMAGE:latest" -t "$CI_REGISTRY_IMAGE:$VERSION.$datestr"
