@@ -13,6 +13,7 @@ public class CollectData {
     private final Logger log = LogManager.getLogger(CollectData.class.getName());
     private TS3Api api;
     private TS3ServerConfig serverConfig;
+    private boolean connectionOpen;
 
     public void setApi(TS3Api api) {
         this.api = api;
@@ -20,6 +21,81 @@ public class CollectData {
 
     public void setServerConfig(TS3ServerConfig serverConfig) {
         this.serverConfig = serverConfig;
+    }
+
+    public void increaseChannelCreateCounter(){
+        waitForDBConnection();
+        Connection conn = connectDatabase();
+        String sql = "UPDATE status SET channel_create_count = channel_create_count + 1;";
+        try {
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            log.error( "{}: sqlite error {}", serverConfig.getBotName(), e.getMessage());
+        }
+        closeDatabase(conn);
+    }
+
+    public void increaseChannelDeleteCounter(){
+        waitForDBConnection();
+        Connection conn = connectDatabase();
+        String sql = "UPDATE status SET channel_delete_count = channel_delete_count + 1;";
+        try {
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            log.error( "{}: sqlite error {}", serverConfig.getBotName(), e.getMessage());
+        }
+        closeDatabase(conn);
+    }
+
+    public void increaseClientMovedCounter(){
+        waitForDBConnection();
+        Connection conn = connectDatabase();
+        String sql = "UPDATE status SET client_moved_count = client_moved_count + 1;";
+        try {
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            log.error( "{}: sqlite error {}", serverConfig.getBotName(), e.getMessage());
+        }
+        closeDatabase(conn);
+    }
+
+    public void increaseWelcomeMessageCounter(){
+        waitForDBConnection();
+        Connection conn = connectDatabase();
+        String sql = "UPDATE status SET welcome_message_count = welcome_message_count + 1;";
+        try {
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            log.error( "{}: sqlite error {}", serverConfig.getBotName(), e.getMessage());
+        }
+        closeDatabase(conn);
+    }
+
+    public void increaseTwitchCounter(){
+        waitForDBConnection();
+        Connection conn = connectDatabase();
+        String sql = "UPDATE status SET twitch_live_count = twitch_live_count + 1;";
+        try {
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            log.error( "{}: sqlite error {}", serverConfig.getBotName(), e.getMessage());
+        }
+        closeDatabase(conn);
+    }
+
+    private void waitForDBConnection(){
+        while(connectionOpen){
+            try {
+                Thread.sleep(100);
+            }catch (Exception ex){
+                log.error("{}: Irgendwas ist schief gelaufen beim warten auf die Datenbank.", serverConfig.getBotName());
+            }
+        }
     }
 
     public void startCollectingData(){
@@ -154,6 +230,7 @@ public class CollectData {
         Connection conn = null;
         try {
             conn = DriverManager.getConnection(url);
+            connectionOpen = true;
         } catch (SQLException e) {
             log.error( "{}: sqlite error {}", serverConfig.getBotName(), e.getMessage());
         }
@@ -164,6 +241,7 @@ public class CollectData {
         try {
             if (conn != null) {
                 conn.close();
+                connectionOpen = false;
             }
         } catch (SQLException ex) {
             log.info( "{}: sqlite error {}", serverConfig.getBotName(), ex.getMessage());

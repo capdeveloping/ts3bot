@@ -4,7 +4,9 @@
 
 createSQLTables(){
   firstServer=true
-  sqlite3 /data/db.sqlite3 "PRAGMA writable_schema = 1; DELETE FROM sqlite_master WHERE type = 'table' AND name NOT IN ('users'); PRAGMA writable_schema = 0; VACUUM;"
+  sqlite3 /data/db.sqlite3 "PRAGMA writable_schema = 1; DELETE FROM sqlite_master WHERE type = 'table' AND name NOT IN ('users', 'status'); PRAGMA writable_schema = 0; VACUUM;"
+  sqlite3 /data/db.sqlite3 'CREATE TABLE IF NOT EXISTS status(channel_create_count integer, channel_delete_count integer, client_moved_count integer, welcome_message_count integer, twitch_live_count integer);'
+  sqlite3 /data/db.sqlite3 'INSERT INTO status(channel_create_count, channel_delete_count, client_moved_count, welcome_message_count, twitch_live_count) SELECT "0", "0", "0", "0", "0" WHERE NOT EXISTS (select * from status);'
   for folder in `find /data/configs/ -maxdepth 1 -type d`; do
     folder="${folder##*/}"
     if [ -n "$folder" ]; then

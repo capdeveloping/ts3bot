@@ -1,4 +1,4 @@
-FROM openjdk:16-jdk-slim-buster
+FROM openjdk:20-jdk-slim-buster
 
 MAINTAINER Capdeveloping
 

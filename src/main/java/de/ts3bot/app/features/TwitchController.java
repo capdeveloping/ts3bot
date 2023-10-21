@@ -10,6 +10,7 @@ import com.github.twitch4j.events.ChannelGoLiveEvent;
 import com.github.twitch4j.events.ChannelGoOfflineEvent;
 import de.ts3bot.app.manager.FormatManager;
 import de.ts3bot.app.manager.ListManager;
+import de.ts3bot.app.models.CollectData;
 import de.ts3bot.app.models.TS3ServerConfig;
 import de.ts3bot.app.models.Twitchuser;
 import de.ts3bot.app.models.User;
@@ -28,9 +29,11 @@ public class TwitchController {
     private List<Twitchuser> users;
     private TS3ServerConfig serverConfig;
     private TS3Api api;
+    private CollectData collectData;
 
-    public TwitchController(TS3ServerConfig serverConfig){
+    public TwitchController(TS3ServerConfig serverConfig, CollectData collectData){
         this.serverConfig = serverConfig;
+        this.collectData = collectData;
         users = new ArrayList<>();
         readConfigFile();
         twitchConnect();
@@ -107,6 +110,7 @@ public class TwitchController {
                     String customMessage = serverConfig.getTwitchServerMessage().replace("%URL%","https://www.twitch.tv/" + user.getName());
                     customMessage = customMessage.replace("%USER%",user.getName());
                     api.sendServerMessage(customMessage);
+                    collectData.increaseTwitchCounter();
                 }
             }
         }

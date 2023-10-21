@@ -41,7 +41,12 @@ public class UserMessageEvent extends TS3EventAdapter {
     //endregion
     @Override
     public void onTextMessage(TextMessageEvent e) {
-        if ((e.getTargetMode() == TextMessageTargetMode.CLIENT || e.getTargetMode() == TextMessageTargetMode.CHANNEL || e.getTargetMode() == TextMessageTargetMode.SERVER) && e.getInvokerId() != api.whoAmI().getId() && !e.getMessage().startsWith("!2wayauth")) {
+        if ( (e.getTargetMode() == TextMessageTargetMode.CLIENT
+                || e.getTargetMode() == TextMessageTargetMode.CHANNEL
+                || e.getTargetMode() == TextMessageTargetMode.SERVER )
+                && e.getInvokerId() != api.whoAmI().getId()
+                && !e.getMessage().startsWith("!2wayauth")
+        ) {
             String message;
             if (e.getMessage().startsWith("!addfriend") || e.getMessage().startsWith("!removefriend")
                     || e.getMessage().startsWith("!moveto") || e.getMessage().startsWith("!accept")

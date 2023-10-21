@@ -1,5 +1,6 @@
 <?php
     require_once('templates/preload.php');
+    require_once('templates/progress_functions.php');
 
 ?>
 <!DOCTYPE html>
@@ -23,14 +24,107 @@
                         <h1 class="mt-4">Dashboard</h1>
                         <hr>
                         <div class="row">
+                            <!-- Tasks Card Example -->
                             <div class="col-xl-3 col-md-6">
-                                <div class="card mb-4">
-                                    <div class="card-header">
-                                        <i class="fas fa-chart-pie mr-1"></i><?php if( ! empty($_SESSION["instances"]) ){ echo "Bots active"; }else{ echo "Keine Instanzen"; }?>
+                                <div class="card border-left-info shadow h-100 py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2 text-xs font-weight-bold text-info text-uppercase mb-1">
+                                                <?php if( ! empty($_SESSION["instances"]) ){ echo "Bots active"; }else{ echo "Keine Instanzen"; }?>
+                                            </div>
+                                            <div id="piechart"></div>
+                                        </div>
                                     </div>
-                                    <div id="piechart"></div>
                                 </div>
                             </div>
+
+                            <!-- Progress Small -->
+                            <div class="col-xl-3 col-md-6">
+                                <div class="card border-left-info shadow h-100 py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2 text-xs font-weight-bold text-info text-uppercase mb-1">
+                                                Erstellte Channel
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="mb-1 small text-center"><?php echo $_SESSION['status']['channel_create_count'];?></div>
+                                        </div>
+                                        <div class="progress mb-4">
+                                            <div class="progress-bar" role="progressbar" style="width: <?php print_r(getProgressWidth($_SESSION['status']['channel_create_count']));?>%" aria-valuemin="<?php print_r(getProgressMin($_SESSION['status']['channel_create_count']));?>" aria-valuemax="<?php print_r(getProgressMax($_SESSION['status']['channel_create_count']));?>"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card border-left-info shadow h-100 py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2 text-xs font-weight-bold text-info text-uppercase mb-1">
+                                                Gelöschte Channel
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="mb-1 small text-center"><?php echo $_SESSION['status']['channel_delete_count'];?></div>
+                                        </div>
+                                        <div class="progress mb-4">
+                                            <div class="progress-bar" role="progressbar" style="width: <?php print_r(getProgressWidth($_SESSION['status']['channel_delete_count']));?>%" aria-valuemin="<?php print_r(getProgressMin($_SESSION['status']['channel_delete_count']));?>" aria-valuemax="<?php print_r(getProgressMax($_SESSION['status']['channel_delete_count']));?>"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Progress Small -->
+                            <div class="col-xl-3 col-md-6">
+                                <div class="card border-left-info shadow h-100 py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2 text-xs font-weight-bold text-info text-uppercase mb-1">
+                                                Gesendete Willkommensnachrichten
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="mb-1 small text-center"><?php echo $_SESSION['status']['welcome_message_count'];?></div>
+                                        </div>
+                                        <div class="progress mb-4">
+                                            <div class="progress-bar" role="progressbar" style="width: <?php print_r(getProgressWidth($_SESSION['status']['welcome_message_count']));?>%" aria-valuemin="<?php print_r(getProgressMin($_SESSION['status']['welcome_message_count']));?>" aria-valuemax="<?php print_r(getProgressMax($_SESSION['status']['welcome_message_count']));?>"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="card border-left-info shadow h-100 py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2 text-xs font-weight-bold text-info text-uppercase mb-1">
+                                                Verschoben Clients
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="mb-1 small text-center"><?php echo $_SESSION['status']['client_moved_count'];?></div>
+                                        </div>
+                                        <div class="progress mb-4">
+                                            <div class="progress-bar" role="progressbar" style="width: <?php print_r(getProgressWidth($_SESSION['status']['client_moved_count']));?>%" aria-valuemin="<?php print_r(getProgressMin($_SESSION['status']['client_moved_count']));?>" aria-valuemax="<?php print_r(getProgressMax($_SESSION['status']['client_moved_count']));?>"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Progress Small -->
+                            <div class="col-xl-3 col-md-6">
+                                <div class="card border-left-info shadow h-100 py-2">
+                                    <div class="card-body">
+                                        <div class="row no-gutters align-items-center">
+                                            <div class="col mr-2 text-xs font-weight-bold text-info text-uppercase mb-1">
+                                                Live gegangene Clients
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="mb-1 small text-center"><?php echo $_SESSION['status']['twitch_live_count'];?></div>
+                                        </div>
+                                        <div class="progress mb-4">
+                                            <div class="progress-bar" role="progressbar" style="width: <?php print_r(getProgressWidth($_SESSION['status']['twitch_live_count']));?>%" aria-valuemin="<?php print_r(getProgressMin($_SESSION['status']['twitch_live_count']));?>" aria-valuemax="<?php print_r(getProgressMax($_SESSION['status']['twitch_live_count']));?>"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                         <h4 class="mt-4">Instanzen</h4>
                         <hr>
@@ -77,6 +171,7 @@ if( filter_var($_SESSION["instances"][$key]["instance_activ"], FILTER_VALIDATE_B
             <!-- End of Content Wrapper -->
         </div>
         <!-- End of Page Wrapper -->
+
         <script type="text/javascript">
         // Load google charts
         google.charts.load('current', {'packages':['corechart']});

@@ -84,7 +84,7 @@ public class BotInstance {
             switch (serverConfig.getFunctionNames().get(key)){
                 case "ClientAFK":
                     if(clientAfkMode == null) clientAfkMode = new ArrayList<>();
-                    clientAfkMode.add(new ClientAfkMode( serverConfig.getFunctionAFKHashMap().get(key), key, serverConfig ));
+                    clientAfkMode.add(new ClientAfkMode( serverConfig.getFunctionAFKHashMap().get(key), key, serverConfig, collectData ));
                     leaveEvent.setClientAfkMode(clientAfkMode);
                     break;
                 case "ClientMove":
@@ -103,7 +103,7 @@ public class BotInstance {
                     autoRemove.checkForGroupsToRemoveTimer();
                     break;
                 case "ChannelAutoCreate":
-                    automaticChannel = new AutomaticChannel(serverConfig);
+                    automaticChannel = new AutomaticChannel(serverConfig, collectData);
                     break;
                 case "Broadcast":
                     broadcastMessage = new BroadcastMessage(serverConfig);
@@ -118,11 +118,11 @@ public class BotInstance {
                     updateGameChannel = new UpdateGameServerChannel(serverConfig);
                     break;
                 case "WelcomeMessage":
-                    welcomeMessageEvent = new WelcomeMessageEvent(serverConfig);
+                    welcomeMessageEvent = new WelcomeMessageEvent(serverConfig, collectData);
                     welcomeMessageEvent.deleteUserListTimer();
                     break;
                 case "Twitch":
-                    twitchController = new TwitchController(serverConfig);
+                    twitchController = new TwitchController(serverConfig, collectData);
                     break;
                 default:
                     break;

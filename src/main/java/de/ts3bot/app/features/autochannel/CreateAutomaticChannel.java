@@ -8,6 +8,7 @@ import com.github.theholywaffle.teamspeak3.api.wrapper.ChannelInfo;
 import com.github.theholywaffle.teamspeak3.api.wrapper.Permission;
 import de.ts3bot.app.manager.FormatManager;
 import de.ts3bot.app.models.AutomaticChannelProperty;
+import de.ts3bot.app.models.CollectData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -17,10 +18,12 @@ public class CreateAutomaticChannel extends TS3EventAdapter {
     private TS3Api api;
     private Map<Integer, AutomaticChannelProperty> channels;
     private boolean stopFunction;
+    private CollectData collectData;
     private final Logger log = LogManager.getLogger(CreateAutomaticChannel.class);
 
-    CreateAutomaticChannel(Map<Integer, AutomaticChannelProperty> channels){
+    CreateAutomaticChannel(Map<Integer, AutomaticChannelProperty> channels, CollectData collectData){
         this.channels = channels;
+        this.collectData = collectData;
         stopFunction = false;
     }
 
@@ -103,6 +106,7 @@ public class CreateAutomaticChannel extends TS3EventAdapter {
         }
         if (empty < 1 || (exist > empty && empty < 1)){
             api.createChannel(channels.get(parentChannelId).getNextChannelName(), properties);
+            collectData.increaseChannelCreateCounter();
             channels.get(parentChannelId).manageNextChannelName("");
         }
     }

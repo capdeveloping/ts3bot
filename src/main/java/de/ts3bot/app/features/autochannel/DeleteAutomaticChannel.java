@@ -4,6 +4,7 @@ import com.github.theholywaffle.teamspeak3.TS3Api;
 import com.github.theholywaffle.teamspeak3.api.event.*;
 import com.github.theholywaffle.teamspeak3.api.wrapper.Channel;
 import de.ts3bot.app.models.AutomaticChannelProperty;
+import de.ts3bot.app.models.CollectData;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,9 +13,11 @@ public class DeleteAutomaticChannel extends TS3EventAdapter {
     private TS3Api api;
     private Map<Integer, AutomaticChannelProperty> channels;
     private boolean stopFunction;
+    private CollectData collectData;
 
-    DeleteAutomaticChannel(Map<Integer, AutomaticChannelProperty> channels){
+    DeleteAutomaticChannel(Map<Integer, AutomaticChannelProperty> channels, CollectData collectData){
         this.channels = channels;
+        this.collectData = collectData;
         stopFunction = false;
     }
 
@@ -68,6 +71,7 @@ public class DeleteAutomaticChannel extends TS3EventAdapter {
             if (channels.containsKey(parentChannelId) && channel.getTotalClients() == 0 && emptychannels.get(parentChannelId) > 1){
                 channels.get(parentChannelId).removeCidFromList(channel.getId());
                 api.deleteChannel(channel.getId());
+                collectData.increaseChannelDeleteCounter();
                 if ( ! lowestNameFound) {
                     channels.get(parentChannelId).manageNextChannelName(lastChannelName);
                     lowestNameFound = true;

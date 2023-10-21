@@ -135,7 +135,7 @@
                 <li class="nav-item">
                     <a class="nav-link" href="https://github.com/capdeveloping/ts3bot">
                         <i class="fas fa-code-branch"></i>
-                        <span>v1.1.12</span>
+                        <span>v%%VERSION_NUMBER%%</span>
                     </a>
                 </li>
                 <!-- <div class="indicator"></div>-->

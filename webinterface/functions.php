@@ -513,6 +513,7 @@ function getlog($number_lines,$filters,$filter2,$inactivefilter = NULL) {
 			array_push($buffer, $line);
 		}
 		fclose($fp);
+		$buffer = array_reverse($buffer);
 		$lastfilter = 'init';
 		foreach($buffer as $line) {
 			if(substr($line, 0, 2) != "20" && in_array($lastfilter, $filters)) {
@@ -550,6 +551,7 @@ function getlog($number_lines,$filters,$filter2,$inactivefilter = NULL) {
 		$lines[] = "No log entry found...\n";
 		$lines[] = "The logfile will be created with next startup.\n";
 	}
+	$lines = array_reverse($lines);
 	return $lines;
 }
 

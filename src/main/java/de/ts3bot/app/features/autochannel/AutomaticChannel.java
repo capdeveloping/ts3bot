@@ -5,6 +5,7 @@ import com.github.theholywaffle.teamspeak3.api.event.*;
 import com.github.theholywaffle.teamspeak3.api.wrapper.Channel;
 import de.ts3bot.app.manager.ListManager;
 import de.ts3bot.app.models.AutomaticChannelProperty;
+import de.ts3bot.app.models.CollectData;
 import de.ts3bot.app.models.TS3ServerConfig;
 import de.ts3bot.app.models.functions.FunctionChannelAutoCreate;
 import org.apache.logging.log4j.LogManager;
@@ -21,11 +22,11 @@ public class AutomaticChannel extends TS3EventAdapter{
     private DeleteAutomaticChannel deleteAutomaticChannel;
     private FunctionChannelAutoCreate functionChannelAutoCreate;
 
-    public AutomaticChannel(TS3ServerConfig serverConfig){
+    public AutomaticChannel(TS3ServerConfig serverConfig, CollectData collectData){
         functionChannelAutoCreate = serverConfig.getFunctionChannelAutoCreate();
         channels = new HashMap<>();
-        deleteAutomaticChannel = new DeleteAutomaticChannel(channels);
-        createAutomaticChannel = new CreateAutomaticChannel(channels);
+        deleteAutomaticChannel = new DeleteAutomaticChannel(channels, collectData);
+        createAutomaticChannel = new CreateAutomaticChannel(channels, collectData);
         reinitializeACP();
     }
 

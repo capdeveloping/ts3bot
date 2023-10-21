@@ -4,6 +4,7 @@ import com.github.theholywaffle.teamspeak3.TS3Api;
 import com.github.theholywaffle.teamspeak3.api.wrapper.Client;
 import de.ts3bot.app.manager.FormatManager;
 import de.ts3bot.app.manager.ListManager;
+import de.ts3bot.app.models.CollectData;
 import de.ts3bot.app.models.TS3ServerConfig;
 import de.ts3bot.app.models.data.ClientAfkUserData;
 import de.ts3bot.app.models.functions.FunctionAFK;
@@ -25,9 +26,11 @@ public class ClientAfkMode {
     private FunctionAFK functionAFK;
     private String clientAfkModeKey;
     private String backupFile;
+    private CollectData collectData;
 
-    public ClientAfkMode(FunctionAFK functionAFK, String clientAfkModeKey, TS3ServerConfig serverConfig) {
+    public ClientAfkMode(FunctionAFK functionAFK, String clientAfkModeKey, TS3ServerConfig serverConfig, CollectData collectData) {
         this.functionAFK = functionAFK;
+        this.collectData = collectData;
         clients = new ArrayList<>();
         this.clientAfkModeKey = clientAfkModeKey;
         this.serverConfig = serverConfig;
@@ -130,6 +133,7 @@ public class ClientAfkMode {
         }
         if(move){
             api.moveClient(client.getId(), functionAFK.getClient_afk_channel());
+            collectData.increaseClientMovedCounter();
         }
     }
 

@@ -42,6 +42,25 @@
         echo 'Exception abgefangen 2: ',  $e->getMessage(), "\n";
     }
 
+    try{
+        if( isset($_SESSION['user']['username']) && ! isset($_POST['login']) ){
+            $tablename = 'status';
+            $results = $db->query('SELECT * FROM "' . $tablename . '" ;');
+            $_SESSION['status'] = [];
+            while ($row = $results->fetchArray()) {
+                $_SESSION['status']["channel_create_count"] = $row["channel_create_count"];
+                $_SESSION['status']["channel_delete_count"] = $row["channel_delete_count"];
+                $_SESSION['status']["client_moved_count"] = $row["client_moved_count"];
+                $_SESSION['status']["welcome_message_count"] = $row["welcome_message_count"];
+                $_SESSION['status']["twitch_live_count"] = $row["twitch_live_count"];
+            }
+        }
+    } catch (Throwable $e) {
+        echo 'Exception abgefangen: ',  $e->getMessage(), "\n";
+    } catch (Exception $e) {
+        echo 'Exception abgefangen 2: ',  $e->getMessage(), "\n";
+    }
+
     if (isset($_POST['login'])){
         $statement = $db->prepare('SELECT * FROM users where username = :username;');
         $statement->bindValue(':username', $_POST["username"]);

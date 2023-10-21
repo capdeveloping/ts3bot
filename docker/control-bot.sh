@@ -1,9 +1,17 @@
 #!/bin/bash
-logfile="/data/logs/bot.log"
+logfolder="/data/logs"
+logfile="$logfolder/bot.log"
 export LANG="C.UTF-8"
+
+cleanUpLog(){
+  echo "[INFO ] logrotated" >> $logfile
+  cp $logfile "$logfolder/bot-$(date '+%Y-%m-%d_%H-%M-%S').log"
+  echo "" > $logfile
+}
 
 case $1 in
         start)
+                cleanUpLog
                 # shellcheck disable=SC2028
                 echo "[INFO ] ################################" >> $logfile
                 # shellcheck disable=SC2028
@@ -11,7 +19,7 @@ case $1 in
                 # shellcheck disable=SC2028
                 echo "[INFO ] ################################" >> $logfile
                 java -Duser.timezone=Europe/Berlin -jar /ts3bot.jar configPath=/data/configs/ instanceFile=/data/configs/instancemanager.cfg 2&>> $logfile &
-                                ;;
+                ;;
         stop)
                 pkill -f 'java'
                 # shellcheck disable=SC2028
@@ -24,6 +32,7 @@ case $1 in
         restart)
                 pkill -f 'java'
                 sleep 5
+                cleanUpLog
                 # shellcheck disable=SC2028
                 echo "[INFO ] ################################" >> $logfile
                 # shellcheck disable=SC2028

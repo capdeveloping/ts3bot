@@ -1,4 +1,6 @@
-image: docker:latest
+---
+
+image: docker:24.0.6
 
 stages:
   - cleanup
@@ -21,6 +23,7 @@ variables:
 
 before_script:
   - export GRADLE_USER_HOME=`pwd`/.gradle
+  - export VERSION=$(grep -E "version " build.gradle | cut -d "'" -f2)
 
 cleanup:
   stage: cleanup
@@ -30,8 +33,9 @@ cleanup:
 
 build jar file:
   stage: build-jar
-  image: gradle:7.1.1
+  image: gradle:8.3
   script:
+    - find src/main/ -exec sed -i 's/%%VERSION_NUMBER%%/'$VERSION'/g' {} \;
     - gradle --build-cache buildjar
   except:
     - /^doku-/
@@ -39,23 +43,22 @@ build jar file:
 create staging container:
   stage: build-container
   script:
-    - export VERSION=$(grep -E "version " build.gradle | cut -d "'" -f2)
+    - find webinterface/ -exec sed -i 's/%%VERSION_NUMBER%%/'$VERSION'/g' {} \;
     - cp build/libs/ts3bot-$VERSION-all.jar docker/ts3bot.jar
     - cp -r webinterface/ docker/html
     - docker build docker -t ts3bot:test-$VERSION -t ts3bot:test
   only:
     - /^update-/
 
-#update test bot:
-#  image: tiangolo/docker-with-compose
-#  stage: deploy
-#  script:
-#    - export VERSION=$(grep -E "version " build.gradle | cut -d "'" -f2)
-#    - cd docker && apk add wget
-#    - wget -O docker-compose.yml --header "PRIVATE-TOKEN:$GITLAB_API_TOKEN" $DOCKER_COMPOSE_TEST_FILE_URL
-#    - docker-compose up -d
-#  only:
-#    - /^update-/
+update test bot:
+  image: tiangolo/docker-with-compose
+  stage: deploy
+  script:
+    - cd docker && apk add wget
+    - wget -O docker-compose.yml --header "PRIVATE-TOKEN:$GITLAB_API_TOKEN" $DOCKER_COMPOSE_TEST_FILE_URL
+    - docker-compose up -d
+  only:
+    - /^update-/
 
 push to github repo:
   stage: push

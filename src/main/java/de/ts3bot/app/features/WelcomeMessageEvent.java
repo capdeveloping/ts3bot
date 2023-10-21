@@ -7,6 +7,7 @@ import com.github.theholywaffle.teamspeak3.api.event.TS3EventAdapter;
 import com.github.theholywaffle.teamspeak3.api.event.TextMessageEvent;
 import de.ts3bot.app.manager.GeneralManager;
 import de.ts3bot.app.manager.ListManager;
+import de.ts3bot.app.models.CollectData;
 import de.ts3bot.app.models.TS3ServerConfig;
 import de.ts3bot.app.models.functions.FunctionWelcomeMessage;
 import org.apache.logging.log4j.LogManager;
@@ -27,10 +28,12 @@ public class WelcomeMessageEvent extends TS3EventAdapter {
     private HashMap<String, Date> removeDates;
     private long plusday = 86400000;
     private String daily = "daily";
+    private CollectData collectData;
 
-    public WelcomeMessageEvent(TS3ServerConfig serverConfig) {
+    public WelcomeMessageEvent(TS3ServerConfig serverConfig, CollectData collectData) {
         this.api = null;
         this.serverConfig = serverConfig;
+        this.collectData = collectData;
         timer = new Timer();
         userLists = new HashMap<>();
         backupFiles = new HashMap<>();
@@ -120,6 +123,7 @@ public class WelcomeMessageEvent extends TS3EventAdapter {
         }
         if( api.isClientOnline(e.getClientId()) ){
             api.sendPrivateMessage(e.getClientId(), message);
+            collectData.increaseWelcomeMessageCounter();
         }
         if(welcomeObj.getWelcome_repeat().equals(daily)){
             userLists.get(welcomeObj.getFunctionKey()).add(e.getUniqueClientIdentifier());
